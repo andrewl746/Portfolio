@@ -12,7 +12,7 @@ export type Project = {
 export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo.",
-  tagline: "I enjoy building software that makes people's lives a little easier.",
+  tagline: "I enjoy building software that makes people's lives easier.",
   sub: "Currently building OlympIQ, the platform my high school's Science Olympics team runs on.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
