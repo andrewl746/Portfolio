@@ -7,8 +7,8 @@ export default function Contact() {
       <Reveal>
         <h2 className="font-mono text-sm text-accent">04 / contact</h2>
         <p className="mt-6 max-w-xl text-xl leading-relaxed">
-          Looking for a Summer 2027 co-op. If you're building something
-          interesting, I'd like to hear about it.
+          Looking for a Summer 2027 co-op. If you&apos;re building something
+          interesting, I&apos;d like to hear about it.
         </p>
         <div className="mt-8 flex flex-wrap gap-6 font-mono text-sm">
           <a

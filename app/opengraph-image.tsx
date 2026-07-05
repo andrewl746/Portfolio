@@ -27,7 +27,8 @@ export default function OpengraphImage() {
           Andrew Li
         </div>
         <div style={{ color: "#8a8a94", marginTop: 24, maxWidth: 900 }}>
-          I enjoy building software that makes people's lives a little easier.
+          I enjoy building software that makes people&apos;s lives a little
+          easier.
         </div>
         <div
           style={{

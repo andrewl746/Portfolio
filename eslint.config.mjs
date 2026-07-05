@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone resume generator script, not part of the app.
+    "resume/**",
   ]),
 ]);
 
