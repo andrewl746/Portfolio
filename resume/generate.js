@@ -14,14 +14,14 @@ const SZ_HEAD = 22;   // 11pt section headings
 
 const sectionHeading = (text) =>
   new Paragraph({
-    spacing: { before: 100, after: 40 },
+    spacing: { before: 70, after: 30 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "444444", space: 2 } },
     children: [new TextRun({ text, bold: true, size: SZ_HEAD, font: FONT, allCaps: true })],
   });
 
 const entryLine = (left, right, opts = {}) =>
   new Paragraph({
-    spacing: { before: opts.first ? 30 : 80, after: 20 },
+    spacing: { before: opts.first ? 20 : 60, after: 15 },
     tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
     children: [
       new TextRun({ text: left, bold: true, size: SZ, font: FONT }),
@@ -98,7 +98,7 @@ const doc = new Document({
         // PROJECTS
         sectionHeading("Projects"),
         entryLine("OlympIQ", "Sep 2025 to present", { first: true, leftItalic: " | Next.js, TypeScript, Firebase, Firestore | olympiq.ca" }),
-        bullet("Built and launched a Science Olympics team-management platform now used by my school's program, with role-based access for teachers, executives, and competitors."),
+        bullet("Built and launched a Science Olympics team-management platform used by 60+ competitors, with role-based access for teachers, executives, and competitors."),
         bullet("Implemented event scheduling with automatic conflict detection and Excel export, and preference-based automatic competitor-to-event assignment."),
         bullet("Shipped solo from design to production across 100+ commits, including Firestore security rules and role-based onboarding with team codes."),
 
@@ -117,17 +117,19 @@ const doc = new Document({
         // EXPERIENCE
         sectionHeading("Experience"),
         entryLine("Kurius (nonprofit)", "Dec 2023 to present", { first: true, leftItalic: " | C++ Instructor and Outreach Coordinator, Remote" }),
-        bullet("Taught a 5-week Introduction to C++ course to university students; students progressed from no C++ experience to writing functional programs."),
-        bullet("Coordinate sponsor and partnership outreach supporting free technology education programs."),
+        bullet("Taught a 5-week Introduction to C++ course to 14 university students; by the end, beginners were confidently shipping functional C++ programs."),
+        bullet("Reached out to 200+ companies to secure sponsorships and partnerships for the 2,200+-member organization."),
 
-        entryLine("Science Olympics Club, Victoria Park CI", "Sep 2023 to Jun 2026", { leftItalic: " | Head Trainer" }),
+        entryLine("Science Olympics Team, Victoria Park CI", "Sep 2023 to Jun 2026", { leftItalic: " | Head Trainer" }),
         bullet("Led a team of 6 trainers; all 4 junior teams coached placed 1st at Western University's Science Olympics."),
-        bullet("Designed the club's first structured training program and recruited experienced competitors as trainers, then built OlympIQ to run scheduling and signups."),
+        bullet("Created the team's first structured training program and recruited experienced competitors as trainers."),
+        bullet("Then developed OlympIQ, which now runs scheduling and signups for the team."),
 
         // AWARDS
         sectionHeading("Awards"),
         bullet("Canadian Computing Competition (Senior): Distinction, 2024, 2025, 2026"),
-        bullet("USACO Silver Division; DMOJ top 2% (300+ points); Codeforces max rating 1200+; 500+ problems solved"),
+        bullet("DMOJ top 2% (300+ points); Codeforces rating 1200+; USACO Silver Division; 500+ problems solved"),
+        bullet("CALICO Bronze, 2024"),
         bullet("Best Use of Gemini AI or Gemini API, Hack Canada 2025"),
         bullet("1st place team, St. Lawrence Coding Competition 2024"),
 
