@@ -16,7 +16,7 @@ export const SITE = {
   sub: "Currently exploring how AI agents work through tool use, RAG, and the ReAct loop.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
-  resumeHref: "/resume",
+  resumeHref: "/Andrew_Li_Resume.pdf",
 };
 
 export const STATS = [
