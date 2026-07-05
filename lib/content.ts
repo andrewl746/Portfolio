@@ -13,7 +13,6 @@ export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo.",
   tagline: "I enjoy building software that makes people's lives easier.",
-  sub: "Currently building OlympIQ, the platform my high school's Science Olympics team runs on.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
   resumeHref: "/resume.pdf",
@@ -29,9 +28,9 @@ export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
   description:
-    "OlympIQ simplifies managing my high school's Science Olympics team by eliminating messy spreadsheets. It manages event schedules with automatic conflict detection, assigns competitors to events based on their preferences, tracks attendance, and allows exporting data to Excel. Teachers, executives, and competitors each have their own roles and join teams using a unique code.",
+    "OlympIQ streamlines the management of my high school's Science Olympics team. It handles event scheduling with automatic conflict detection, assigns competitors to events based on their preferences, tracks attendance, and exports data to Excel. Teachers, executives, and competitors each have distinct roles within the platform. Used by 60+ competitors on the team.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
-  coord: "CAT. Nº 001",
+  coord: "LOG-001",
   live: "https://www.olympiq.ca",
 };
 
@@ -40,9 +39,9 @@ export const PROJECTS: Project[] = [
     name: "Flowboard",
     context: "JamHacks 2026",
     description:
-      "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions are displayed as nodes on a canvas. An assistant, using the actual file structure and code snippets, helps answer questions about where to begin reading.",
+      "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions are displayed as nodes on a canvas. An AI assistant, using the file structure and code snippets, answers questions about the codebase.",
     tech: ["Next.js", "React Flow", "Zustand", "Anthropic API"],
-    coord: "CAT. Nº 002",
+    coord: "LOG-002",
     github: "https://github.com/andrewl746/Flowboard",
   },
   {
@@ -51,7 +50,7 @@ export const PROJECTS: Project[] = [
     description:
       "Analyzes student reasoning alongside their answers. It identifies misconceptions from written explanations, creates profiles for each student, provides class-wide analytics, and advises teachers on what to teach next.",
     tech: ["Firebase", "Claude API", "Cloudflare Workers"],
-    coord: "CAT. Nº 003",
+    coord: "LOG-003",
     github: "https://github.com/andrewl746/TeacherAId",
   },
   {
@@ -60,7 +59,7 @@ export const PROJECTS: Project[] = [
     description:
       "Estimates your risk of frostbite and hypothermia based on live weather conditions and your clothing, then tells you how long it is safe to stay outside.",
     tech: ["Next.js", "Node.js", "Firebase", "Gemini API"],
-    coord: "CAT. Nº 004",
+    coord: "LOG-004",
     github: "https://github.com/andrewl746/FrostByte",
     award: "Best Use of Gemini AI",
   },
@@ -68,9 +67,9 @@ export const PROJECTS: Project[] = [
     name: "CourtManager",
     context: "IB HL CS Internal Assessment",
     description:
-      "Manages my high school's tennis doubles team with a custom merge-sort pairing algorithm, player records, and lineup planning.",
+      "Manages my high school's 12-player tennis doubles team with a custom merge-sort pairing algorithm, player records, and lineup planning.",
     tech: ["Java", "Spring Boot", "JavaScript"],
-    coord: "CAT. Nº 005",
+    coord: "LOG-005",
     github: "https://github.com/andrewl746/CourtManager",
   },
 ];
@@ -105,13 +104,13 @@ export const EXPERIENCE: ExperienceEntry[] = [
     ],
   },
   {
-    org: "Science Olympics Team, Victoria Park CI",
+    org: "Science Olympics Team, Victoria Park C.I.",
     role: "Head Trainer",
     period: "Sep 2023 to Jun 2026",
     bullets: [
       "Led a team of 6 trainers. All 4 junior teams I coached placed 1st at Western University's Science Olympics.",
-      "Created the team's first structured training program and recruited experienced competitors as trainers.",
-      "Then developed OlympIQ, which now runs scheduling and signups for the team's 60+ competitors.",
+      "Created the first structured training program and recruited experienced members as trainers.",
+      "Then developed OlympIQ, which now runs scheduling and signups for the team.",
     ],
   },
 ];

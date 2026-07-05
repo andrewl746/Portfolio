@@ -28,11 +28,8 @@ export default function About() {
       <p className="mt-6 max-w-xl text-lg leading-relaxed text-primary/90 sm:text-xl">
         {SITE.tagline}
       </p>
-      <p className="mt-4 max-w-xl text-sm leading-relaxed text-body">
-        {SITE.sub}
-      </p>
 
-      <div className="mt-12 flex flex-wrap gap-x-12 gap-y-8">
+      <div className="mt-10 flex flex-wrap gap-x-12 gap-y-8">
         {STATS.map((s) => (
           <div key={s.eyebrow} className="border-l-2 border-ember pl-4">
             <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
