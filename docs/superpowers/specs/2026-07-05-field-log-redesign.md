@@ -72,6 +72,10 @@ Ember appears on: the CURRENT nav entry, the current sighting (OlympIQ row), sta
 4. **Tech** (`id="tech"`): plain "Tech" heading. Grid of inline SVG brand logos, each rendered dimmed (grayscale/low opacity) and blooming to full brand color on hover (CSS transition, no JS). Set: C++ (#00599C), Java (#EA2D2E), Python (#3776AB), TypeScript (#3178C6), JavaScript (#F7DF1E), React (#61DAFB), Next.js (#e8e2d3 on dark), Node.js (#5FA04E), Tailwind CSS (#38BDF8), Firebase (#FFCA28), Cloudflare (#F38020), Spring Boot (#6DB33F), Git (#F05032). Mono name label under each icon. Icons as local inline SVG paths (simple-icons path data), no new npm dependency, no network fetch.
 5. **Contact** (`id="contact"`): Summer 2027 co-op line, email (mailto), GitHub, resume links in mono. Minimal footer line.
 
+## Corners
+
+Zero border radius everywhere: CTA panel, stat blocks, tech tiles, focus outlines, all of it square with hairline 1px borders, like etched instrument plates. The only round things on the page are stars, constellation nodes, and the radial falloff of the two ember glows.
+
 ## Hover language (instrument-style, everywhere but quiet)
 
 Every interactive element reacts; nothing scales, bounces, or translates. Color/glow transitions only (~200ms ease): nav entries preview CURRENT, project rows brighten ember accent + coordinates, stat blocks warm their border, CTA glow deepens, tech logos gain brand color, links shift to ember. Cursor glow provides the ambient "red flashlight" feel.
