@@ -37,6 +37,7 @@ Thumbs.db
 .codex/
 .agents/
 .claude/
+.rebase-local-backup/
 .cursor/
 .gemini/
 .roo/
