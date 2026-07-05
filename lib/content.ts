@@ -3,6 +3,7 @@ export type Project = {
   context: string;
   description: string;
   tech: string[];
+  coord: string;
   github?: string;
   live?: string;
   award?: string;
@@ -10,25 +11,27 @@ export type Project = {
 
 export const SITE = {
   name: "Andrew Li",
+  identity: "Computer Science student at the University of Waterloo.",
   tagline: "I enjoy building software that makes people's lives a little easier.",
-  sub: "Incoming Computer Science student at the University of Waterloo, class of 2031. Currently building OlympIQ, the platform my school's Science Olympics program runs on.",
+  sub: "Currently building OlympIQ, the platform my high school's Science Olympics program runs on.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
   resumeHref: "/resume.pdf",
 };
 
 export const STATS = [
-  { value: "3x", label: "CCC Senior distinction" },
-  { value: "500+", label: "problems solved" },
-  { value: "4", label: "hackathons" },
+  { eyebrow: "Problems solved", value: "500+" },
+  { eyebrow: "Founder", value: "OlympIQ" },
+  { eyebrow: "Hackathons", value: "4" },
 ];
 
 export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
   description:
-    "Science Olympics, minus the spreadsheets. OlympIQ runs my school's Science Olympics program end to end: event schedules with automatic conflict detection and Excel export, preference-based competitor-to-event assignment, shared materials, and attendance tracking. Teachers, executives, and competitors each get their own role, joined by team code.",
+    "Science Olympics, minus the spreadsheets. OlympIQ runs my high school's Science Olympics program end to end: event schedules with automatic conflict detection and Excel export, preference-based competitor-to-event assignment, shared materials, and attendance tracking. Teachers, executives, and competitors each get their own role, joined by team code.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
+  coord: "RA 19h 04m / DEC -25 18",
   github: "https://github.com/andrewl746/OlympIQ",
   live: "https://www.olympiq.ca",
 };
@@ -40,6 +43,7 @@ export const PROJECTS: Project[] = [
     description:
       "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions become nodes on a canvas, and an assistant grounded in the actual file tree and code excerpts answers questions about where to start reading.",
     tech: ["Next.js", "React Flow", "Zustand", "Anthropic API"],
+    coord: "RA 05h 32m / DEC +22 01",
     github: "https://github.com/andrewl746/Flowboard",
   },
   {
@@ -48,6 +52,7 @@ export const PROJECTS: Project[] = [
     description:
       "Reads student reasoning, not just their answers. Classifies misconceptions from written explanations, builds per-student profiles and class-wide analytics, and tells teachers what to reteach next.",
     tech: ["Firebase", "Claude API", "Cloudflare Workers"],
+    coord: "RA 12h 51m / DEC +56 22",
     github: "https://github.com/andrewl746/TeacherAId",
   },
   {
@@ -56,6 +61,7 @@ export const PROJECTS: Project[] = [
     description:
       "Estimates frostbite and hypothermia risk from live weather and what you're wearing, then tells you how long you can safely stay outside.",
     tech: ["Next.js", "Node.js", "Firebase", "Gemini API"],
+    coord: "RA 20h 41m / DEC +45 17",
     github: "https://github.com/andrewl746/FrostByte",
     award: "Best Use of Gemini AI",
   },
@@ -63,17 +69,19 @@ export const PROJECTS: Project[] = [
     name: "CourtManager",
     context: "IB HL CS Internal Assessment",
     description:
-      "Team management for my school's tennis doubles squad, with a custom merge-sort based pairing algorithm, player records, and lineup planning.",
+      "Team management for my high school's tennis doubles squad, with a custom merge-sort based pairing algorithm, player records, and lineup planning.",
     tech: ["Java", "Spring Boot", "JavaScript"],
+    coord: "RA 07h 34m / DEC +31 53",
     github: "https://github.com/andrewl746/CourtManager",
   },
 ];
 
-export const COMPETITION = [
+export const RESULTS = [
   { event: "CCC Senior", result: "Distinction", year: "2024, 2025, 2026" },
   { event: "USACO", result: "Silver Division", year: "2024" },
+  { event: "CALICO", result: "Bronze", year: "2024" },
   { event: "DMOJ", result: "Top 2%, 300+ points", year: "ongoing" },
-  { event: "Codeforces", result: "Max rating 1200+", year: "ongoing" },
+  { event: "Codeforces", result: "Rating 1200+", year: "ongoing" },
   { event: "St. Lawrence Coding Competition", result: "1st place team", year: "2024" },
 ];
 
