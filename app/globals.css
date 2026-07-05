@@ -1,23 +1,32 @@
 @import "tailwindcss";
 
 :root {
-  --background: #08080c;
-  --foreground: #ececf1;
-  --muted: #8a8a94;
-  --accent: #e04654;
-  --card: #0d0d13;
-  --border: #1c1c24;
+  --void: #07080d;
+  --surface-line: #161a29;
+  --parchment: #e8e2d3;
+  --ink: #1a1d2b;
+  --ember: #e0455f;
+  --ember-dim: rgba(224, 69, 95, 0.35);
+  --brass: #a8895a;
+  --text-primary: #eceef4;
+  --text-body: #828aa3;
+  --text-muted: #6a7088;
+  --text-faint: #3d4258;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-card: var(--card);
-  --color-line: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-void: var(--void);
+  --color-line: var(--surface-line);
+  --color-parchment: var(--parchment);
+  --color-ember: var(--ember);
+  --color-brass: var(--brass);
+  --color-primary: var(--text-primary);
+  --color-body: var(--text-body);
+  --color-dim: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --font-serif: var(--font-fraunces);
+  --font-mono: var(--font-jbmono);
+  --radius: 0;
 }
 
 html {
@@ -25,37 +34,49 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--void);
+  color: var(--text-body);
+  font-family: var(--font-jbmono), ui-monospace, monospace;
 }
 
 ::selection {
-  background: rgba(224, 70, 84, 0.35);
+  background: rgba(224, 69, 95, 0.35);
+  color: var(--text-primary);
 }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+/* Coordinate grid over the main content area, draws in on load. */
+.coord-grid {
+  background-image:
+    linear-gradient(var(--surface-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--surface-line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.35;
+  animation: grid-in 1.4s ease-out;
 }
 
-.reveal.revealed {
-  opacity: 1;
-  transform: none;
+@keyframes grid-in {
+  from { opacity: 0; }
+  to { opacity: 0.35; }
 }
 
+/* Star twinkle used by constellation nodes. */
 @keyframes twinkle {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
 }
 
 .constellation-star {
-  animation: twinkle 4.5s ease-in-out infinite;
+  animation: twinkle 5s ease-in-out infinite;
+}
+
+/* Logbook margin rule on the sidebar's right edge. */
+.margin-rule {
+  border-right: 1px solid #221f26;
+  box-shadow: 1px 0 0 rgba(224, 69, 95, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .coord-grid { animation: none; }
   .constellation-star { animation: none; }
 }
