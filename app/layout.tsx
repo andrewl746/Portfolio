@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
-    apple: "/icon.svg",
+    apple: "/app-icon-og-v2.png",
   },
   openGraph: {
     title: "Andrew Li",
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     siteName: "Andrew Li",
     images: [
       {
-        url: "/icon.svg",
-        width: 64,
-        height: 64,
+        url: "/app-icon-og-v2.png",
+        width: 512,
+        height: 512,
         alt: "Andrew Li app icon",
       },
     ],
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: "Andrew Li",
     description:
       "Computer Science student at the University of Waterloo. Founder of OlympIQ and other tools that make people's lives easier.",
-    images: ["/icon.svg"],
+    images: ["/app-icon-og-v2.png"],
   },
 };
 
