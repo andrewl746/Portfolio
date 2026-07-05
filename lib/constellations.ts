@@ -45,23 +45,23 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
     ],
     edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3]],
   },
-  // Cygnus, traced from the reference photo: a tilted X (Sadr at center),
-  // a short wing upper-left, a two-star wing upper-right, a two-star tail
-  // lower-left, and the longer three-star wing lower-right.
+  // Cygnus, point-for-point from the reference photo (8 stars), rotated
+  // slightly counterclockwise: Deneb at top with a bend star below it,
+  // Sadr at the crossing, one upper-left wing tip, two-star arms to the
+  // lower left and lower right.
   cygnus: {
     stars: [
-      [195, 20, 3],
-      [178, 75, 3],
-      [120, 120, 3.5],
-      [80, 90, 3],
-      [95, 165, 3],
-      [45, 205, 3],
-      [155, 165, 3],
-      [185, 210, 2.5],
-      [205, 235, 3],
+      [186, 12, 3.5],
+      [187, 66, 3],
+      [134, 120, 3.5],
+      [89, 77, 3],
+      [100, 176, 3],
+      [48, 220, 3],
+      [186, 158, 3],
+      [253, 200, 3],
     ],
     edges: [
-      [0, 1], [1, 2], [2, 3], [2, 4], [4, 5], [2, 6], [6, 7], [7, 8],
+      [0, 1], [1, 2], [2, 3], [2, 4], [4, 5], [2, 6], [6, 7],
     ],
   },
   // The bow-tie: two triangles meeting at the belt.
@@ -79,29 +79,34 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
       [0, 1], [1, 4], [0, 2], [2, 3], [3, 4], [2, 5], [5, 6], [6, 4],
     ],
   },
-  // The twins, traced from the reference photo, kept upright: two figures
-  // joined at the inner shoulders, each with a head, torso, and two legs
-  // ending in feet. The left figure's outer arm is a single tip; the
-  // right figure's outer arm has an extra bend star, matching the photo.
+  // Gemini, point-for-point from the NOIRLab reference photo (16 stars,
+  // same orientation): top hub with the head star upper-right and a short
+  // branch upper-left, a five-star cluster on the left with three branch
+  // tips, a long arm to the right ending in a three-star chain plus a
+  // hanging star, and the lower body dropping to two leg lines.
   gemini: {
     stars: [
-      [70, 30, 3],
-      [95, 75, 3],
-      [30, 55, 2.5],
-      [100, 140, 3],
-      [65, 210, 3],
-      [135, 205, 3],
-      [230, 45, 3.5],
-      [205, 90, 3],
-      [255, 100, 2.5],
-      [275, 60, 3],
-      [200, 155, 3],
-      [175, 225, 3],
-      [235, 230, 3],
+      [159, 12, 3.5],
+      [58, 32, 3],
+      [113, 52, 3],
+      [179, 111, 3],
+      [50, 86, 3],
+      [28, 71, 2.5],
+      [74, 78, 2.5],
+      [27, 115, 2.5],
+      [87, 145, 3.5],
+      [233, 137, 3],
+      [266, 130, 2.5],
+      [282, 127, 2.5],
+      [218, 165, 3],
+      [89, 207, 3],
+      [198, 207, 3],
+      [177, 248, 3],
     ],
     edges: [
-      [0, 1], [1, 2], [1, 3], [3, 4], [3, 5],
-      [1, 7], [7, 6], [7, 8], [8, 9], [7, 10], [10, 11], [10, 12],
+      [0, 2], [1, 2], [2, 6], [6, 4], [4, 5], [4, 7], [4, 8],
+      [2, 3], [3, 9], [9, 10], [10, 11], [3, 12],
+      [8, 13], [13, 15], [8, 14],
     ],
   },
 };
