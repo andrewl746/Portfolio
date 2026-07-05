@@ -29,7 +29,7 @@ export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
   description:
-    "Science Olympics, minus the spreadsheets. OlympIQ runs my high school's Science Olympics program end to end: event schedules with automatic conflict detection and Excel export, preference-based competitor-to-event assignment, shared materials, and attendance tracking. Teachers, executives, and competitors each get their own role, joined by team code.",
+    "OlympIQ simplifies managing my high school's Science Olympics team by eliminating messy spreadsheets. It manages event schedules with automatic conflict detection, assigns competitors to events based on their preferences, tracks attendance, and allows exporting data to Excel. Teachers, executives, and competitors each have their own roles and join teams using a unique code.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   coord: "CAT. Nº 001",
   live: "https://www.olympiq.ca",
@@ -40,7 +40,7 @@ export const PROJECTS: Project[] = [
     name: "Flowboard",
     context: "JamHacks 2026",
     description:
-      "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions become nodes on a canvas, and an assistant grounded in the actual file tree and code excerpts answers questions about where to start reading.",
+      "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions are displayed as nodes on a canvas. An assistant, using the actual file structure and code snippets, helps answer questions about where to begin reading.",
     tech: ["Next.js", "React Flow", "Zustand", "Anthropic API"],
     coord: "CAT. Nº 002",
     github: "https://github.com/andrewl746/Flowboard",
@@ -49,7 +49,7 @@ export const PROJECTS: Project[] = [
     name: "TeacherAId",
     context: "GenAI Genesis 2026",
     description:
-      "Reads student reasoning, not just their answers. Classifies misconceptions from written explanations, builds per-student profiles and class-wide analytics, and tells teachers what to reteach next.",
+      "Analyzes student reasoning alongside their answers. It identifies misconceptions from written explanations, creates profiles for each student, provides class-wide analytics, and advises teachers on what to teach next.",
     tech: ["Firebase", "Claude API", "Cloudflare Workers"],
     coord: "CAT. Nº 003",
     github: "https://github.com/andrewl746/TeacherAId",
@@ -58,7 +58,7 @@ export const PROJECTS: Project[] = [
     name: "FrostByte",
     context: "Hack Canada 2025",
     description:
-      "Estimates frostbite and hypothermia risk from live weather and what you're wearing, then tells you how long you can safely stay outside.",
+      "Estimates your risk of frostbite and hypothermia based on live weather conditions and your clothing, then tells you how long it is safe to stay outside.",
     tech: ["Next.js", "Node.js", "Firebase", "Gemini API"],
     coord: "CAT. Nº 004",
     github: "https://github.com/andrewl746/FrostByte",
@@ -68,7 +68,7 @@ export const PROJECTS: Project[] = [
     name: "CourtManager",
     context: "IB HL CS Internal Assessment",
     description:
-      "Team management for my high school's tennis doubles squad, with a custom merge-sort based pairing algorithm, player records, and lineup planning.",
+      "Manages my high school's tennis doubles team with a custom merge-sort pairing algorithm, player records, and lineup planning.",
     tech: ["Java", "Spring Boot", "JavaScript"],
     coord: "CAT. Nº 005",
     github: "https://github.com/andrewl746/CourtManager",
@@ -78,8 +78,8 @@ export const PROJECTS: Project[] = [
 export const RESULTS = [
   { event: "CCC Senior", result: "Distinction", year: "2024, 2025, 2026" },
   { event: "DMOJ", result: "Top 2%, 300+ Points", year: "Ongoing" },
-  { event: "USACO", result: "Silver Division", year: "2024" },
   { event: "Codeforces", result: "Rating 1200+", year: "Ongoing" },
+  { event: "USACO", result: "Silver Division", year: "2024" },
   { event: "CALICO", result: "Bronze", year: "2024" },
   { event: "St. Lawrence Coding Competition", result: "1st Place Team", year: "2024" },
 ];
@@ -98,10 +98,10 @@ export const EXPERIENCE: ExperienceEntry[] = [
     role: "C++ Instructor, Outreach and Partnership Coordinator",
     period: "Dec 2023 to present",
     blurb:
-      "Nonprofit coding organization offering free courses and tools to 2,200+ members worldwide.",
+      "Nonprofit coding organization providing free courses and tools to over 2,200 members worldwide.",
     bullets: [
-      "Taught a 5-week Introduction to C++ course to a class of 14 university students. By the end, students who had never written C++ were shipping functional programs.",
-      "Contacted 200+ companies for sponsorships and partnerships supporting free technology education.",
+      "Taught a 5-week Introduction to C++ course to 14 university students. By the end, beginners were confidently shipping functional C++ programs.",
+      "Reached out to 200+ companies to secure sponsorships and partnerships supporting free technology education.",
     ],
   },
   {
@@ -110,8 +110,8 @@ export const EXPERIENCE: ExperienceEntry[] = [
     period: "Sep 2023 to Jun 2026",
     bullets: [
       "Led a team of 6 trainers. All 4 junior teams I coached placed 1st at Western University's Science Olympics.",
-      "Designed the team's first structured training program, recruiting experienced competitors as trainers.",
-      "Then built OlympIQ, which now runs scheduling and signups for the team's 60+ competitors.",
+      "Created the team's first structured training program and recruited experienced competitors as trainers.",
+      "Then developed OlympIQ, which now runs scheduling and signups for the team's 60+ competitors.",
     ],
   },
 ];

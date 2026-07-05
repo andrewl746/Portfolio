@@ -11,21 +11,24 @@ type ConstellationData = {
 };
 
 export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
-  // The Teapot asterism.
+  // Sagittarius, traced from the reference photo: arrow tip upper-right,
+  // teapot bowl at left, spout and handle to the lower right.
   sagittarius: {
     stars: [
-      [40, 150, 3],
-      [95, 130, 3.5],
-      [85, 195, 4],
-      [135, 75, 3.5],
-      [185, 110, 3],
-      [230, 85, 4],
-      [250, 130, 3],
-      [215, 170, 3.5],
+      [228, 20, 3.5],
+      [178, 75, 4],
+      [125, 95, 3.5],
+      [97, 85, 3],
+      [64, 105, 3.5],
+      [78, 137, 3],
+      [194, 140, 4],
+      [236, 153, 3.5],
+      [181, 202, 3.5],
+      [194, 239, 3],
     ],
     edges: [
-      [0, 1], [0, 2], [1, 2], [1, 3], [3, 4], [4, 1],
-      [4, 7], [7, 2], [4, 5], [5, 6], [6, 7],
+      [0, 1], [1, 2], [1, 6], [2, 3], [3, 4], [4, 5],
+      [5, 8], [2, 6], [6, 7], [6, 8], [7, 8], [8, 9],
     ],
   },
   // The Big Dipper, proportions traced from the reference photo:
