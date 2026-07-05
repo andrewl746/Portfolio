@@ -18,7 +18,7 @@ export default function Experience() {
         {RESULTS.map((r) => (
           <li
             key={r.event}
-            className="group grid grid-cols-2 gap-2 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1fr_1fr_auto]"
+            className="group grid grid-cols-2 gap-2 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1.4fr_1.4fr_0.8fr]"
           >
             <span className="text-sm text-primary">{r.event}</span>
             <span className="text-sm text-body transition-colors group-hover:text-primary">
@@ -42,6 +42,9 @@ export default function Experience() {
               <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-brass">
                 {e.role}
               </div>
+              {e.blurb && (
+                <p className="mt-2 text-xs leading-relaxed text-dim">{e.blurb}</p>
+              )}
               <ul className="mt-3 space-y-2 text-sm leading-relaxed text-body">
                 {e.bullets.map((b) => (
                   <li key={b}>{b}</li>

@@ -36,7 +36,7 @@ export default function Contact() {
         </a>
       </div>
       <footer className="mt-24 border-t border-line pt-6 text-[10px] uppercase tracking-[0.1em] text-faint">
-        © {new Date().getFullYear()} Andrew Li. Built with Next.js.
+        © {new Date().getFullYear()} Andrew Li.
       </footer>
     </section>
   );

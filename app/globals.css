@@ -44,6 +44,30 @@ body {
   color: var(--text-primary);
 }
 
+/* Instrument scrollbar: dark rail, ember indicator. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224, 69, 95, 0.35) var(--void);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(224, 69, 95, 0.35);
+  border: 2px solid var(--void);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ember);
+}
+
 /* Coordinate grid over the main content area, draws in on load. */
 .coord-grid {
   background-image:

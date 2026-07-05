@@ -10,8 +10,8 @@ export default function Constellation({
   prominent?: boolean;
 }) {
   const { stars, edges } = CONSTELLATIONS[name];
-  const lineAlpha = prominent ? 0.22 : 0.12;
-  const starAlpha = prominent ? 0.65 : 0.4;
+  const lineAlpha = prominent ? 0.17 : 0.12;
+  const starAlpha = prominent ? 0.52 : 0.4;
 
   return (
     <svg

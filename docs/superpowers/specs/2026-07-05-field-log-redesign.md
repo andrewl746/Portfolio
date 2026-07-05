@@ -92,6 +92,19 @@ Card grids; top navbar on desktop; overusing red; glowing orbs/large gradient bl
 - Old components removed: Nav, old section styling, Reveal usage may stay for section fade-ins only if it doesn't fight the grid draw-in; otherwise drop Reveal.
 - No new npm dependencies.
 
+## Post-review amendments (user feedback round, 2026-07-05)
+
+- Favicon: keep, recolor to ember #e0455f on void #07080d.
+- Themed scrollbar: thin, void track, ember-dim thumb, ember on hover.
+- Results table: three left-aligned columns, no column lines. Copy: "Top 2%, 300+ Points", "1st Place Team", "Ongoing". Order: CCC Senior, DMOJ, USACO, Codeforces, CALICO, St. Lawrence.
+- Kurius gets a one-line org description (nonprofit coding org, free courses and tools, 2,200+ members worldwide); bullets state class of 14 students and 200+ companies contacted. Science Olympics bullet: OlympIQ runs scheduling and signups for the team's 60+ competitors. "Science Olympics Team, Victoria Park CI" (not Club). Hero sub: "team" not "program".
+- Project coordinates replaced with catalog numbers ("CAT. Nº 001" ... "005") to avoid RA/DEC misreadings.
+- OlympIQ Source link removed (repo going private); olympiq.ca link stays.
+- Hero stat eyebrow: "Algorithm problems". IB Diploma stays off the site (resume only).
+- Footer: "© {year} Andrew Li." (no "Built with Next.js").
+- Tech grid: 20 tiles, rows tell a story: languages (C++, Java, Python, TypeScript, JavaScript), web (React, Next.js, Tailwind CSS, Node.js, Vercel), backend/cloud (Spring Boot, Firebase, Supabase, Google Cloud, Cloudflare), tools/AI (Git, GitHub, IntelliJ IDEA, Claude Code, Google Gemini). Dark brand colors (luminance < 0.18: Next.js, Vercel, GitHub, IntelliJ, OpenJDK) render as parchment instead.
+- Sagittarius slightly dimmer (still more visible than others). Constellation shapes redrawn to match user-supplied reference photos: Big Dipper with handle upper-left and bowl lower-right; Cygnus as an X with bent arms; Orion as the NOIRLab bow-tie/hourglass; Gemini as two connected stick figures with arms.
+
 ## Verification
 
 Lint + build clean; preview checks at desktop and mobile: sidebar scroll-spy CURRENT tracking, all five constellations visible but subtle, starfield clearly visible with twinkles, hover states on nav/rows/CTA/icons, /resume.pdf 200, no console errors, no horizontal overflow, reduced-motion disables grid draw-in, twinkle, and cursor glow. Copy audit: no em dashes, no LinkedIn, no "incoming", no "class of 2031", no "max rating", no Missions/Trajectory/Sightings.
