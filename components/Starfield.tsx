@@ -9,6 +9,7 @@ type Star = {
   baseAlpha: number;
   phase: number;
   speed: number;
+  twinkler: boolean;
 };
 
 export default function Starfield() {
@@ -27,24 +28,31 @@ export default function Starfield() {
     let height = 0;
 
     const seed = () => {
-      const count = Math.min(220, Math.floor((width * height) / 9000));
+      const count = Math.min(450, Math.floor((width * height) / 4500));
       stars = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: Math.random() * 1.1 + 0.3,
-        baseAlpha: Math.random() * 0.5 + 0.15,
+        r: Math.random() * 1.9 + 0.3,
+        baseAlpha: Math.random() * 0.6 + 0.15,
         phase: Math.random() * Math.PI * 2,
         speed: Math.random() * 0.008 + 0.002,
+        twinkler: Math.random() < 0.08,
       }));
     };
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "#e8e8f0";
+      ctx.fillStyle = "#e8e2d3";
       for (const s of stars) {
-        const alpha = reduced
+        let alpha = reduced
           ? s.baseAlpha
-          : s.baseAlpha * (0.6 + 0.4 * Math.sin(s.phase + t * s.speed));
+          : s.baseAlpha * (0.65 + 0.35 * Math.sin(s.phase + t * s.speed));
+        if (!reduced && s.twinkler) {
+          // Occasional sharp flash: a high-powered sine spends most of its
+          // period near zero, then spikes briefly.
+          const flash = Math.pow(Math.max(0, Math.sin(s.phase + t * s.speed * 2.5)), 12);
+          alpha = Math.min(1, alpha + flash * 0.8);
+        }
         ctx.globalAlpha = Math.max(0, alpha);
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
