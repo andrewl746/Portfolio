@@ -95,13 +95,12 @@ export type ExperienceEntry = {
 export const EXPERIENCE: ExperienceEntry[] = [
   {
     org: "Kurius",
-    role: "C++ Instructor, Outreach and Partnership Coordinator",
+    role: "C++ Instructor",
     period: "Dec 2023 to present",
     blurb:
       "Nonprofit coding organization providing free courses and tools to over 2,200 members worldwide.",
     bullets: [
-      "Taught a 5-week Introduction to C++ course to 14 university students. By the end, beginners were confidently shipping functional C++ programs.",
-      "Reached out to 200+ companies to secure sponsorships and partnerships supporting free technology education.",
+      "Taught a 5-week Introduction to C++ course to 11 university students. By the end, beginners were confidently shipping functional C++ programs."
     ],
   },
   {
