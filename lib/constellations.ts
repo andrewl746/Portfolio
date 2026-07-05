@@ -45,19 +45,24 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
     ],
     edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3]],
   },
-  // The flying swan: an X of bent arms crossing at Sadr.
+  // Cygnus, traced from the reference photo: a tilted X (Sadr at center),
+  // a short wing upper-left, a two-star wing upper-right, a two-star tail
+  // lower-left, and the longer three-star wing lower-right.
   cygnus: {
     stars: [
-      [150, 130, 3.5],
-      [195, 85, 3],
-      [225, 35, 3],
-      [95, 75, 3],
-      [95, 180, 3],
-      [45, 225, 3],
-      [200, 180, 3],
-      [250, 225, 3],
+      [195, 20, 3],
+      [178, 75, 3],
+      [120, 120, 3.5],
+      [80, 90, 3],
+      [95, 165, 3],
+      [45, 205, 3],
+      [155, 165, 3],
+      [185, 210, 2.5],
+      [205, 235, 3],
     ],
-    edges: [[0, 1], [1, 2], [0, 3], [0, 4], [4, 5], [0, 6], [6, 7]],
+    edges: [
+      [0, 1], [1, 2], [2, 3], [2, 4], [4, 5], [2, 6], [6, 7], [7, 8],
+    ],
   },
   // The bow-tie: two triangles meeting at the belt.
   orion: {
@@ -74,27 +79,29 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
       [0, 1], [1, 4], [0, 2], [2, 3], [3, 4], [2, 5], [5, 6], [6, 4],
     ],
   },
-  // The twins, upright: head, shoulder, outstretched arm, torso to hip,
-  // and two legs each, joined at the shoulders.
+  // The twins, traced from the reference photo, kept upright: two figures
+  // joined at the inner shoulders, each with a head, torso, and two legs
+  // ending in feet. The left figure's outer arm is a single tip; the
+  // right figure's outer arm has an extra bend star, matching the photo.
   gemini: {
     stars: [
-      [115, 35, 3.5],
-      [120, 80, 3],
-      [60, 100, 2.5],
-      [125, 140, 3],
-      [95, 215, 3],
-      [145, 220, 3],
-      [200, 45, 3.5],
-      [195, 90, 3],
-      [260, 115, 2.5],
-      [205, 150, 3],
-      [180, 225, 3],
+      [70, 30, 3],
+      [95, 75, 3],
+      [30, 55, 2.5],
+      [100, 140, 3],
+      [65, 210, 3],
+      [135, 205, 3],
+      [230, 45, 3.5],
+      [205, 90, 3],
+      [255, 100, 2.5],
+      [275, 60, 3],
+      [200, 155, 3],
+      [175, 225, 3],
       [235, 230, 3],
     ],
     edges: [
       [0, 1], [1, 2], [1, 3], [3, 4], [3, 5],
-      [6, 7], [7, 8], [7, 9], [9, 10], [9, 11],
-      [1, 7],
+      [1, 7], [7, 6], [7, 8], [8, 9], [7, 10], [10, 11], [10, 12],
     ],
   },
 };

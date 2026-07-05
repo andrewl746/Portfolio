@@ -11,7 +11,7 @@ export default function Contact() {
       <h2 className="font-serif text-3xl text-primary">Contact</h2>
       <p className="mt-6 max-w-xl font-serif text-2xl leading-snug text-primary/90">
         Looking for a Summer 2027 co-op. If you&apos;re building something
-        interesting, I&apos;d love to hear about it.
+        interesting, I&apos;d love to hear from you.
       </p>
       <div className="mt-8 flex flex-wrap gap-8 text-sm">
         <a

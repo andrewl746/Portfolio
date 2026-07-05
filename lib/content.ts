@@ -12,7 +12,8 @@ export type Project = {
 export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo.",
-  tagline: "I enjoy building software that makes people's lives easier.",
+  tagline: "I enjoy building software to optimize workflows.",
+  sub: "Currently exploring how AI agents work through tool use, RAG, and the ReAct loop.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
   resumeHref: "/resume.pdf",
@@ -28,7 +29,7 @@ export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
   description:
-    "OlympIQ streamlines the management of my high school's Science Olympics team. It handles event scheduling with automatic conflict detection, assigns competitors to events based on their preferences, tracks attendance, and exports data to Excel. Teachers, executives, and competitors each have distinct roles within the platform. Used by 60+ competitors on the team.",
+    "Streamlines the management of my high school's Science Olympics team. It handles event scheduling with automatic conflict detection, assigns competitors to events based on their preferences, tracks attendance, and exports data to Excel. Used by over 60 members on the team.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   coord: "LOG-001",
   live: "https://www.olympiq.ca",
@@ -48,7 +49,7 @@ export const PROJECTS: Project[] = [
     name: "TeacherAId",
     context: "GenAI Genesis 2026",
     description:
-      "Analyzes student reasoning alongside their answers. It identifies misconceptions from written explanations, creates profiles for each student, provides class-wide analytics, and advises teachers on what to teach next.",
+      "Analyzes student reasoning alongside their answers. It identifies misconceptions from written explanations, creates profiles for each student, provides class-wide analytics, and advises teachers on what to focus on next.",
     tech: ["Firebase", "Claude API", "Cloudflare Workers"],
     coord: "LOG-003",
     github: "https://github.com/andrewl746/TeacherAId",
@@ -57,11 +58,11 @@ export const PROJECTS: Project[] = [
     name: "FrostByte",
     context: "Hack Canada 2025",
     description:
-      "Estimates your risk of frostbite and hypothermia based on live weather conditions and your clothing, then tells you how long it is safe to stay outside.",
+      "Estimates your risk of frostbite and hypothermia based on live weather conditions and your clothing, then advises how much longer you can safely stay outside.",
     tech: ["Next.js", "Node.js", "Firebase", "Gemini API"],
     coord: "LOG-004",
     github: "https://github.com/andrewl746/FrostByte",
-    award: "Best Use of Gemini AI",
+    award: "Best Use of Gemini AI Award",
   },
   {
     name: "CourtManager",
@@ -109,7 +110,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     period: "Sep 2023 to Jun 2026",
     bullets: [
       "Led a team of 6 trainers. All 4 junior teams I coached placed 1st at Western University's Science Olympics.",
-      "Created the first structured training program and recruited experienced members as trainers.",
+      "Created the first structured training program and recruited experienced competitors as trainers.",
       "Then developed OlympIQ, which now runs scheduling and signups for the team.",
     ],
   },
