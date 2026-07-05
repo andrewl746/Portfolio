@@ -22,13 +22,41 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+
+# local editor state
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# AI assistant / agent tooling
+.codex/
+.agents/
+.claude/
+.cursor/
+.gemini/
+.roo/
+.windsurf/
+.aider*
+.cursorrules
+AGENTS.md
+CLAUDE.md
+CODEX.md
+GEMINI.md
+QWEN.md
+docs/superpowers/
+.github/copilot-instructions.md
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -39,3 +67,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# resume / LaTeX build byproducts
+resume/*.aux
+resume/*.bbl
+resume/*.bcf
+resume/*.blg
+resume/*.fdb_latexmk
+resume/*.fls
+resume/*.log
+resume/*.out
+resume/*.run.xml
+resume/*.synctex.gz
+resume/*.toc
+resume/*.xdv
