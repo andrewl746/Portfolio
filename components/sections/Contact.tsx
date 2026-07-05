@@ -30,6 +30,8 @@ export default function Contact() {
         </a>
         <a
           href={SITE.resumeHref}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-body transition-colors hover:text-ember"
         >
           Resume

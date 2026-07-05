@@ -39,6 +39,8 @@ export default function Sidebar() {
         </a>
         <a
           href={SITE.resumeHref}
+          target="_blank"
+          rel="noopener noreferrer"
           className="border border-ember/40 px-3 py-1 text-xs uppercase tracking-[0.12em] text-[#f2a3ae] transition-colors hover:border-ember"
         >
           Resume

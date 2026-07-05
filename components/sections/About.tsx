@@ -48,6 +48,8 @@ export default function About() {
       <div className="mt-12 flex flex-wrap items-center gap-6">
         <a
           href={SITE.resumeHref}
+          target="_blank"
+          rel="noopener noreferrer"
           className="border border-ember bg-ember/10 px-6 py-3 text-sm text-[#f2a3ae] shadow-[0_0_14px_rgba(224,69,95,0.25)] transition-shadow hover:shadow-[0_0_22px_rgba(224,69,95,0.4)]"
         >
           View Resume
