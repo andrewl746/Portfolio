@@ -1,101 +1,81 @@
-import { FLAGSHIP, PROJECTS, SITE } from "@/lib/content";
-import Reveal from "@/components/Reveal";
+import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
+import Constellation from "@/components/Constellation";
 
-function TechTags({ tech }: { tech: string[] }) {
+function Row({ p, current = false }: { p: Project; current?: boolean }) {
   return (
-    <div className="mt-4 flex flex-wrap gap-2">
-      {tech.map((t) => (
+    <div
+      className={`group border-t border-white/8 py-7 pl-5 transition-colors ${
+        current
+          ? "border-l-2 border-l-ember bg-gradient-to-r from-ember/8 to-transparent"
+          : "border-l-2 border-l-ember/35 hover:border-l-ember"
+      }`}
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <h3 className="font-serif text-2xl text-primary">{p.name}</h3>
         <span
-          key={t}
-          className="rounded border border-line px-2 py-0.5 font-mono text-xs text-muted"
+          className={`text-xs tracking-[0.08em] transition-colors ${
+            current ? "text-ember" : "text-brass group-hover:text-ember"
+          }`}
         >
-          {t}
+          {p.coord}
         </span>
-      ))}
+      </div>
+      <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-dim">
+        {p.context}
+        {p.award ? ` / ${p.award}` : ""}
+      </p>
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
+        {p.description}
+      </p>
+      <p className="mt-3 text-xs text-dim">{p.tech.join(" / ")}</p>
+      <div className="mt-3 flex gap-6 text-xs uppercase tracking-[0.1em]">
+        {p.live && (
+          <a
+            href={p.live}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
+          >
+            olympiq.ca
+          </a>
+        )}
+        {p.github && (
+          <a
+            href={p.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-dim transition-colors hover:text-ember"
+          >
+            Source
+          </a>
+        )}
+      </div>
     </div>
   );
 }
 
 export default function Projects() {
   return (
-    <section id="projects" className="mx-auto max-w-5xl scroll-mt-24 px-6 py-20">
-      <Reveal>
-        <h2 className="font-mono text-sm text-accent">01 / projects</h2>
-
-        <div className="mt-8 rounded-xl border border-accent/25 bg-card p-8 transition-colors hover:border-accent/50">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="text-2xl font-semibold">{FLAGSHIP.name}</h3>
-            <span className="font-mono text-xs text-accent">
-              {FLAGSHIP.context}
-            </span>
-          </div>
-          <p className="mt-3 max-w-3xl leading-relaxed text-muted">
-            {FLAGSHIP.description}
-          </p>
-          <TechTags tech={FLAGSHIP.tech} />
-          <div className="mt-5 flex gap-5 font-mono text-sm">
-            <a
-              href={FLAGSHIP.live}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground underline decoration-accent/60 underline-offset-4 transition-colors hover:text-accent"
-            >
-              olympiq.ca
-            </a>
-            <a
-              href={FLAGSHIP.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted transition-colors hover:text-accent"
-            >
-              source
-            </a>
-          </div>
-        </div>
-      </Reveal>
-
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">
+    <section id="projects" className="relative scroll-mt-24 py-20">
+      <Constellation
+        name="ursaMajor"
+        className="pointer-events-none absolute top-8 right-0 w-64 max-md:hidden"
+      />
+      <h2 className="font-serif text-3xl text-primary">Projects</h2>
+      <div className="mt-8">
+        <Row p={FLAGSHIP} current />
         {PROJECTS.map((p) => (
-          <Reveal key={p.name}>
-            <div className="flex h-full flex-col rounded-xl border border-line bg-card p-6 transition-colors hover:border-accent/40">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-lg font-semibold">{p.name}</h3>
-                <span className="font-mono text-xs text-muted">{p.context}</span>
-              </div>
-              {p.award && (
-                <p className="mt-2 font-mono text-xs text-accent">
-                  ★ {p.award}
-                </p>
-              )}
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
-                {p.description}
-              </p>
-              <TechTags tech={p.tech} />
-              {p.github && (
-                <a
-                  href={p.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 font-mono text-sm text-muted transition-colors hover:text-accent"
-                >
-                  source
-                </a>
-              )}
-            </div>
-          </Reveal>
+          <Row key={p.name} p={p} />
         ))}
       </div>
-
-      <Reveal>
-        <a
-          href={SITE.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-8 inline-block font-mono text-sm text-muted transition-colors hover:text-accent"
-        >
-          more on github
-        </a>
-      </Reveal>
+      <a
+        href={SITE.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-8 inline-block text-xs uppercase tracking-[0.1em] text-dim transition-colors hover:text-ember"
+      >
+        More on GitHub
+      </a>
     </section>
   );
 }
