@@ -20,7 +20,7 @@ export const SITE = {
 };
 
 export const STATS = [
-  { eyebrow: "Algorithm problems", value: "500+" },
+  { eyebrow: "Problems solved", value: "500+" },
   { eyebrow: "Founder", value: "OlympIQ" },
   { eyebrow: "Hackathons", value: "4" },
 ];
