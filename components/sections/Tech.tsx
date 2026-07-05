@@ -9,11 +9,11 @@ export default function Tech() {
         className="pointer-events-none absolute top-6 right-2 w-56 max-md:hidden"
       />
       <h2 className="font-serif text-3xl text-primary">Tech</h2>
-      <div className="mt-8 grid grid-cols-3 gap-px bg-white/5 sm:grid-cols-4 lg:grid-cols-5">
+      <div className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5">
         {TECH_STACK.map((t) => (
           <div
             key={t.name}
-            className="group flex flex-col items-center gap-3 bg-void px-4 py-6 transition-colors hover:bg-[#0a0c14]"
+            className="group flex flex-col items-center gap-3 border border-white/8 bg-void px-4 py-6 transition-colors hover:border-white/20 hover:bg-[#0a0c14]"
           >
             <svg
               viewBox="0 0 24 24"
