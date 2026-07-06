@@ -83,6 +83,19 @@ html {
   to { opacity: 0.35; }
 }
 
+@keyframes terminal-cursor-post {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.animate-terminal-cursor-pre {
+  animation: terminal-cursor-post 0.8s steps(1, end) 2 both;
+}
+
+.animate-terminal-cursor-post {
+  animation: terminal-cursor-post 0.8s steps(1, end) 5 both;
+}
+
 /* Star twinkle used by constellation nodes. */
 @keyframes twinkle {
   0%, 100% { opacity: 0.4; }
@@ -102,5 +115,7 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .coord-grid { animation: none; }
+  .animate-terminal-cursor-pre,
+  .animate-terminal-cursor-post { animation: none; }
   .constellation-star { animation: none; }
 }

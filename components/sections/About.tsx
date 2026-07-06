@@ -1,5 +1,7 @@
 import { SITE, STATS } from "@/lib/content";
 import Constellation from "@/components/Constellation";
+import AnimatedStatValue from "@/components/animations/AnimatedStatValue";
+import TypewriterSubtitle from "@/components/animations/TypewriterSubtitle";
 
 export default function About() {
   return (
@@ -26,23 +28,34 @@ export default function About() {
         {SITE.name}
       </h1>
       <p className="mt-6 max-w-xl text-lg leading-relaxed text-primary/90 sm:text-xl">
-        {SITE.tagline}
+        <TypewriterSubtitle text={SITE.tagline} />
       </p>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-body">
         {SITE.sub}
       </p>
 
-      <div className="mt-10 flex flex-wrap gap-x-12 gap-y-8">
-        {STATS.map((s) => (
-          <div key={s.eyebrow} className="border-l-2 border-ember pl-4">
-            <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
-              {s.eyebrow}
+      <div className="mt-10 flex flex-wrap gap-y-8">
+        {STATS.map((s, i) => {
+          const width =
+            s.value === "OlympIQ" ? 132 : s.value === "500+" ? 144 : 78;
+
+          return (
+            <div
+              key={s.eyebrow}
+              className={`shrink-0 border-l-2 border-ember pl-4 ${
+                i === 1 ? "ml-7" : i === 2 ? "ml-10" : ""
+              }`}
+              style={{ width }}
+            >
+              <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
+                {s.eyebrow}
+              </div>
+              <div className="mt-1 font-serif text-2xl text-primary">
+                <AnimatedStatValue value={s.value} />
+              </div>
             </div>
-            <div className="mt-1 font-serif text-2xl text-primary">
-              {s.value}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-12 flex flex-wrap items-center gap-6">

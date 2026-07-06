@@ -1,5 +1,6 @@
 import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
 import Constellation from "@/components/Constellation";
+import ScrambleText from "@/components/animations/ScrambleText";
 
 function Row({ p, current = false }: { p: Project; current?: boolean }) {
   return (
@@ -17,7 +18,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
             current ? "text-ember" : "text-brass group-hover:text-ember"
           }`}
         >
-          {p.coord}
+          <ScrambleText text={p.coord} />
         </span>
       </div>
       <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-dim">
