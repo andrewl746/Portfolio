@@ -28,7 +28,7 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
     ],
     edges: [
       [0, 1], [1, 2], [1, 6], [2, 3], [3, 4], [4, 5],
-      [5, 8], [2, 6], [6, 7], [6, 8], [7, 8], [8, 9],
+      [5, 2], [5, 8], [2, 6], [6, 7], [6, 8], [7, 8], [8, 9],
     ],
   },
   // The Big Dipper, proportions traced from the reference photo:
