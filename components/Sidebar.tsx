@@ -7,7 +7,7 @@ const ENTRIES = [
   { id: "about", label: "About" },
   { id: "projects", label: "Projects" },
   { id: "experience", label: "Experience" },
-  { id: "tech", label: "Tech" },
+  { id: "tech", label: "Tech Stack" },
   { id: "contact", label: "Contact" },
 ];
 
