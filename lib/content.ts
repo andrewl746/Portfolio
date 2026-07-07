@@ -12,7 +12,7 @@ export type Project = {
 export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo",
-  tagline: "I enjoy building software to optimize workflows.",
+  tagline: "I build software to optimize workflows.",
   sub: "Currently exploring how AI agents work through tool use, RAG, and the ReAct loop.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
