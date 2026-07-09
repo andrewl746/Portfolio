@@ -40,7 +40,7 @@ export default function Constellation({
           r={r}
           fill={`rgba(232, 226, 211, ${starAlpha})`}
           className="constellation-star"
-          style={{ animationDelay: `${(i % 5) * 0.9}s` }}
+          style={{ animationDelay: `-${((i * 1.3) % 5).toFixed(2)}s` }}
         />
       ))}
     </svg>

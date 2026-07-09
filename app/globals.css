@@ -103,7 +103,10 @@ html {
 }
 
 .constellation-star {
-  animation: twinkle 5s ease-in-out infinite;
+  /* `both` fill-mode + negative per-star delays (set inline) keep every star
+     at its animated opacity from the first paint, so none snap from the
+     default 1.0 to the keyframe start when their delay elapses. */
+  animation: twinkle 5s ease-in-out infinite both;
 }
 
 /* Logbook margin rule on the sidebar's right edge. */

@@ -77,13 +77,26 @@ export default function Starfield() {
       raf = requestAnimationFrame(loop);
     };
 
+    // Pause the render loop while the tab is hidden to save CPU and battery.
+    const onVisibility = () => {
+      if (reduced) return;
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else if (!raf) {
+        raf = requestAnimationFrame(loop);
+      }
+    };
+
     resize();
     window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", onVisibility);
     if (!reduced) raf = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
