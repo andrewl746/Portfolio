@@ -18,8 +18,14 @@ export const metadata: Metadata = {
   description:
     "Computer Science student at the University of Waterloo. Founder of OlympIQ and other tools that make people's lives easier.",
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
+    // One square source everywhere: the tab shows the square icon, and Google
+    // masks it into a circle on its own end (the star has padding, so it
+    // survives the crop cleanly).
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
     apple: "/app-icon-og-v2.png",
   },
   openGraph: {
