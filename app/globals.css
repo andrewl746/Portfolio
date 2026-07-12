@@ -44,6 +44,13 @@ body {
   color: var(--text-primary);
 }
 
+/* Keyboard focus: ember ring, only for focus-visible (keyboard/tab), so
+   mouse clicks don't leave outlines behind. */
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+}
+
 /* Instrument scrollbar: dark rail, ember indicator. */
 html {
   scrollbar-width: thin;
@@ -109,6 +116,57 @@ html {
   animation: twinkle 5s ease-in-out infinite both;
 }
 
+/* Constellation plot-in: stars fade up first, then the edges draw between
+   them. Lines stay hidden (full dashoffset) until the parent svg gets
+   .constellation-drawn from its IntersectionObserver. */
+.constellation-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.constellation-drawn .constellation-line {
+  animation: constellation-draw 0.6s ease-out forwards;
+}
+
+@keyframes constellation-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.constellation-stars {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.constellation-drawn .constellation-stars {
+  opacity: 1;
+}
+
+/* Scroll reveal: content settles up into place when it enters the viewport. */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+}
+
+.reveal-shown {
+  opacity: 1;
+  transform: none;
+}
+
+/* Tech stack "systems check": each icon flashes to full color once when the
+   grid first scrolls into view, then settles back to its resting state.
+   `backwards` (not `both`) fill so the resting Tailwind styles — and hover —
+   take over again once the flash ends. */
+@keyframes tech-flash {
+  0% { opacity: 0.5; filter: grayscale(1); }
+  45% { opacity: 1; filter: grayscale(0); }
+  100% { opacity: 0.5; filter: grayscale(1); }
+}
+
+.tech-flash {
+  animation: tech-flash 0.9s ease-in-out backwards;
+}
+
 /* Logbook margin rule on the sidebar's right edge. */
 .margin-rule {
   border-right: 1px solid #221f26;
@@ -121,4 +179,8 @@ html {
   .animate-terminal-cursor-pre,
   .animate-terminal-cursor-post { animation: none; }
   .constellation-star { animation: none; }
+  .constellation-line { stroke-dashoffset: 0; animation: none; }
+  .constellation-stars { opacity: 1; transition: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .tech-flash { animation: none; }
 }

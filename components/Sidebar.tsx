@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SITE } from "@/lib/content";
 
 const ENTRIES = [
@@ -13,6 +13,22 @@ const ENTRIES = [
 
 export default function Sidebar() {
   const [active, setActive] = useState("about");
+  const [marker, setMarker] = useState<{ top: number; height: number } | null>(
+    null
+  );
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+
+  // Slide the ember needle to the active entry. Re-measured on resize and
+  // after the active entry re-renders (its eyebrow can wrap and change height).
+  useEffect(() => {
+    const measure = () => {
+      const el = linkRefs.current[active];
+      if (el) setMarker({ top: el.offsetTop, height: el.offsetHeight });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [active]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -56,11 +72,28 @@ export default function Sidebar() {
           Observation log
         </p>
 
-        <nav className="mt-12 flex flex-col gap-7">
+        <nav className="relative mt-12 flex flex-col gap-7">
+          {marker && (
+            <span
+              aria-hidden="true"
+              className="absolute -left-3 top-0 w-0.5 bg-ember shadow-[0_0_8px_rgba(224,69,95,0.5)] transition-all duration-300 ease-out motion-reduce:transition-none"
+              style={{
+                transform: `translateY(${marker.top + 3}px)`,
+                height: marker.height - 6,
+              }}
+            />
+          )}
           {ENTRIES.map(({ id, label }, i) => {
             const current = active === id;
             return (
-              <a key={id} href={`#${id}`} className="group block">
+              <a
+                key={id}
+                href={`#${id}`}
+                ref={(el) => {
+                  linkRefs.current[id] = el;
+                }}
+                className="group block"
+              >
                 <span
                   className={`block text-[10px] uppercase tracking-[0.14em] transition-colors ${
                     current ? "text-ember" : "text-faint group-hover:text-ember/70"

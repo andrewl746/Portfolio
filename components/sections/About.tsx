@@ -18,7 +18,7 @@ export default function About() {
       <Constellation
         name="sagittarius"
         prominent
-        className="pointer-events-none absolute top-0 right-4 w-72 max-md:hidden lg:w-80"
+        className="pointer-events-none absolute top-0 right-0 w-40 opacity-80 md:right-4 md:w-72 md:opacity-100 lg:w-80"
       />
 
       <p className="text-xs uppercase tracking-[0.14em] text-brass">
@@ -34,28 +34,24 @@ export default function About() {
         {SITE.sub}
       </p>
 
-      <div className="mt-10 flex flex-wrap gap-y-8">
-        {STATS.map((s, i) => {
-          const width =
-            s.value === "OlympIQ" ? 132 : s.value === "500+" ? 144 : 78;
-
-          return (
-            <div
-              key={s.eyebrow}
-              className={`shrink-0 border-l-2 border-ember pl-4 ${
-                i === 1 ? "ml-7" : i === 2 ? "ml-10" : ""
-              }`}
-              style={{ width }}
-            >
-              <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
-                {s.eyebrow}
-              </div>
-              <div className="mt-1 font-serif text-2xl text-primary">
-                <AnimatedStatValue value={s.value} />
-              </div>
+      <div className="mt-10 flex flex-wrap gap-x-10 gap-y-8">
+        {STATS.map((s) => (
+          <div key={s.eyebrow} className="border-l-2 border-ember pl-4">
+            <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
+              {s.eyebrow}
             </div>
-          );
-        })}
+            {/* An invisible copy of the final value reserves the width, so
+                the count-up/scramble overlay never shifts its neighbors. */}
+            <div className="relative mt-1 font-serif text-2xl text-primary">
+              <span className="invisible" aria-hidden="true">
+                {s.value}
+              </span>
+              <span className="absolute inset-0 whitespace-nowrap">
+                <AnimatedStatValue value={s.value} />
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="mt-12 flex flex-wrap items-center gap-6">
