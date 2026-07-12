@@ -63,12 +63,21 @@ export default function Starfield() {
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = window.innerWidth;
-      height = window.innerHeight;
+      const nextWidth = window.innerWidth;
+      const nextHeight = window.innerHeight;
+      // Mobile browsers fire `resize` when their address bar collapses or
+      // expands on scroll, changing only the height. Reseeding on every one
+      // of those made the whole field jump to new random positions mid-
+      // scroll. Only reseed when the width actually changes (a real resize
+      // or orientation change); a height-only change just resizes the
+      // canvas and keeps the existing stars.
+      const widthChanged = nextWidth !== width;
+      width = nextWidth;
+      height = nextHeight;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      seed();
+      if (widthChanged || stars.length === 0) seed();
       if (reduced) draw(0);
     };
 
