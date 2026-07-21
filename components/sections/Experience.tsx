@@ -39,12 +39,25 @@ export default function Experience() {
       <div className="mt-14 space-y-12">
         {EXPERIENCE.map((e) => (
           <Reveal key={e.org}>
-            <div className="group grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-8">
+            <div className="group relative grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-8">
               <div className="text-xs uppercase tracking-[0.1em] text-dim">
                 {e.period}
               </div>
               <div className="border-l-2 border-ember/35 pl-5 transition-colors group-hover:border-ember">
-                <h3 className="font-serif text-xl text-primary">{e.org}</h3>
+                <h3 className="font-serif text-xl text-primary">
+                  {e.link ? (
+                    <a
+                      href={e.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="after:absolute after:inset-0"
+                    >
+                      {e.org}
+                    </a>
+                  ) : (
+                    e.org
+                  )}
+                </h3>
                 <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-brass">
                   {e.role}
                 </div>

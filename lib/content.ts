@@ -90,6 +90,7 @@ export type ExperienceEntry = {
   period: string;
   blurb?: string;
   bullets: string[];
+  link?: string;
 };
 
 export const EXPERIENCE: ExperienceEntry[] = [
@@ -102,6 +103,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     bullets: [
       "Taught a 5-week Introduction to C++ course to 11 university students. By the end, beginners were confidently shipping functional C++ programs."
     ],
+    link: "https://www.kurius.ca/",
   },
   {
     org: "Science Olympics Team, Victoria Park C.I.",
@@ -112,5 +114,6 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Created the first structured training program and recruited experienced competitors as trainers.",
       "Then developed OlympIQ, which now runs scheduling and signups for the team.",
     ],
+    link: "https://vpciscienceolympics.wixsite.com/vpci-science-olympic",
   },
 ];
