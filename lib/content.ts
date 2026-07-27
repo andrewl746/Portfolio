@@ -28,8 +28,7 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
-  description:
-    "Streamlines the management of my high school's Science Olympics team. It handles event scheduling with automatic conflict detection, assigns competitors to events based on their preferences, tracks attendance, and exports data to Excel. Used by over 60 members on the team.",
+  description: "Streamlines management of my high school's Science Olympics team. Previously, executives spent over ten hours manually assigning 60+ competitors to events while avoiding scheduling conflicts. OlympIQ automates the entire process by scheduling events with automatic conflict detection, assigning competitors based on preferences through a custom sorting algorithm, tracking attendance, and providing easy Excel exports. It was piloted with the team's executives this summer and is set to be adopted by the full competitor roster when the school year begins.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   coord: "LOG-001",
   live: "https://www.olympiq.ca",
@@ -112,7 +111,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     bullets: [
       "Led a team of 6 trainers. All 4 junior teams I coached placed 1st at Western University's Science Olympics.",
       "Created the first structured training program and recruited experienced competitors as trainers.",
-      "Then developed OlympIQ, which now runs scheduling and signups for the team.",
+      "Then developed OlympIQ, which is set to run scheduling and signups for the team.",
     ],
     link: "https://vpciscienceolympics.wixsite.com/vpci-science-olympic",
   },
