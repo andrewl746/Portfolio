@@ -28,7 +28,7 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
-  description: "Streamlines management of my high school's Science Olympics team. Previously, executives spent over ten hours manually assigning 60+ competitors to events while avoiding scheduling conflicts. OlympIQ automates the entire process by scheduling events with automatic conflict detection, assigning competitors based on preferences through a custom sorting algorithm, tracking attendance, and providing easy Excel exports. It was piloted with the team's executives this summer and is set to be adopted by the full competitor roster when the school year begins.",
+  description: "Streamlines management of my high school's Science Olympics team. Previously, executives spent over ten hours manually assigning 60+ competitors to events while balancing preferences and avoiding scheduling conflicts. OlympIQ automates the entire process by automatically scheduling events, finding and fixing conflicts, assigning competitors to events based on their preferences using a custom algorithm, tracking attendance, and providing easy schedule exports to Excel. It was piloted with the team's executives this summer and is set to be adopted by the entire team in the 2026-27 season.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   coord: "LOG-001",
   live: "https://www.olympiq.ca",
