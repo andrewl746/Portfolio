@@ -13,7 +13,7 @@ export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo",
   tagline: "I build software to optimize workflows.",
-  sub: "Currently exploring how AI agents work through tool use, RAG, and the ReAct loop.",
+  sub: "Currently building Nebulosity, an AI agent that speeds up onboarding to unfamiliar codebases using LangGraph, RAG, and AST parsing.",
   email: "andrewli746@gmail.com",
   github: "https://github.com/andrewl746",
   resumeHref: "/Andrew_Li_Resume.pdf",
