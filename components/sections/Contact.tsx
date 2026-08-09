@@ -25,6 +25,14 @@ export default function Contact() {
             {SITE.email}
           </a>
           <a
+            href={SITE.linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-body transition-colors hover:text-ember"
+          >
+            LinkedIn
+          </a>
+          <a
             href={SITE.github}
             target="_blank"
             rel="noopener noreferrer"

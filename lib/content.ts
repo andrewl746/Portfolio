@@ -15,6 +15,7 @@ export const SITE = {
   tagline: "I build software to optimize workflows.",
   sub: "Currently building Nebulosity, an AI agent that speeds up onboarding to unfamiliar codebases using LangGraph, RAG, and AST parsing.",
   email: "andrewli746@gmail.com",
+  linkedIn: "https://www.linkedin.com/in/andrewl746/",
   github: "https://github.com/andrewl746",
   resumeHref: "/Andrew_Li_Resume.pdf",
 };
@@ -75,7 +76,7 @@ export const PROJECTS: Project[] = [
 ];
 
 export const RESULTS = [
-  { event: "CCC Senior", result: "Distinction", year: "2024, 2025, 2026" },
+  { event: "CCC Senior", result: "Distinction", year: "2026, 2025, 2024" },
   { event: "DMOJ", result: "Top 2%, 300+ Points", year: "Ongoing" },
   { event: "Codeforces", result: "Rating 1200+", year: "2024" },
   { event: "USACO", result: "Silver Division", year: "2024" },
@@ -96,18 +97,19 @@ export const EXPERIENCE: ExperienceEntry[] = [
   {
     org: "Kurius",
     role: "C++ Instructor",
-    period: "Dec 2023 to present",
+    period: "Jul 2024 to Aug 2024",
     blurb:
       "Nonprofit coding organization providing free courses and tools to over 2,200 members worldwide.",
     bullets: [
-      "Taught a 5-week Introduction to C++ course to 11 university students. By the end, beginners were confidently shipping functional C++ programs."
+      "Designed and taught a 5-week introductory C++ course to 11 university students covering syntax, data types, pointers, and functions.",
+      "Every student successfully built a fully functional Library Management System using arrays and custom functions for their final project."
     ],
     link: "https://www.kurius.ca/",
   },
   {
     org: "Science Olympics Team, Victoria Park C.I.",
     role: "Head Trainer",
-    period: "Sep 2023 to Jun 2026",
+    period: "Feb 2023 to Jun 2026",
     bullets: [
       "Led a team of 6 trainers. All 4 junior teams I coached placed 1st at Western University's Science Olympics.",
       "Created the first structured training program and recruited experienced competitors as trainers.",

@@ -64,6 +64,14 @@ export default function About() {
           View Resume
         </a>
         <a
+          href={SITE.linkedIn}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
+        >
+          LinkedIn
+        </a>
+        <a
           href={SITE.github}
           target="_blank"
           rel="noopener noreferrer"
