@@ -23,7 +23,7 @@ export const SITE = {
 export const STATS = [
   { eyebrow: "Problems solved", value: "500+" },
   { eyebrow: "Founder", value: "OlympIQ" },
-  { eyebrow: "Hackathons", value: "4" },
+  { eyebrow: "Hackathons", value: "5" },
 ];
 
 export const FLAGSHIP: Project = {
