@@ -5,8 +5,9 @@ import { SITE } from "@/lib/content";
 
 const ENTRIES = [
   { id: "about", label: "About" },
-  { id: "projects", label: "Projects" },
   { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "awards", label: "Awards" },
   { id: "tech", label: "Tech Stack" },
   { id: "contact", label: "Contact" },
 ];

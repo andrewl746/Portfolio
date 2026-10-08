@@ -12,11 +12,13 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const DESCRIPTION =
+  "Computer Science student at the University of Waterloo. Software engineer at Marble Investments and UW Orbital, aimed at aerospace.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://andrewli.app"),
   title: "Andrew Li",
-  description:
-    "Computer Science student at the University of Waterloo. Founder of OlympIQ and other tools that make people's lives easier.",
+  description: DESCRIPTION,
   icons: {
     // One square source everywhere: the tab shows the square icon, and Google
     // masks it into a circle on its own end (the star has padding, so it
@@ -30,8 +32,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Andrew Li",
-    description:
-      "Computer Science student at the University of Waterloo. Founder of OlympIQ and other tools that make people's lives easier.",
+    description: DESCRIPTION,
     url: "https://andrewli.app",
     siteName: "Andrew Li",
     images: [
@@ -47,8 +48,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Andrew Li",
-    description:
-      "Computer Science student at the University of Waterloo. Founder of OlympIQ and other tools that make people's lives easier.",
+    description: DESCRIPTION,
     images: ["/app-icon-og-v2.png"],
   },
 };
@@ -62,7 +62,19 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      // The inline script below adds `js` before hydration, so React would
+      // otherwise warn about the className mismatch on <html>.
+      suppressHydrationWarning
     >
+      <head>
+        {/* Runs before first paint: marks JS as available so animated content
+            can wait for its animation instead of flashing the final state. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
+      </head>
       <body className="min-h-full">{children}</body>
     </html>
   );

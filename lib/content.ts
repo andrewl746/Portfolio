@@ -12,7 +12,7 @@ export type Project = {
 export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo",
-  tagline: "I build software to optimize workflows.",
+  tagline: "Software engineer, aimed at aerospace.",
   sub: "Currently building Nebulosity, an AI agent that speeds up onboarding to unfamiliar codebases using LangGraph, RAG, and AST parsing.",
   email: "andrewli746@gmail.com",
   linkedIn: "https://www.linkedin.com/in/andrewl746/",
@@ -21,9 +21,8 @@ export const SITE = {
 };
 
 export const STATS = [
-  { eyebrow: "Problems solved", value: "500+" },
-  { eyebrow: "Founder", value: "OlympIQ" },
-  { eyebrow: "Hackathons", value: "6" },
+  { eyebrow: "Current Position", value: "Marble Investments" },
+  { eyebrow: "Hackathon Wins", value: "2" },
 ];
 
 export const FLAGSHIP: Project = {
@@ -75,12 +74,31 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-export const RESULTS = [
+export type Award = {
+  event: string;
+  result: string;
+  year: string;
+  link?: string;
+};
+
+export const AWARDS: Award[] = [
+  {
+    event: "Hack the North",
+    result: "Best Mobile Experience (Expo)",
+    year: "2026",
+    link: "https://devpost.com/software/fresco-b1riws",
+  },
+  {
+    event: "Hack Canada",
+    result: "Best Use of Gemini AI",
+    year: "2025",
+    link: "https://dorahacks.io/build/23086/milestones",
+  },
   { event: "CCC Senior", result: "Distinction", year: "2026, 2025, 2024" },
   { event: "DMOJ", result: "Top 2%, 300+ Points", year: "Ongoing" },
   { event: "Codeforces", result: "Rating 1200+", year: "2024" },
   { event: "USACO", result: "Silver Division", year: "2024" },
-  { event: "CALICO (UC Berkeley)", result: "Bronze Medal", year: "2024" },
+  { event: "CALICO (UC Berkeley)", result: "Bronze Brick Winner", year: "2024" },
   { event: "St. Lawrence Coding Competition", result: "1st Place Team", year: "2024" },
 ];
 
@@ -89,11 +107,28 @@ export type ExperienceEntry = {
   role: string;
   period: string;
   blurb?: string;
-  bullets: string[];
+  bullets?: string[];
   link?: string;
 };
 
 export const EXPERIENCE: ExperienceEntry[] = [
+  {
+    org: "Marble Investments",
+    role: "Software Engineer",
+    period: "Sep 2026 to Present",
+    blurb:
+      "Equity research firm backed by private capital, investing in the trends reshaping the world.",
+    link: "https://www.marbleinvestments.ca/",
+    bullets: [
+      "Building a news pipeline for the firm's stock research platform. It sources and filters the latest news for every company the team tracks, merges it into one feed, and uses an LLM to flag industry news that could affect those companies.",
+    ],
+  },
+  {
+    org: "UW Orbital",
+    role: "Software Engineer",
+    period: "Sep 2026 to Present",
+    blurb: "The University of Waterloo's student satellite design team.",
+  },
   {
     org: "Kurius",
     role: "C++ Instructor",
@@ -107,9 +142,11 @@ export const EXPERIENCE: ExperienceEntry[] = [
     link: "https://www.kurius.ca/",
   },
   {
-    org: "Science Olympics Team, Victoria Park C.I.",
+    org: "Science Olympics Team",
     role: "Head Trainer",
     period: "Feb 2023 to Jun 2026",
+    blurb:
+      "Victoria Park Collegiate Institute, Toronto. A 60+ member team that competes in science events at Western University and the University of Guelph.",
     bullets: [
       "Led a team of 6 trainers. All 4 junior teams I coached placed 1st at Western University's Science Olympics.",
       "Created the first structured training program and recruited experienced competitors as trainers.",

@@ -1,4 +1,4 @@
-import { EXPERIENCE, RESULTS } from "@/lib/content";
+import { EXPERIENCE } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 
@@ -13,30 +13,11 @@ export default function Experience() {
 
       <Reveal>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
-          Competitive programming since grade nine. 500+ problems solved across
-          DMOJ, Codeforces, and USACO.
+          Where I&apos;ve worked, taught, and led.
         </p>
       </Reveal>
-      <Reveal delay={80}>
-        <ul className="mt-6 border-y border-white/8">
-          {RESULTS.map((r) => (
-            <li
-              key={r.event}
-              className="group grid grid-cols-2 gap-2 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1.4fr_1.4fr_0.8fr]"
-            >
-              <span className="text-sm text-primary">{r.event}</span>
-              <span className="text-sm text-body transition-colors group-hover:text-primary">
-                {r.result}
-              </span>
-              <span className="text-xs text-brass transition-colors group-hover:text-ember max-sm:col-span-2 sm:text-right">
-                {r.year}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
 
-      <div className="mt-14 space-y-12">
+      <div className="mt-10 space-y-12">
         {EXPERIENCE.map((e) => (
           <Reveal key={e.org}>
             <div className="group relative grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-8">
@@ -64,11 +45,13 @@ export default function Experience() {
                 {e.blurb && (
                   <p className="mt-2 text-xs leading-relaxed text-dim">{e.blurb}</p>
                 )}
-                <ul className="mt-3 space-y-2 text-sm leading-relaxed text-body">
-                  {e.bullets.map((b) => (
-                    <li key={b}>{b}</li>
-                  ))}
-                </ul>
+                {e.bullets && e.bullets.length > 0 && (
+                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-body">
+                    {e.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </Reveal>

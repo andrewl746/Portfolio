@@ -40,13 +40,18 @@ export default function About() {
             <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
               {s.eyebrow}
             </div>
-            {/* An invisible copy of the final value reserves the width, so
-                the count-up/scramble overlay never shifts its neighbors. */}
-            <div className="relative mt-1 font-serif text-2xl text-primary">
-              <span className="invisible" aria-hidden="true">
-                {s.value}
-              </span>
-              <span className="absolute inset-0 whitespace-nowrap">
+            {/* An invisible ::before copy of the final value reserves the
+                width, so the count-up overlay never shifts its neighbors.
+                It's a pseudo-element so the value isn't duplicated in the
+                page text that crawlers and screen readers see. */}
+            <div
+              data-value={s.value}
+              className="relative mt-1 whitespace-nowrap font-serif text-2xl text-primary before:invisible before:content-[attr(data-value)]"
+            >
+              {/* overflow-hidden: scrambled letters (m, w...) can be wider
+                  than the final word, so clip them to its reserved width
+                  instead of letting them spill into the next stat. */}
+              <span className="absolute inset-0 overflow-hidden whitespace-nowrap">
                 <AnimatedStatValue value={s.value} />
               </span>
             </div>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { TECH_STACK } from "@/lib/techstack";
 import Constellation from "@/components/Constellation";
+import Reveal from "@/components/animations/Reveal";
 
 export default function Tech() {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -36,6 +37,11 @@ export default function Tech() {
         className="pointer-events-none absolute top-6 right-2 w-56 max-md:hidden"
       />
       <h2 className="font-serif text-3xl text-primary">Tech Stack</h2>
+      <Reveal>
+        <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
+          Languages, frameworks, and tools I build with.
+        </p>
+      </Reveal>
       <div
         ref={gridRef}
         className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5"

@@ -3,7 +3,8 @@ export type ConstellationName =
   | "ursaMajor"
   | "cygnus"
   | "orion"
-  | "gemini";
+  | "gemini"
+  | "coronaBorealis";
 
 type ConstellationData = {
   stars: [number, number, number][];
@@ -108,5 +109,19 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
       [2, 3], [3, 9], [9, 10], [10, 11], [3, 12],
       [8, 13], [13, 15], [8, 14],
     ],
+  },
+  // Corona Borealis, the northern crown: seven stars in an open arc, with
+  // Alphecca (the brightest) at the bottom of the curve.
+  coronaBorealis: {
+    stars: [
+      [62, 72, 2.5],
+      [78, 126, 3],
+      [126, 166, 4],
+      [181, 172, 3],
+      [226, 146, 2.5],
+      [246, 101, 3],
+      [238, 56, 2.5],
+    ],
+    edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]],
   },
 };

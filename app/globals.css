@@ -167,6 +167,20 @@ html {
   animation: tech-flash 0.9s ease-in-out backwards;
 }
 
+/* Hero stat count-up. The real value is in the server HTML; it is hidden only
+   when JS is running (html.js, set by an inline script in layout.tsx) and the
+   count-up hasn't started yet, so there's no flash of the final number before
+   it resets to 0. If the bundle never loads, this delayed animation reveals
+   the real value after 2.5s instead of leaving it blank. */
+.js .countup-pending {
+  opacity: 0;
+  animation: countup-fallback 0s linear 2.5s forwards;
+}
+
+@keyframes countup-fallback {
+  to { opacity: 1; }
+}
+
 /* Logbook margin rule on the sidebar's right edge. */
 .margin-rule {
   border-right: 1px solid #221f26;
@@ -183,4 +197,5 @@ html {
   .constellation-stars { opacity: 1; transition: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .tech-flash { animation: none; }
+  .js .countup-pending { opacity: 1; animation: none; }
 }

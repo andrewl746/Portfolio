@@ -81,6 +81,12 @@ export default function Projects() {
         className="pointer-events-none absolute top-8 right-0 w-64 max-md:hidden"
       />
       <h2 className="font-serif text-3xl text-primary">Projects</h2>
+      <Reveal>
+        <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
+          Featured tools I&apos;ve built to solve real problems, from team scheduling to
+          exploring codebases.
+        </p>
+      </Reveal>
       <div className="mt-8">
         <Reveal>
           <Row p={FLAGSHIP} current />

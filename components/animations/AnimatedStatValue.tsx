@@ -5,45 +5,46 @@ import { useEffect, useRef, useState } from "react";
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const ANIMATION_DURATION = 1000;
 
-function randomString(length: number) {
-  let value = "";
-  for (let i = 0; i < length; i++) {
-    value += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-  }
-  return value;
+// Scrambles every character except spaces, so multi-word values keep their
+// word shape while they resolve.
+function randomLike(target: string) {
+  return Array.from(target, (char) =>
+    char === " "
+      ? " "
+      : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+  ).join("");
 }
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
+// The initial render is always the real value, so the server HTML (what
+// crawlers, link previews, and visitors whose JS never loads see) is correct.
+// While `pending`, the .countup-pending class keeps it visually hidden once
+// JS is known to be running; if the animation never starts, a CSS fallback
+// reveals the real value anyway (see globals.css).
 export default function AnimatedStatValue({ value }: { value: string }) {
-  const [display, setDisplay] = useState(() => {
-    if (value === "OlympIQ") return "#######";
-    const match = value.match(/^(\d+)(.*)$/);
-    return match ? `0${match[2] ?? ""}` : value;
-  });
+  const [display, setDisplay] = useState(value);
+  const [pending, setPending] = useState(true);
   const ref = useRef<HTMLSpanElement>(null);
   const played = useRef(false);
 
   useEffect(() => {
     let frame = 0;
     let interval = 0;
-    let timer = 0;
     const node = ref.current;
     if (!node) return;
+
+    // Reduced motion: CSS already shows the real value; nothing to animate.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const run = () => {
       if (played.current) return;
       played.current = true;
+      setPending(false);
 
-      if (prefersReducedMotion()) {
-        timer = window.setTimeout(() => setDisplay(value), 0);
-        return;
-      }
+      const match = value.match(/^(\d+)(.*)$/);
 
-      if (value === "OlympIQ") {
-        setDisplay(randomString(value.length));
+      // Non-numeric values scramble into place.
+      if (!match) {
+        setDisplay(randomLike(value));
         const startedAt = performance.now();
         interval = window.setInterval(() => {
           if (performance.now() - startedAt >= ANIMATION_DURATION) {
@@ -51,19 +52,17 @@ export default function AnimatedStatValue({ value }: { value: string }) {
             setDisplay(value);
             return;
           }
-          setDisplay(randomString(value.length));
+          setDisplay(randomLike(value));
         }, 34);
-
         return;
       }
 
-      const match = value.match(/^(\d+)(.*)$/);
-      if (!match) return;
-
+      // Numeric values count up from zero.
       const target = Number(match[1]);
       const suffix = match[2] ?? "";
       const startedAt = performance.now();
-      let lastShown = -1;
+      let lastShown = 0;
+      setDisplay(`0${suffix}`);
 
       const tick = (now: number) => {
         const progress = Math.min((now - startedAt) / ANIMATION_DURATION, 1);
@@ -89,7 +88,7 @@ export default function AnimatedStatValue({ value }: { value: string }) {
       ([entry]) => {
         if (entry.isIntersecting) {
           run();
-          observer?.disconnect();
+          observer.disconnect();
         }
       },
       { threshold: 0.45 }
@@ -98,12 +97,15 @@ export default function AnimatedStatValue({ value }: { value: string }) {
     observer.observe(node);
 
     return () => {
-      observer?.disconnect();
+      observer.disconnect();
       cancelAnimationFrame(frame);
       window.clearInterval(interval);
-      window.clearTimeout(timer);
     };
   }, [value]);
 
-  return <span ref={ref}>{display}</span>;
+  return (
+    <span ref={ref} className={pending ? "countup-pending" : undefined}>
+      {display}
+    </span>
+  );
 }
