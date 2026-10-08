@@ -13,7 +13,7 @@ export default function Experience() {
 
       <Reveal>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
-          Where I work, have worked, taught, and led.
+          Where I work, have worked, and led.
         </p>
       </Reveal>
 
