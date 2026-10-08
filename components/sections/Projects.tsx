@@ -29,7 +29,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
           p.name
         )}
       </h3>
-      <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-dim">
+      <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-brass">
         {p.context}
         {p.award ? ` / ${p.award}` : ""}
       </p>

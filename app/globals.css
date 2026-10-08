@@ -9,9 +9,9 @@
   --ember-dim: rgba(224, 69, 95, 0.35);
   --brass: #c9a86a;
   --text-primary: #eceef4;
-  --text-body: #828aa3;
-  --text-muted: #6a7088;
-  --text-faint: #3d4258;
+  --text-body: #a5adc4;
+  --text-muted: #7e85a0;
+  --text-faint: #6a7088;
 }
 
 @theme inline {
