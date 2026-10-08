@@ -84,7 +84,7 @@ export default function Projects() {
       <Reveal>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
           Featured tools I&apos;ve built to solve real problems, from team scheduling to
-          exploring codebases.
+          exploring unfamiliar codebases.
         </p>
       </Reveal>
       <div className="mt-8">
