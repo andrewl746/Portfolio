@@ -4,10 +4,10 @@ import Reveal from "@/components/animations/Reveal";
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative scroll-mt-24 py-20">
+    <section id="contact" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
       <Constellation
         name="gemini"
-        className="pointer-events-none absolute top-4 right-8 w-48 max-md:hidden"
+        className="pointer-events-none absolute right-0 top-6 w-32 md:right-8 md:top-4 md:w-48"
       />
       <h2 className="font-serif text-3xl text-primary">Contact</h2>
       <Reveal>
@@ -20,7 +20,7 @@ export default function Contact() {
         <div className="mt-8 flex flex-wrap items-center gap-6 text-sm">
           <a
             href={`mailto:${SITE.email}`}
-            className="border border-ember bg-ember/10 px-6 py-3 text-[#f2a3ae] shadow-[0_0_14px_rgba(224,69,95,0.25)] transition-shadow hover:shadow-[0_0_22px_rgba(224,69,95,0.4)]"
+            className="border border-ember bg-ember/10 px-6 py-3 text-[#f2a3ae] shadow-[0_0_14px_rgba(224,69,95,0.25)] transition-shadow hover:shadow-[0_0_22px_rgba(224,69,95,0.4)] max-sm:w-full max-sm:text-center"
           >
             {SITE.email}
           </a>

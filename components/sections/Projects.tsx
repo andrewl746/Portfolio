@@ -75,10 +75,10 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
 
 export default function Projects() {
   return (
-    <section id="projects" className="relative scroll-mt-24 py-20">
+    <section id="projects" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
       <Constellation
         name="ursaMajor"
-        className="pointer-events-none absolute top-8 right-0 w-64 max-md:hidden"
+        className="pointer-events-none absolute right-0 top-6 w-32 md:top-8 md:w-64"
       />
       <h2 className="font-serif text-3xl text-primary">Projects</h2>
       <Reveal>

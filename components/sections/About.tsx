@@ -5,11 +5,16 @@ import TypewriterSubtitle from "@/components/animations/TypewriterSubtitle";
 
 export default function About() {
   return (
-    <section id="about" className="relative scroll-mt-24 py-24 md:py-32">
+    <section
+      id="about"
+      className="relative scroll-mt-14 pb-16 pt-36 md:scroll-mt-24 md:py-32"
+    >
+      {/* On phones, the tall top padding is the space Sagittarius sits in,
+          so the constellation stays clear of the eyebrow text below it. */}
       {/* Stationary ember bloom behind Sagittarius */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-10 right-0 h-[420px] w-[420px] max-md:hidden"
+        className="pointer-events-none absolute -right-16 -top-20 h-[300px] w-[300px] md:-top-10 md:right-0 md:h-[420px] md:w-[420px]"
         style={{
           background:
             "radial-gradient(closest-side, rgba(224, 69, 95, 0.07), transparent 70%)",
@@ -18,7 +23,7 @@ export default function About() {
       <Constellation
         name="sagittarius"
         prominent
-        className="pointer-events-none absolute top-0 right-0 w-40 opacity-80 md:right-4 md:w-72 md:opacity-100 lg:w-80"
+        className="pointer-events-none absolute right-0 top-0 w-36 md:right-4 md:w-72 lg:w-80"
       />
 
       <p className="text-xs uppercase tracking-[0.14em] text-brass">

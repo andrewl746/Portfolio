@@ -21,7 +21,7 @@ export const SITE = {
 };
 
 export const STATS = [
-  { eyebrow: "Current Position", value: "Marble Investments" },
+  { eyebrow: "Currently working at", value: "Marble Investments" },
   { eyebrow: "Hackathon Wins", value: "2" },
 ];
 
@@ -120,7 +120,8 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Equity research firm backed by private capital, investing in the trends reshaping the world.",
     link: "https://www.marbleinvestments.ca/",
     bullets: [
-      "Building a news pipeline for the firm's stock research platform. It sources and filters the latest news for every company the team tracks, merges it into one feed, and uses an LLM to flag industry news that could affect those companies.",
+      "Building a news pipeline for the firm's stock research platform that sources and filters the latest news for every company the team tracks, then merges it into one feed.",
+      "Integrating an LLM to flag industry news that could affect those companies."
     ],
   },
   {

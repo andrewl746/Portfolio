@@ -15,14 +15,12 @@ function randomLike(target: string) {
   ).join("");
 }
 
-// The initial render is always the real value, so the server HTML (what
-// crawlers, link previews, and visitors whose JS never loads see) is correct.
-// While `pending`, the .countup-pending class keeps it visually hidden once
-// JS is known to be running; if the animation never starts, a CSS fallback
-// reveals the real value anyway (see globals.css).
+// The real value is rendered and visible from the first paint, so visitors on
+// a slow connection (and crawlers, and anyone whose JS never loads) always see
+// it. Once JS is running and the stat scrolls into view, it resets to a
+// scramble or to 0 and animates back to the real value.
 export default function AnimatedStatValue({ value }: { value: string }) {
   const [display, setDisplay] = useState(value);
-  const [pending, setPending] = useState(true);
   const ref = useRef<HTMLSpanElement>(null);
   const played = useRef(false);
 
@@ -32,13 +30,12 @@ export default function AnimatedStatValue({ value }: { value: string }) {
     const node = ref.current;
     if (!node) return;
 
-    // Reduced motion: CSS already shows the real value; nothing to animate.
+    // Reduced motion: the real value is already showing; nothing to animate.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const run = () => {
       if (played.current) return;
       played.current = true;
-      setPending(false);
 
       const match = value.match(/^(\d+)(.*)$/);
 
@@ -103,9 +100,5 @@ export default function AnimatedStatValue({ value }: { value: string }) {
     };
   }, [value]);
 
-  return (
-    <span ref={ref} className={pending ? "countup-pending" : undefined}>
-      {display}
-    </span>
-  );
+  return <span ref={ref}>{display}</span>;
 }

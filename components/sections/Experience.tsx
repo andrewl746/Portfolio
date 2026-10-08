@@ -4,10 +4,10 @@ import Reveal from "@/components/animations/Reveal";
 
 export default function Experience() {
   return (
-    <section id="experience" className="relative scroll-mt-24 py-20">
+    <section id="experience" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
       <Constellation
         name="cygnus"
-        className="pointer-events-none absolute top-10 right-6 w-52 max-md:hidden"
+        className="pointer-events-none absolute right-0 top-6 w-32 md:right-6 md:top-10 md:w-52"
       />
       <h2 className="font-serif text-3xl text-primary">Experience</h2>
 

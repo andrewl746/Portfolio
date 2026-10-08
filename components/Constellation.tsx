@@ -51,7 +51,11 @@ export default function Constellation({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g stroke={`rgba(232, 226, 211, ${lineAlpha})`} strokeWidth="1">
+      <g
+        stroke={`rgba(232, 226, 211, ${lineAlpha})`}
+        strokeWidth="1"
+        className="constellation-edges"
+      >
         {edges.map(([a, b], i) => (
           <line
             key={i}

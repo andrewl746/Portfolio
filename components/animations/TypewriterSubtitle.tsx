@@ -5,11 +5,16 @@ import { useEffect, useRef, useState } from "react";
 const PRE_BLINK_DURATION = 1600;
 const POST_BLINK_DURATION = 4000;
 
+type Phase = "idle" | "pre" | "typing" | "post" | "done";
+
+// The untyped remainder is always rendered, just hidden (.typewriter-rest in
+// globals.css). That reserves the finished line's wrapping and height from
+// the first frame, so a tagline that wraps on a phone doesn't push the rest of
+// the hero down as it types. It also keeps the full text in the server HTML
+// for crawlers and visitors without JS.
 export default function TypewriterSubtitle({ text }: { text: string }) {
-  const [display, setDisplay] = useState("");
-  const [phase, setPhase] = useState<"idle" | "pre" | "typing" | "post" | "done">(
-    "idle"
-  );
+  const [count, setCount] = useState(0);
+  const [phase, setPhase] = useState<Phase>("idle");
   const ref = useRef<HTMLSpanElement>(null);
   const played = useRef(false);
 
@@ -28,7 +33,7 @@ export default function TypewriterSubtitle({ text }: { text: string }) {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduced) {
         const timer = window.setTimeout(() => {
-          setDisplay(text);
+          setCount(text.length);
           setPhase("done");
         }, 0);
         timers.push(timer);
@@ -42,7 +47,7 @@ export default function TypewriterSubtitle({ text }: { text: string }) {
 
           const interval = window.setInterval(() => {
             index += 1;
-            setDisplay(text.slice(0, index));
+            setCount(index);
 
             if (index >= text.length) {
               window.clearInterval(interval);
@@ -59,7 +64,7 @@ export default function TypewriterSubtitle({ text }: { text: string }) {
       ([entry]) => {
         if (entry.isIntersecting) {
           run();
-          observer?.disconnect();
+          observer.disconnect();
         }
       },
       { threshold: 0.4 }
@@ -68,32 +73,26 @@ export default function TypewriterSubtitle({ text }: { text: string }) {
     observer.observe(node);
 
     return () => {
-      observer?.disconnect();
+      observer.disconnect();
       for (const timer of timers) window.clearTimeout(timer);
       for (const interval of intervals) window.clearInterval(interval);
     };
   }, [text]);
 
   const cursorClass =
-    phase === "idle"
-      ? "opacity-100"
-      : phase === "pre"
+    phase === "pre"
       ? "animate-terminal-cursor-pre"
       : phase === "post"
         ? "animate-terminal-cursor-post"
-        : "opacity-100";
+        : "";
 
   return (
-    <span ref={ref} aria-label={text}>
-      <span aria-hidden="true">{display}</span>
+    <span ref={ref} className={phase === "idle" ? "typewriter-pending" : undefined}>
+      {text.slice(0, count)}
       {phase !== "done" && (
-        <span
-          aria-hidden="true"
-          className={`inline-block w-0 translate-x-1 overflow-visible ${cursorClass}`}
-        >
-          _
-        </span>
+        <span aria-hidden="true" className={`typewriter-caret ${cursorClass}`} />
       )}
+      <span className="typewriter-rest">{text.slice(count)}</span>
     </span>
   );
 }

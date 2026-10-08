@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -11,6 +11,13 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jbmono",
   subsets: ["latin"],
 });
+
+// Phones tint their address/status bar with theme-color, so it blends into
+// the night sky instead of showing a white or grey strip above the site.
+export const viewport: Viewport = {
+  themeColor: "#07080d",
+  colorScheme: "dark",
+};
 
 const DESCRIPTION =
   "Computer Science student at the University of Waterloo. Software engineer at Marble Investments and UW Orbital, aimed at aerospace.";

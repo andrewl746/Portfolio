@@ -14,9 +14,11 @@ export default function Home() {
       <Starfield />
       <CursorGlow />
       <Sidebar />
-      <main className="relative md:ml-[180px]">
+      {/* overflow-x-clip: decorative glows near the right edge can't widen
+          the page into a sideways scroll on phones. */}
+      <main className="relative overflow-x-clip md:ml-[180px]">
         <div aria-hidden="true" className="coord-grid pointer-events-none absolute inset-0" />
-        <div className="relative mx-auto max-w-4xl px-6 pt-16 md:px-14 md:pt-0">
+        <div className="relative mx-auto max-w-4xl px-6 pt-14 md:px-14 md:pt-0">
           <About />
           <Experience />
           <Projects />

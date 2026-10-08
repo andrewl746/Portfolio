@@ -31,10 +31,10 @@ export default function Tech() {
   }, []);
 
   return (
-    <section id="tech" className="relative scroll-mt-24 py-20">
+    <section id="tech" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
       <Constellation
         name="orion"
-        className="pointer-events-none absolute top-6 right-2 w-56 max-md:hidden"
+        className="pointer-events-none absolute right-0 top-6 w-32 md:right-2 md:w-56"
       />
       <h2 className="font-serif text-3xl text-primary">Tech Stack</h2>
       <Reveal>
@@ -49,7 +49,7 @@ export default function Tech() {
         {TECH_STACK.map((t, i) => (
           <div
             key={t.name}
-            className="group flex flex-col items-center gap-3 border border-white/8 bg-void px-4 py-6 transition-colors hover:border-white/20 hover:bg-[#0a0c14]"
+            className="group flex flex-col items-center gap-3 border border-white/8 bg-void px-2 py-5 transition-colors hover:border-white/20 hover:bg-[#0a0c14] sm:px-4 sm:py-6"
           >
             <svg
               viewBox="0 0 24 24"
@@ -63,7 +63,9 @@ export default function Tech() {
             >
               <path d={t.path} />
             </svg>
-            <span className="text-[10px] uppercase tracking-[0.1em] text-dim transition-colors group-hover:text-body">
+            {/* On phones a few names wrap ("Google Gemini"). Every label
+                reserves two lines there so all the cells stay one height. */}
+            <span className="text-center text-[10px] uppercase tracking-[0.1em] text-dim transition-colors group-hover:text-body max-sm:min-h-[2lh]">
               {t.name}
             </span>
           </div>

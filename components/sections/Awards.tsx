@@ -4,10 +4,10 @@ import Reveal from "@/components/animations/Reveal";
 
 export default function Awards() {
   return (
-    <section id="awards" className="relative scroll-mt-24 py-20">
+    <section id="awards" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
       <Constellation
         name="coronaBorealis"
-        className="pointer-events-none absolute top-6 right-6 w-52 max-md:hidden"
+        className="pointer-events-none absolute right-0 top-6 w-32 md:right-6 md:w-52"
       />
       <h2 className="font-serif text-3xl text-primary">Awards</h2>
 
@@ -18,11 +18,13 @@ export default function Awards() {
         </p>
       </Reveal>
       <Reveal delay={80}>
+        {/* Phones: event and year share a line with the result underneath.
+            Wider screens: three columns in source order. */}
         <ul className="mt-6 border-y border-white/8">
           {AWARDS.map((a) => (
             <li
               key={a.event}
-              className="group grid grid-cols-2 gap-2 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1.4fr_1.4fr_0.8fr]"
+              className="group grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1.4fr_1.4fr_0.8fr] sm:gap-2"
             >
               <span className="text-sm text-primary">
                 {a.link ? (
@@ -38,10 +40,10 @@ export default function Awards() {
                   a.event
                 )}
               </span>
-              <span className="text-sm text-body transition-colors group-hover:text-primary">
+              <span className="col-span-2 text-sm text-body transition-colors group-hover:text-primary sm:col-span-1">
                 {a.result}
               </span>
-              <span className="text-xs text-brass transition-colors group-hover:text-ember max-sm:col-span-2 sm:text-right">
+              <span className="col-start-2 row-start-1 text-right text-xs text-brass transition-colors group-hover:text-ember sm:col-start-auto sm:row-start-auto">
                 {a.year}
               </span>
             </li>

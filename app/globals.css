@@ -31,6 +31,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Faint ember flash on tap instead of the default blue/grey box. */
+  -webkit-tap-highlight-color: rgba(224, 69, 95, 0.12);
 }
 
 body {
@@ -103,6 +105,38 @@ html {
   animation: terminal-cursor-post 0.8s steps(1, end) 5 both;
 }
 
+/* Hero tagline typewriter. The caret is a normal inline (not inline-block)
+   so it adds no line-break opportunity, and its -1ch margin cancels its
+   width, so the line wraps exactly like the finished text. Its glyph is
+   generated content, so it never appears in the page's text. */
+.typewriter-caret {
+  margin-right: -1ch;
+}
+
+.typewriter-caret::after {
+  content: "_";
+}
+
+/* The untyped remainder holds its space but stays invisible while JS runs
+   the animation. Without JS (html has no .js class) the whole line shows and
+   the caret is hidden. If JS is on but the bundle never starts the
+   animation, the line reveals itself after 2.5s rather than staying blank. */
+.js .typewriter-rest {
+  visibility: hidden;
+}
+
+.js .typewriter-pending .typewriter-rest {
+  animation: reveal-fallback 0s linear 2.5s forwards;
+}
+
+@keyframes reveal-fallback {
+  to { visibility: visible; }
+}
+
+html:not(.js) .typewriter-caret {
+  display: none;
+}
+
 /* Star twinkle used by constellation nodes. */
 @keyframes twinkle {
   0%, 100% { opacity: 0.4; }
@@ -167,24 +201,32 @@ html {
   animation: tech-flash 0.9s ease-in-out backwards;
 }
 
-/* Hero stat count-up. The real value is in the server HTML; it is hidden only
-   when JS is running (html.js, set by an inline script in layout.tsx) and the
-   count-up hasn't started yet, so there's no flash of the final number before
-   it resets to 0. If the bundle never loads, this delayed animation reveals
-   the real value after 2.5s instead of leaving it blank. */
-.js .countup-pending {
-  opacity: 0;
-  animation: countup-fallback 0s linear 2.5s forwards;
-}
-
-@keyframes countup-fallback {
-  to { opacity: 1; }
-}
-
 /* Logbook margin rule on the sidebar's right edge. */
 .margin-rule {
   border-right: 1px solid #221f26;
   box-shadow: 1px 0 0 rgba(224, 69, 95, 0.15);
+}
+
+/* The mobile drawer takes focus itself when it opens (so screen readers
+   announce it); its links show the focus ring, the panel doesn't need one. */
+.mobile-drawer:focus-visible {
+  outline: none;
+}
+
+/* On phones the constellations render at roughly a third to half their
+   desktop size, which would thin the 1-unit lines to a fraction of a pixel
+   and shrink the stars to specks. Thicken the lines and enlarge the stars
+   so they hold up at that scale. */
+@media (max-width: 767px) {
+  .constellation-edges {
+    stroke-width: 2;
+  }
+
+  .constellation-star {
+    transform-box: fill-box;
+    transform-origin: center;
+    scale: 1.35;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -197,5 +239,4 @@ html {
   .constellation-stars { opacity: 1; transition: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .tech-flash { animation: none; }
-  .js .countup-pending { opacity: 1; animation: none; }
 }
