@@ -77,20 +77,20 @@ export default function About() {
             a lone "X" on its own line under the button. */}
         <div className="flex items-center gap-4 sm:gap-6">
           <a
-            href={SITE.linkedIn}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
-          >
-            LinkedIn
-          </a>
-          <a
             href={SITE.github}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
           >
             GitHub
+          </a>
+          <a
+            href={SITE.linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
+          >
+            LinkedIn
           </a>
           <a
             href={SITE.x}
