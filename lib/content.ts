@@ -12,7 +12,7 @@ export type Project = {
 export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo",
-  tagline: "Software engineer, aiming at aerospace.",
+  tagline: "Software engineer, aiming for space.",
   sub: "Currently building Nebulosity, an AI agent that speeds up onboarding to unfamiliar codebases using LangGraph, RAG, and AST parsing.",
   email: "andrewli746@gmail.com",
   linkedIn: "https://www.linkedin.com/in/andrewl746/",
