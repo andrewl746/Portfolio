@@ -92,9 +92,7 @@ function SectionNav({
               className={`block transition-colors ${
                 mobile ? "text-base" : "text-sm"
               } ${
-                current
-                  ? "font-bold text-[#f2a3ae] [text-shadow:0_0_12px_rgba(224,69,95,0.55)]"
-                  : "text-body hover:text-primary"
+                current ? "font-bold text-primary" : "text-body hover:text-primary"
               }`}
             >
               {label}
