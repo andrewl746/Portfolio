@@ -110,19 +110,19 @@ export const CONSTELLATIONS: Record<ConstellationName, ConstellationData> = {
       [8, 13], [13, 15], [8, 14],
     ],
   },
-  // Corona Borealis, point-for-point from the NOIRLab reference image (same
-  // orientation): an open crown running from Iota at the upper left, down
-  // through the bowl, and up to Theta at the upper right. Alphecca, the
+  // Corona Borealis, point-for-point from the NOIRLab reference image, then
+  // turned 6° clockwise: an open crown running from Iota at the upper left,
+  // down through the bowl, and up to Theta at the upper right. Alphecca, the
   // brightest, is the slightly larger star at the lower right of the bowl.
   coronaBorealis: {
     stars: [
-      [61, 87, 3],
-      [82, 164, 3],
-      [130, 183, 3],
-      [167, 176, 3],
-      [213, 163, 3.5],
-      [247, 99, 3],
-      [217, 45, 3],
+      [64, 77, 3],
+      [77, 156, 3],
+      [123, 180, 3],
+      [160, 177, 3],
+      [208, 169, 3.5],
+      [248, 109, 3],
+      [224, 52, 3],
     ],
     edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]],
   },
