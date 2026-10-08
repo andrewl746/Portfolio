@@ -260,6 +260,9 @@ export default function Sidebar() {
         <a href="#about" className="font-serif text-xl leading-tight text-primary">
           {SITE.name}
         </a>
+        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-brass">
+          Software Engineer
+        </p>
 
         <SectionNav active={active} variant="desktop" />
 
