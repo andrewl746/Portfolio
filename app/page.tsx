@@ -1,6 +1,7 @@
 import Starfield from "@/components/Starfield";
 import CursorGlow from "@/components/CursorGlow";
 import Sidebar from "@/components/Sidebar";
+import ScrollProgress from "@/components/ScrollProgress";
 import About from "@/components/sections/About";
 import Projects from "@/components/sections/Projects";
 import Experience from "@/components/sections/Experience";
@@ -13,6 +14,7 @@ export default function Home() {
     <div>
       <Starfield />
       <CursorGlow />
+      <ScrollProgress />
       <Sidebar />
       {/* overflow-x-clip: decorative glows near the right edge can't widen
           the page into a sideways scroll on phones. */}

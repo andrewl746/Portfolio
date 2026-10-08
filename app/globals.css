@@ -95,6 +95,22 @@ html {
   pointer-events: none;
 }
 
+/* Reading progress along the very top edge, in the scrollbar's red. It's
+   scaled rather than resized, so updating it on scroll never triggers layout.
+   It sits above the mobile top bar. */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: 100%;
+  height: 3px;
+  background: rgba(224, 69, 95, 0.35);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
 /* Coordinate grid over the main content area, draws in on load. */
 .coord-grid {
   background-image:
