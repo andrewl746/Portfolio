@@ -64,7 +64,7 @@ export default function About() {
         ))}
       </div>
 
-      <div className="mt-12 flex flex-wrap items-center gap-6">
+      <div className="mt-12 flex flex-wrap items-center gap-x-4 gap-y-5 sm:gap-x-6">
         <a
           href={SITE.resumeHref}
           target="_blank"
@@ -73,22 +73,35 @@ export default function About() {
         >
           View Resume
         </a>
-        <a
-          href={SITE.linkedIn}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
-        >
-          LinkedIn
-        </a>
-        <a
-          href={SITE.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
-        >
-          GitHub
-        </a>
+        {/* The text links wrap as one group, so a narrow phone never strands
+            a lone "X" on its own line under the button. */}
+        <div className="flex items-center gap-4 sm:gap-6">
+          <a
+            href={SITE.linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
+          >
+            LinkedIn
+          </a>
+          <a
+            href={SITE.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
+          >
+            GitHub
+          </a>
+          <a
+            href={SITE.x}
+            aria-label="X (formerly Twitter)"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-body underline decoration-line underline-offset-4 transition-colors hover:text-ember"
+          >
+            X
+          </a>
+        </div>
       </div>
     </section>
   );

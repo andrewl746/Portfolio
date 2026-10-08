@@ -16,6 +16,7 @@ export const SITE = {
   sub: "Currently building Nebulosity, an AI agent that speeds up onboarding to unfamiliar codebases using LangGraph, RAG, and AST parsing.",
   email: "andrewli746@gmail.com",
   linkedIn: "https://www.linkedin.com/in/andrewl746/",
+  x: "https://x.com/andrewl746",
   github: "https://github.com/andrewl746",
   resumeHref: "/Andrew_Li_Resume.pdf",
 };

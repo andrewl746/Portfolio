@@ -25,6 +25,8 @@ export default function Contact() {
         </p>
       </Reveal>
       <Reveal delay={100}>
+        {/* Ranked by how to reach me: ways to message first (email, then
+            LinkedIn, then X), then places to look (GitHub, resume). */}
         <div className="mt-8 flex flex-wrap items-center gap-6 text-sm">
           <a
             href={`mailto:${SITE.email}`}
@@ -39,6 +41,15 @@ export default function Contact() {
             className="text-body transition-colors hover:text-ember"
           >
             LinkedIn
+          </a>
+          <a
+            href={SITE.x}
+            aria-label="X (formerly Twitter)"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-body transition-colors hover:text-ember"
+          >
+            X
           </a>
           <a
             href={SITE.github}
