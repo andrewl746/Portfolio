@@ -77,6 +77,24 @@ html {
   background: var(--ember);
 }
 
+/* Background starfield canvas. It's sized to the large viewport (100lvh: the
+   screen height with a phone's address bar retracted) rather than the visible
+   area, so it never resizes, stretches or redraws while that bar slides in
+   and out, and the strip the bar uncovers already has stars in it. It's
+   pinned by its top edge, the edge browsers keep steady during that animation
+   (an element pinned to both edges, as with inset: 0, gets a gap at the
+   bottom and then jumps when the page resizes). */
+.starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -10;
+  width: 100%;
+  height: 100vh; /* fallback without lvh: on phones vh is the large viewport */
+  height: 100lvh;
+  pointer-events: none;
+}
+
 /* Coordinate grid over the main content area, draws in on load. */
 .coord-grid {
   background-image:
