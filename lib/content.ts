@@ -132,7 +132,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "The University of Waterloo's satellite design team, building a 3U CubeSat to be the first satellite launched by Waterloo students. Now competing for the Canadian Space Agency's CUBICS program.",
     bullets: [
       "Developing the Mission Control Centre, the ground station web app operators use to send commands to the CubeSat and monitor the telemetry it sends back.",
-      "Designing and building the operator dashboard, combining satellite status, command history, telemetry, and the satellite's latest image in one view.",
+      "Designing and building the operator dashboard, combining satellite status, command history, telemetry, and the satellite's latest image into one unified interface.",
     ],
     link: "https://www.uworbital.org/",
   },
