@@ -1,7 +1,6 @@
 import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
-import ScrambleText from "@/components/animations/ScrambleText";
 
 function Row({ p, current = false }: { p: Project; current?: boolean }) {
   // The title's ::after stretches over the whole row, so clicking anywhere
@@ -10,35 +9,26 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
 
   return (
     <div
-      className={`group relative border-t border-white/8 py-7 pl-5 transition-colors ${
+      className={`relative border-t border-white/8 py-7 pl-5 transition-colors ${
         current
           ? "border-l-2 border-l-ember bg-gradient-to-r from-ember/8 to-transparent"
           : "border-l-2 border-l-ember/35 hover:border-l-ember"
       }`}
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-        <h3 className="font-serif text-2xl text-primary">
-          {primaryHref ? (
-            <a
-              href={primaryHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="after:absolute after:inset-0"
-            >
-              {p.name}
-            </a>
-          ) : (
-            p.name
-          )}
-        </h3>
-        <span
-          className={`text-xs tracking-[0.08em] transition-colors ${
-            current ? "text-ember" : "text-brass group-hover:text-ember"
-          }`}
-        >
-          <ScrambleText text={p.coord} />
-        </span>
-      </div>
+      <h3 className="font-serif text-2xl text-primary">
+        {primaryHref ? (
+          <a
+            href={primaryHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="after:absolute after:inset-0"
+          >
+            {p.name}
+          </a>
+        ) : (
+          p.name
+        )}
+      </h3>
       <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-dim">
         {p.context}
         {p.award ? ` / ${p.award}` : ""}

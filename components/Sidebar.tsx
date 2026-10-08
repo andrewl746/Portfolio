@@ -20,10 +20,10 @@ function lockPage(locked: boolean) {
   if (main) main.inert = locked;
 }
 
-// The logbook entries with the sliding ember needle, shared by the desktop
-// margin and the mobile drawer. Each copy measures its own entries, since only
+// The section links with the sliding ember needle, shared by the desktop
+// sidebar and the mobile drawer. Each copy measures its own links, since only
 // one of the two is laid out at a given screen size.
-function LogNav({
+function SectionNav({
   active,
   variant,
   onNavigate,
@@ -38,10 +38,9 @@ function LogNav({
   const entryRefs = useRef<Record<string, HTMLSpanElement | null>>({});
   const mobile = variant === "mobile";
 
-  // Slide the needle to the active entry. Re-measured on resize, once web
-  // fonts finish loading, and when the active entry changes (its eyebrow can
-  // wrap and change height). A copy that's display: none measures as zero
-  // height, so it keeps its last position instead.
+  // Slide the needle to the active link. Re-measured on resize, once web fonts
+  // finish loading, and when the active link changes. A copy that's
+  // display: none measures as zero height, so it keeps its last position.
   useEffect(() => {
     let cancelled = false;
     const measure = () => {
@@ -62,7 +61,7 @@ function LogNav({
   return (
     <nav
       aria-label="Sections"
-      className={`relative flex flex-col ${mobile ? "mt-5 gap-1" : "mt-12 gap-7"}`}
+      className={`relative flex flex-col ${mobile ? "gap-1" : "mt-12 gap-5"}`}
     >
       {marker && (
         <span
@@ -74,7 +73,7 @@ function LogNav({
           }}
         />
       )}
-      {ENTRIES.map(({ id, label }, i) => {
+      {ENTRIES.map(({ id, label }) => {
         const current = active === id;
         return (
           <a
@@ -82,7 +81,7 @@ function LogNav({
             href={`#${id}`}
             onClick={onNavigate}
             aria-current={current ? "location" : undefined}
-            className={`group block ${mobile ? "py-2.5" : ""}`}
+            className={`block ${mobile ? "py-2.5" : ""}`}
           >
             {/* The needle is measured against this inner span, so padding
                 that enlarges the mobile tap target doesn't stretch it. */}
@@ -90,27 +89,15 @@ function LogNav({
               ref={(el) => {
                 entryRefs.current[id] = el;
               }}
-              className="block"
+              className={`block transition-colors ${
+                mobile ? "text-base" : "text-sm"
+              } ${
+                current
+                  ? "font-bold text-[#f2a3ae] [text-shadow:0_0_12px_rgba(224,69,95,0.55)]"
+                  : "text-body hover:text-primary"
+              }`}
             >
-              <span
-                className={`block text-[10px] uppercase tracking-[0.14em] transition-colors ${
-                  current ? "text-ember" : "text-faint group-hover:text-ember/70"
-                }`}
-              >
-                Entry 0{i + 1}
-                {current ? " / Current" : ""}
-              </span>
-              <span
-                className={`mt-0.5 block transition-colors ${
-                  mobile ? "text-base" : "text-sm"
-                } ${
-                  current
-                    ? "font-bold text-primary"
-                    : "text-body group-hover:text-primary"
-                }`}
-              >
-                {label}
-              </span>
+              {label}
             </span>
           </a>
         );
@@ -231,7 +218,7 @@ export default function Sidebar() {
         </a>
       </header>
 
-      {/* Mobile drawer: the logbook margin, sliding out under the bar */}
+      {/* Mobile drawer: the sidebar, sliding out under the bar */}
       <div
         aria-hidden="true"
         onClick={() => setMenuOpen(false)}
@@ -256,10 +243,7 @@ export default function Sidebar() {
             : "invisible -translate-x-full transition-[translate,visibility]"
         }`}
       >
-        <p className="text-[10px] uppercase tracking-[0.14em] text-brass">
-          Observation log
-        </p>
-        <LogNav
+        <SectionNav
           active={active}
           variant="mobile"
           onNavigate={closeForNavigation}
@@ -271,16 +255,13 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Desktop logbook margin */}
+      {/* Desktop sidebar */}
       <aside className="margin-rule fixed inset-y-0 left-0 z-20 hidden w-[180px] flex-col px-6 py-10 md:flex">
         <a href="#about" className="font-serif text-xl leading-tight text-primary">
           {SITE.name}
         </a>
-        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-brass">
-          Observation log
-        </p>
 
-        <LogNav active={active} variant="desktop" />
+        <SectionNav active={active} variant="desktop" />
 
         <div className="mt-auto text-[10px] uppercase leading-relaxed tracking-[0.1em] text-faint">
           University of Waterloo

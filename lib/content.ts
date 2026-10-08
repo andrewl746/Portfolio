@@ -3,7 +3,6 @@ export type Project = {
   context: string;
   description: string;
   tech: string[];
-  coord: string;
   github?: string;
   live?: string;
   award?: string;
@@ -31,7 +30,6 @@ export const FLAGSHIP: Project = {
   context: "Live at olympiq.ca",
   description: "Streamlines management of my high school's Science Olympics team. Previously, executives spent over ten hours manually assigning 60+ competitors to events while balancing preferences and avoiding scheduling conflicts. OlympIQ automates the entire process by automatically scheduling events, finding and fixing conflicts, assigning competitors to events based on their preferences using a custom algorithm, tracking attendance, and providing easy schedule exports to Excel. It was piloted with the team's executives this summer and is set to be adopted by the entire team in the 2026-27 season.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
-  coord: "LOG-001",
   live: "https://www.olympiq.ca",
 };
 
@@ -42,7 +40,6 @@ export const PROJECTS: Project[] = [
     description:
       "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions are displayed as nodes on a canvas. An AI assistant, using the file structure and code snippets, answers questions about the codebase.",
     tech: ["Next.js", "React Flow", "Zustand", "Anthropic API"],
-    coord: "LOG-002",
     github: "https://github.com/andrewl746/Flowboard",
   },
   {
@@ -51,7 +48,6 @@ export const PROJECTS: Project[] = [
     description:
       "Analyzes student reasoning alongside their answers. It identifies misconceptions from written explanations, creates profiles for each student, provides class-wide analytics, and advises teachers on what to focus on next.",
     tech: ["Firebase", "Claude API", "Cloudflare Workers"],
-    coord: "LOG-003",
     github: "https://github.com/andrewl746/TeacherAId",
   },
   {
@@ -60,7 +56,6 @@ export const PROJECTS: Project[] = [
     description:
       "Estimates your risk of frostbite and hypothermia based on live weather conditions and your clothing, then advises how much longer you can safely stay outside.",
     tech: ["Next.js", "Node.js", "Firebase", "Gemini API"],
-    coord: "LOG-004",
     github: "https://github.com/andrewl746/FrostByte",
     award: "Best Use of Gemini AI Award",
   },
@@ -70,7 +65,6 @@ export const PROJECTS: Project[] = [
     description:
       "Manages my high school's 12-player tennis doubles team with a custom merge-sort pairing algorithm, player records, and lineup planning.",
     tech: ["Java", "Spring Boot", "JavaScript"],
-    coord: "LOG-005",
     github: "https://github.com/andrewl746/CourtManager",
   },
 ];
