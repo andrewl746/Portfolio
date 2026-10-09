@@ -1,0 +1,185 @@
+%-------------------------
+% Resume in Latex
+% Template: Jake Gutierrez (https://github.com/sb2nov/resume), MIT License
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Andrew Li} \\ \vspace{4pt}
+    \small \href{mailto:andrewli746@gmail.com}{\underline{andrewli746@gmail.com}} \ $|$ \
+    \href{https://linkedin.com/in/andrewl746}{\underline{linkedin.com/in/andrewl746}} \ $|$ \
+    \href{https://github.com/andrewl746}{\underline{github.com/andrewl746}} \ $|$ \
+    \href{https://andrewli.app}{\underline{andrewli.app}}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University of Waterloo}{Waterloo, ON}
+      {Bachelor of Computer Science (Honours, Co-op)}{Class of 2031}
+  \resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: C++, Java, Python, TypeScript, JavaScript} \\
+     \textbf{Frameworks}{: React, Next.js, Node.js, Tailwind CSS, Spring Boot} \\
+     \textbf{Cloud \& Tools}{: Firebase, Supabase, Google Cloud, Cloudflare, Vercel, Git/GitHub, Postman, Claude Code}
+    }}
+ \end{itemize}
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Software Engineer}{Sep. 2026 -- Present}
+      {Marble Investments}{}
+      \resumeItemListStart
+        \resumeItem{Building a news pipeline for the firm's equity research platform that sources, filters, and merges the latest news for every tracked company, with an LLM flagging industry news likely to affect them}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Software Engineer, Ground Station}{Sep. 2026 -- Present}
+      {UW Orbital (University of Waterloo Satellite Design Team)}{Waterloo, ON}
+      \resumeItemListStart
+        \resumeItem{Developing the Mission Control Centre, the ground station web app operators use to send commands to the team's 3U CubeSat and monitor its telemetry}
+        \resumeItem{Designing and building the operator dashboard, unifying satellite status, command history, telemetry, and the latest satellite image in one view}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Head Trainer}{Feb. 2023 -- Jun. 2026}
+      {Science Olympics Team, Victoria Park C.I.}{Toronto, ON}
+      \resumeItemListStart
+        \resumeItem{Led 6 trainers for a 60+ member team; all 4 junior teams I coached placed 1st at Western University's Science Olympics}
+        \resumeItem{Created the team's first structured training program and recruited experienced competitors as trainers}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {C++ Instructor}{Jul. 2024 -- Aug. 2024}
+      {Kurius (nonprofit, 2,200+ members)}{Remote}
+      \resumeItemListStart
+        \resumeItem{Designed and taught a 5-week introductory C++ course to 11 university students; every student built a working Library Management System as their final project}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{OlympIQ} $|$ \emph{Next.js, TypeScript, Firebase, Firestore} $|$ \href{https://www.olympiq.ca}{\underline{olympiq.ca}}}{May 2026 -- Jul. 2026}
+          \resumeItemListStart
+            \resumeItem{Built a scheduling platform for a 60+ member Science Olympics team, replacing 10+ hours of manual spreadsheet work with a custom algorithm that assigns competitors to their preferred events while avoiding conflicts}
+            \resumeItem{Designed and shipped it independently; piloted with the team's executives and set to be adopted by the full team in the 2026--27 season}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{Flowboard} $|$ \emph{Next.js, TypeScript, React Flow, Zustand, Anthropic API}}{JAMHacks 2026}
+          \resumeItemListStart
+            \resumeItem{Built a codebase onboarding tool that renders a GitHub repository as an interactive dependency graph, with an AI assistant grounded in the file hierarchy and code excerpts so answers cite the actual codebase}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{FrostByte} $|$ \emph{Next.js, Node.js, Firebase, Gemini API}}{Hack Canada 2025}
+          \resumeItemListStart
+            \resumeItem{Won Best Use of Gemini AI for a web app that estimates frostbite and hypothermia risk from live weather and clothing, with safe-exposure time limits}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%-----------AWARDS-----------
+\section{Awards}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Hack the North 2026}{: Best Mobile Experience (Expo), team of 4} \\
+     \textbf{Hack Canada 2025}{: Best Use of Gemini AI} \\
+     \textbf{Canadian Computing Competition (Senior)}{: Distinction, 2024, 2025, 2026} \\
+     \textbf{Competitive Programming}{: DMOJ Top 2\%; USACO Silver; 500+ problems solved} \\
+     \textbf{CALICO Informatics Competition (UC Berkeley)}{: Bronze Brick Winner, 2024} \\
+     \textbf{St. Lawrence Coding Competition}{: 1st Place Team, 2024}
+    }}
+ \end{itemize}
+
+%-------------------------------------------
+\end{document}
