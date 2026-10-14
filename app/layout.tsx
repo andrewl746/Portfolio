@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 const DESCRIPTION =
-  "Computer Science student at the University of Waterloo. Software engineer at Marble Investments and UW Orbital, aimed at aerospace.";
+  "Computer Science student at the University of Waterloo. Software engineer at Marble Investments and UW Orbital.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://andrewli.app"),
