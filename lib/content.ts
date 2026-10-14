@@ -12,7 +12,7 @@ export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo",
   tagline: "Software engineer, aiming for space.",
-  sub: "Currently building Nebulosity, a codebase mapping tool that helps AI agents navigate large repositories and quickly find relevant context.",
+  sub: "Currently building Nebulosity, a codebase mapping tool that helps AI agents navigate large repositories and find relevant context faster.",
   email: "andrewli746@gmail.com",
   linkedIn: "https://www.linkedin.com/in/andrewl746/",
   x: "https://x.com/andrewl746",
