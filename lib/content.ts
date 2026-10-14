@@ -131,18 +131,6 @@ export const EXPERIENCE: ExperienceEntry[] = [
     link: "https://www.uworbital.org/",
   },
   {
-    org: "Kurius",
-    role: "C++ Instructor",
-    period: "Jul 2024 to Aug 2024",
-    blurb:
-      "Nonprofit coding organization providing free courses and tools to over 2,200 members worldwide.",
-    bullets: [
-      "Designed and taught a 5-week introductory C++ course to 11 university students covering syntax, data types, pointers, and functions.",
-      "Every student successfully built a fully functional Library Management System using arrays and custom functions for their final project."
-    ],
-    link: "https://www.kurius.ca/",
-  },
-  {
     org: "Science Olympics Team",
     role: "Head Trainer",
     period: "Feb 2023 to Jun 2026",
@@ -154,5 +142,17 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Then developed OlympIQ, which is set to run scheduling and signups for the team.",
     ],
     link: "https://vpciscienceolympics.wixsite.com/vpci-science-olympic",
+  },
+  {
+    org: "Kurius",
+    role: "C++ Instructor",
+    period: "Jul 2024 to Aug 2024",
+    blurb:
+      "Nonprofit coding organization providing free courses and tools to over 2,200 members worldwide.",
+    bullets: [
+      "Designed and taught a 5-week introductory C++ course to 11 university students covering syntax, data types, pointers, and functions.",
+      "Every student successfully built a fully functional Library Management System using arrays and custom functions for their final project."
+    ],
+    link: "https://www.kurius.ca/",
   },
 ];
