@@ -32,7 +32,7 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
-  description: "Runs scheduling for my high school's Science Olympics team, where executives used to spend over ten hours assigning 60+ competitors to events by hand while juggling preferences and time conflicts. A custom algorithm now schedules the events, assigns competitors based on their preferences, and catches conflicts, with attendance tracking and built in Excel exports. It was piloted with the executives this summer and is set to be adopted by the whole team for the 2026-27 season.",
+  description: "Runs scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours assigning 60+ competitors to events by hand while juggling preferences and time conflicts. A custom algorithm now schedules events, assigns competitors based on their preferences, and detects time conflicts. It was piloted with the executives this summer and is set to be adopted by the whole team for the 2026–27 season.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   live: "https://www.olympiq.ca",
   image: {
@@ -72,7 +72,7 @@ export const PROJECTS: Project[] = [
     name: "CourtManager",
     context: "IB HL CS Internal Assessment",
     description:
-      "Manages my high school's 12-player tennis doubles team with a custom merge-sort pairing algorithm, player records, and lineup planning.",
+      "Plans lineups for a 12-player high school tennis doubles team by pairing teammates with a custom merge-sort algorithm.",
     tech: ["Java", "Spring Boot", "JavaScript"],
     github: "https://github.com/andrewl746/CourtManager",
     image: {
