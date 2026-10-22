@@ -63,7 +63,7 @@ export default function Tech() {
             >
               <path d={t.path} />
             </svg>
-            {/* On phones a few names wrap ("Google Gemini"). Every label
+            {/* On phones a few names wrap ("Google Cloud"). Every label
                 reserves two lines there so all the cells stay one height. */}
             <span className="text-center text-[10px] uppercase tracking-[0.1em] text-dim transition-colors group-hover:text-body max-sm:min-h-[2lh]">
               {t.name}
