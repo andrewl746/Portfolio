@@ -24,7 +24,7 @@ export default function Awards() {
           {AWARDS.map((a) => (
             <li
               key={a.event}
-              className="group grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1.4fr_1.4fr_0.8fr] sm:gap-2"
+              className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 border-t border-white/8 py-3 first:border-t-0 sm:grid-cols-[1.4fr_1.4fr_0.8fr] sm:gap-2"
             >
               <span className="text-sm text-primary">
                 {a.link ? (
@@ -40,10 +40,10 @@ export default function Awards() {
                   a.event
                 )}
               </span>
-              <span className="col-span-2 text-sm text-body transition-colors group-hover:text-primary sm:col-span-1">
+              <span className="col-span-2 text-sm text-body sm:col-span-1">
                 {a.result}
               </span>
-              <span className="col-start-2 row-start-1 text-right text-xs text-brass transition-colors group-hover:text-ember sm:col-start-auto sm:row-start-auto">
+              <span className="col-start-2 row-start-1 text-right text-xs text-brass sm:col-start-auto sm:row-start-auto">
                 {a.year}
               </span>
             </li>

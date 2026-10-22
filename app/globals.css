@@ -241,6 +241,24 @@ html:not(.js) .typewriter-caret {
   box-shadow: 1px 0 0 rgba(224, 69, 95, 0.15);
 }
 
+/* Viewfinder corner brackets around project screenshots, drawn as eight
+   background gradients so no extra elements are needed. */
+.viewfinder {
+  --corner: var(--ember-dim);
+  --len: 14px;
+  --w: 1.5px;
+  background:
+    linear-gradient(var(--corner), var(--corner)) top left / var(--len) var(--w),
+    linear-gradient(var(--corner), var(--corner)) top left / var(--w) var(--len),
+    linear-gradient(var(--corner), var(--corner)) top right / var(--len) var(--w),
+    linear-gradient(var(--corner), var(--corner)) top right / var(--w) var(--len),
+    linear-gradient(var(--corner), var(--corner)) bottom left / var(--len) var(--w),
+    linear-gradient(var(--corner), var(--corner)) bottom left / var(--w) var(--len),
+    linear-gradient(var(--corner), var(--corner)) bottom right / var(--len) var(--w),
+    linear-gradient(var(--corner), var(--corner)) bottom right / var(--w) var(--len);
+  background-repeat: no-repeat;
+}
+
 /* The mobile drawer takes focus itself when it opens (so screen readers
    announce it); its links show the focus ring, the panel doesn't need one. */
 .mobile-drawer:focus-visible {

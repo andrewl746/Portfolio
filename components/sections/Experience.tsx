@@ -20,18 +20,18 @@ export default function Experience() {
       <div className="mt-10 space-y-12">
         {EXPERIENCE.map((e) => (
           <Reveal key={e.org}>
-            <div className="group relative grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-8">
+            <div className="grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-8">
               <div className="text-xs uppercase tracking-[0.1em] text-dim">
                 {e.period}
               </div>
-              <div className="border-l-2 border-ember/35 pl-5 transition-colors group-hover:border-ember">
+              <div className="border-l-2 border-ember/35 pl-5">
                 <h3 className="font-serif text-xl text-primary">
                   {e.link ? (
                     <a
                       href={e.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="after:absolute after:inset-0"
+                      className="underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
                     >
                       {e.org}
                     </a>

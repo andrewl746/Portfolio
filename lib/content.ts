@@ -5,7 +5,11 @@ export type Project = {
   tech: string[];
   github?: string;
   live?: string;
+  // Hackathon write-up.
+  devpost?: string;
   award?: string;
+  // Card screenshot in public/, made per docs/project-images.md.
+  image?: { src: string; alt: string };
 };
 
 export const SITE = {
@@ -28,12 +32,29 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
-  description: "Streamlines management of my high school's Science Olympics team. Previously, executives spent over ten hours manually assigning 60+ competitors to events while balancing preferences and avoiding scheduling conflicts. OlympIQ automates the entire process by automatically scheduling events, finding and fixing conflicts, assigning competitors to events based on their preferences using a custom algorithm, tracking attendance, and providing easy schedule exports to Excel. It was piloted with the team's executives this summer and is set to be adopted by the entire team in the 2026-27 season.",
+  description: "Runs scheduling for my high school's Science Olympics team, where executives used to spend over ten hours assigning 60+ competitors to events by hand while juggling preferences and time conflicts. A custom algorithm now schedules the events, assigns competitors based on their preferences, and catches conflicts, with attendance tracking and built in Excel exports. It was piloted with the executives this summer and is set to be adopted by the whole team for the 2026-27 season.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   live: "https://www.olympiq.ca",
+  image: {
+    src: "/projects/olympiq-schedule-v7.webp",
+    alt: "OlympIQ's schedule page, showing each competitor's assigned events and flagged time conflicts that need review",
+  },
 };
 
 export const PROJECTS: Project[] = [
+  {
+    name: "Suplex",
+    context: "Hack the Valley 2026",
+    description:
+      "Checks any Toronto address against the City's four pre-approved multiplex designs and shows the result in 3D. I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
+    tech: ["Python", "FastAPI", "Shapely", "three.js", "React"],
+    github: "https://github.com/andrewl746/suplex",
+    devpost: "https://devpost.com/software/suplex",
+    image: {
+      src: "/projects/suplex.webp",
+      alt: "Suplex showing a fourplex design in 3D on a Toronto lot, next to which of the four designs fit",
+    },
+  },
   {
     name: "Flowboard",
     context: "JamHacks 2026",
@@ -41,23 +62,11 @@ export const PROJECTS: Project[] = [
       "Turns a GitHub repository into an interactive flowchart. Folders, files, and functions are displayed as nodes on a canvas. An AI assistant, using the file structure and code snippets, answers questions about the codebase.",
     tech: ["Next.js", "React Flow", "Zustand", "Anthropic API"],
     github: "https://github.com/andrewl746/Flowboard",
-  },
-  {
-    name: "TeacherAId",
-    context: "GenAI Genesis 2026",
-    description:
-      "Analyzes student reasoning alongside their answers. It identifies misconceptions from written explanations, creates profiles for each student, provides class-wide analytics, and advises teachers on what to focus on next.",
-    tech: ["Firebase", "Claude API", "Cloudflare Workers"],
-    github: "https://github.com/andrewl746/TeacherAId",
-  },
-  {
-    name: "FrostByte",
-    context: "Hack Canada 2025",
-    description:
-      "Estimates your risk of frostbite and hypothermia based on live weather conditions and your clothing, then advises how much longer you can safely stay outside.",
-    tech: ["Next.js", "Node.js", "Firebase", "Gemini API"],
-    github: "https://github.com/andrewl746/FrostByte",
-    award: "Best Use of Gemini AI Award",
+    devpost: "https://devpost.com/software/vibeless",
+    image: {
+      src: "/projects/flowboard-tree.webp",
+      alt: "Flowboard showing a repository's folders and files as a connected flowchart",
+    },
   },
   {
     name: "CourtManager",
@@ -66,6 +75,10 @@ export const PROJECTS: Project[] = [
       "Manages my high school's 12-player tennis doubles team with a custom merge-sort pairing algorithm, player records, and lineup planning.",
     tech: ["Java", "Spring Boot", "JavaScript"],
     github: "https://github.com/andrewl746/CourtManager",
+    image: {
+      src: "/projects/courtmanager-lineups-v2.webp",
+      alt: "CourtManager's lineups page, showing ranked doubles pairs with compatibility scores on a tennis court layout",
+    },
   },
 ];
 
