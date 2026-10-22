@@ -32,7 +32,7 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "OlympIQ",
   context: "Live at olympiq.ca",
-  description: "Runs scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours assigning 60+ competitors to events by hand while juggling preferences and time conflicts. A custom algorithm now schedules events, assigns competitors based on their preferences, and detects time conflicts. It was piloted with the executives this summer and is set to be adopted by the whole team for the 2026–27 season.",
+  description: "Set to run scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours manually assigning 60+ competitors to events while juggling their preferences and avoiding time conflicts. A custom algorithm now does it instantly, flags any conflicts it can't resolve, and exports the schedule to Excel. It was piloted with the executives this summer before the full rollout for the 2026–27 season.",
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   live: "https://www.olympiq.ca",
   image: {
