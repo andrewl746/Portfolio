@@ -26,7 +26,7 @@ export const SITE = {
 
 export const STATS = [
   { eyebrow: "Currently working at", value: "Marble Investments" },
-  { eyebrow: "Hackathon Wins", value: "2" },
+  { eyebrow: "Award winner at", value: "Hack the North" },
 ];
 
 export const FLAGSHIP: Project = {
