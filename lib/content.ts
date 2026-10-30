@@ -36,7 +36,7 @@ export const FLAGSHIP: Project = {
   tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
   live: "https://www.olympiq.ca",
   image: {
-    src: "/projects/olympiq-schedule-v7.webp",
+    src: "/projects/olympiq-schedule-v10.webp",
     alt: "OlympIQ's schedule page, showing each competitor's assigned events and flagged time conflicts that need review",
   },
 };
