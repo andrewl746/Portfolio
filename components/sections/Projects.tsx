@@ -51,8 +51,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
             height={800}
             sizes="(min-width: 768px) 656px, 100vw"
             quality={90}
-            // Dimmed so bright app screenshots sit in the dark page instead of glaring.
-            className="block w-full border border-white/10 brightness-85 saturate-90"
+            className="block w-full border border-white/10"
           />
         </div>
       )}
@@ -70,8 +69,8 @@ export default function Projects() {
       <h2 className="font-serif text-3xl text-primary">Projects</h2>
       <Reveal>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
-          Featured tools I&apos;ve built to solve real problems, from team scheduling to
-          exploring unfamiliar codebases.
+          Featured tools I&apos;ve built to solve real problems, from mapping huge codebases
+          to scheduling a 60+ member team.
         </p>
       </Reveal>
       <div className="mt-8">

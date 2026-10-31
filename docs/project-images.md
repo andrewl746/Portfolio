@@ -46,7 +46,7 @@ Most screenshots need some cleanup first. Do it on a copy in `images-src/` (Pyth
 
 - The one moment that sells the project, for example the 3D design rising on a lot for Suplex, or the schedule view for OlympIQ.
 - Dark mode where the app has it, so it sits well on the site's dark background.
-- Text big enough to read at card size. Apps screenshotted on a wide monitor shrink a lot; zoom the browser to 125–150% or narrow the window before capturing, or crop to the part that matters. For canvas apps (graphs, maps, 3D scenes), zoom the canvas itself so the content fills it; tiny node labels stay blurry no matter how they're cropped.
+- Text big enough to read at card size. The card shows the image about 640 px wide, so text needs to be roughly 2% of the screenshot's width or more to stay readable (about 40 px tall in a 2000 px screenshot). Apps screenshotted on a wide monitor shrink a lot; zoom the browser to 125–150% or narrow the window before capturing, or crop to the part that matters. For canvas apps (graphs, maps, 3D scenes), zoom the canvas itself so the content fills it; tiny node labels stay blurry no matter how they're cropped.
 - A tight crop with no browser chrome, no personal tabs or bookmarks, and no small unreadable text.
 - No personal data in the screenshot (real names, emails, addresses) unless it's public or yours to share.
 
@@ -62,7 +62,7 @@ The card (`components/sections/Projects.tsx`) then shows it below the text and l
 
 These are applied by the card automatically, so don't bake them into the image files:
 
-- **Dimming:** every screenshot is shown at 85% brightness and 90% saturation (`brightness-85 saturate-90`), so bright or light-mode apps sit in the dark page instead of glaring.
+- **No dimming:** screenshots are shown at full brightness. Dimming them (85% brightness, tried earlier) made small text muddier, especially grey text on dark backgrounds, so keep it off.
 - **Quality:** served at `quality={90}` (allowed by `images.qualities` in `next.config.ts`), since the default 75 softens small UI text.
 - **Frame:** static, dim ember viewfinder corner brackets (the `.viewfinder` class in `app/globals.css`). No hover effects: the image isn't clickable, and the site only uses hover effects on things that are, apart from the decorative tech stack icons.
 
