@@ -4,9 +4,11 @@ import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 
 function Row({ p, current = false }: { p: Project; current?: boolean }) {
-  // Something you can see working first (live site, then a hackathon demo), the code last.
+  // Something you can see working first (live site, demo video, then a hackathon demo),
+  // the code last.
   const links: { href: string; label: string }[] = [];
   if (p.live) links.push({ href: p.live, label: new URL(p.live).hostname.replace(/^www\./, "") });
+  if (p.video) links.push({ href: p.video, label: "Demo video" });
   if (p.devpost) links.push({ href: p.devpost, label: "Devpost" });
   if (p.github) links.push({ href: p.github, label: "GitHub" });
 

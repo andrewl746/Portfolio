@@ -5,6 +5,8 @@ export type Project = {
   tech: string[];
   github?: string;
   live?: string;
+  // Demo video, for example on YouTube.
+  video?: string;
   // Hackathon write-up.
   devpost?: string;
   award?: string;
@@ -35,6 +37,7 @@ export const FLAGSHIP: Project = {
   description: "Gives Claude Code a live map of how a big codebase fits together, so a question that spans many files takes one tool call instead of a chain of searches. In 378 test runs, Claude Code answered those up to 4.4× faster and got all 42 fully right, against 29 without it. Published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
   tech: ["TypeScript", "MCP", "SQLite", "Next.js"],
   live: "https://nebulosity.ca",
+  video: "https://youtu.be/pWwsganPLWE",
   github: "https://github.com/andrewl746/Nebulosity",
   image: {
     src: "/projects/nebulosity-map-v5.webp",
