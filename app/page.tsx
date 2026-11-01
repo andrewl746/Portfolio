@@ -22,8 +22,8 @@ export default function Home() {
         <div aria-hidden="true" className="coord-grid pointer-events-none absolute inset-0" />
         <div className="relative mx-auto max-w-4xl px-6 pt-14 md:px-14 md:pt-0">
           <About />
-          <Experience />
           <Projects />
+          <Experience />
           <Awards />
           <Tech />
           <Contact />
