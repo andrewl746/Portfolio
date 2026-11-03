@@ -107,7 +107,6 @@ export const AWARDS: Award[] = [
   },
   { event: "CCC Senior", result: "Distinction", year: "2026, 2025, 2024" },
   { event: "DMOJ", result: "Top 2%, 300+ Points", year: "Ongoing" },
-  { event: "USACO", result: "Silver Division", year: "2024" },
   { event: "CALICO (UC Berkeley)", result: "Bronze Brick Winner", year: "2024" },
   { event: "St. Lawrence Coding Competition", result: "1st Place Team", year: "2024" },
 ];
