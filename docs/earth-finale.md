@@ -40,7 +40,7 @@ Contact and the Earth form the last screen (`.contact-scene` in `app/page.tsx`).
 
 - **Rise:** the Earth follows the scroll (18% rise, slight zoom), easing toward the scroll position with a 0.14 s time constant, so it glides and settles in about half a second. It waits for its images, so after a jump to Contact the rise still plays in view instead of happening while they load.
 - **Lights and atmosphere:** they fade up as it settles.
-- **Orbit and satellite:** once the Earth is mostly in view, the orbit draws in with the site's strong ease-out, `cubic-bezier(0.23, 1, 0.32, 1)`, and the satellite starts its 15 s pass at constant orbital speed. Perspective makes it fast near the camera and slow at the horizon. As it sets, it dims and reddens through the atmosphere, and its trail follows it down behind the limb.
+- **Orbit and satellite:** once the Earth is mostly in view, the orbit draws in with the site's strong ease-out, `cubic-bezier(0.23, 1, 0.32, 1)`. The satellite sets off at the same moment, from the start of the arc, so something is moving as soon as the orbit appears (the line races ahead of it). Its 15 s pass runs at constant orbital speed. Perspective makes it fast near the camera and slow at the horizon. As it sets, it dims and reddens through the atmosphere, and its trail follows it down behind the limb.
 - **Reduced motion:** devices set to reduce motion get the settled frame with the satellite at the top of its arc and nothing moving.
 - **Pausing:** the animation runs only while the Earth is on screen and the tab is visible.
 

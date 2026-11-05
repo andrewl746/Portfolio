@@ -478,9 +478,11 @@ export default function EarthFinale({
         moving.push({ o: t.orbit, u, fade: smoothstep(0, 0.6, Math.min(local, t.duration - local)) });
       }
       const o = geo.frame.orbit;
-      // The hero's first pass starts as the line finishes drawing, and each
-      // pass runs on past the set until its trail has followed it down.
-      const time = since - 1.1;
+      // The hero's first pass starts the moment the line starts drawing, so
+      // something is moving as soon as the orbit appears (the line races
+      // ahead of it). Each pass runs on past the set until its trail has
+      // followed it down.
+      const time = since;
       const sinkSeconds = (TRAIL_SPAN / (o.end - o.start)) * PASS_SECONDS;
       let hero: { u: number; glint: number } | null = null;
       if (time >= 0) {
