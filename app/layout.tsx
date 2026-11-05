@@ -42,21 +42,23 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     url: "https://andrewli.app",
     siteName: "Andrew Li",
+    // Link preview card for LinkedIn, X, iMessage and so on. Only text that
+    // doesn't change with the hero, so it never needs updating with it.
     images: [
       {
-        url: "/app-icon-og-v2.png",
-        width: 512,
-        height: 512,
-        alt: "Andrew Li app icon",
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Andrew Li, software engineer, aiming for space, above the night side of Earth with a satellite in orbit",
       },
     ],
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Andrew Li",
     description: DESCRIPTION,
-    images: ["/app-icon-og-v2.png"],
+    images: ["/og-image.jpg"],
   },
 };
 
