@@ -50,10 +50,12 @@ export const metadata: Metadata = {
     // doesn't change with the hero, so it never needs updating with it.
     images: [
       {
-        url: "/og-image.jpg",
+        // A new file name when the image changes, so link previews that
+        // cached the old one fetch it fresh.
+        url: "/og-image-v2.jpg",
         width: 1200,
         height: 630,
-        alt: "Andrew Li, software engineer, aiming for space, above the night side of Earth with a satellite in orbit",
+        alt: "Andrew Li, software engineer, aiming for space, above eastern North America at night with a satellite in orbit",
       },
     ],
     type: "website",
@@ -62,7 +64,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Andrew Li",
     description: DESCRIPTION,
-    images: ["/og-image.jpg"],
+    images: ["/og-image-v2.jpg"],
   },
 };
 
