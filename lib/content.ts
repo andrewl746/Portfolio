@@ -12,10 +12,17 @@ export type Project = {
   award?: string;
   // Card screenshot in public/, made per docs/project-images.md.
   image?: { src: string; alt: string };
+  // Turns a phrase in the description into a link, such as a claim into the
+  // evidence behind it. `text` must appear in the description exactly once
+  // (the build fails otherwise); `hint` tells screen readers where it goes.
+  descriptionLink?: { text: string; href: string; hint: string };
 };
 
 export const SITE = {
   name: "Andrew Li",
+  // Where the site is served. andrewli.app (no www) redirects here, so the
+  // sitemap, canonical URL and link previews all use this address.
+  url: "https://www.andrewli.app",
   identity: "Computer Science student at the University of Waterloo",
   tagline: "Software engineer, aiming for space.",
   // One sentence per line on wider screens.
@@ -39,6 +46,12 @@ export const FLAGSHIP: Project = {
   name: "Nebulosity",
   context: "Live at nebulosity.ca",
   description: "Gives Claude Code a live map of how a big codebase fits together, so a question that spans many files takes one tool call instead of a chain of searches. In 378 test runs, Claude Code answered those up to 4.4× faster and got all 42 fully right, against 29 without it. Published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
+  // The speedup links to how it was measured, for anyone who doubts it.
+  descriptionLink: {
+    text: "4.4× faster",
+    href: "https://nebulosity.ca/#evaluation",
+    hint: "how it was measured",
+  },
   tech: ["TypeScript", "MCP", "SQLite", "Next.js"],
   live: "https://nebulosity.ca",
   video: "https://youtu.be/p6-T-qkoOXo",

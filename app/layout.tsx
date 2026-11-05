@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SITE } from "@/lib/content";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -23,9 +25,11 @@ const DESCRIPTION =
   "Computer Science student at the University of Waterloo. Software engineer at Marble Investments and UW Orbital.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://andrewli.app"),
+  // Relative URLs below (canonical, link preview image) resolve against this.
+  metadataBase: new URL(SITE.url),
   title: "Andrew Li",
   description: DESCRIPTION,
+  alternates: { canonical: "/" },
   icons: {
     // One square source everywhere: the tab shows the square icon, and Google
     // masks it into a circle on its own end (the star has padding, so it
@@ -40,7 +44,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Andrew Li",
     description: DESCRIPTION,
-    url: "https://andrewli.app",
+    url: "/",
     siteName: "Andrew Li",
     // Link preview card for LinkedIn, X, iMessage and so on. Only text that
     // doesn't change with the hero, so it never needs updating with it.
@@ -84,7 +88,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        {/* Vercel Web Analytics: page views and referrers, with no cookies.
+            Its script only exists on Vercel once Analytics is switched on
+            for the project in the Vercel dashboard. */}
+        <Analytics />
+      </body>
     </html>
   );
 }

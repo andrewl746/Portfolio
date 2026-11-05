@@ -3,6 +3,35 @@ import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 
+// The description, with its linked phrase (if it has one) as a link.
+function Description({ p }: { p: Project }) {
+  const link = p.descriptionLink;
+  if (!link) return <>{p.description}</>;
+  const at = p.description.indexOf(link.text);
+  // Fails the build, so rewording the description can't silently drop the link.
+  if (at === -1 || at !== p.description.lastIndexOf(link.text)) {
+    throw new Error(
+      `${p.name}: descriptionLink text "${link.text}" must appear in the description exactly once.`,
+    );
+  }
+  return (
+    <>
+      {p.description.slice(0, at)}
+      <a
+        href={link.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        // nowrap: on phones the phrase stays on one line, one tap target.
+        className="whitespace-nowrap text-primary underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
+      >
+        {link.text}
+        <span className="sr-only"> ({link.hint})</span>
+      </a>
+      {p.description.slice(at + link.text.length)}
+    </>
+  );
+}
+
 function Row({ p, current = false }: { p: Project; current?: boolean }) {
   // Something you can see working first (live site, demo video, then a hackathon demo),
   // the code last.
@@ -26,7 +55,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
         {p.award ? ` / ${p.award}` : ""}
       </p>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
-        {p.description}
+        <Description p={p} />
       </p>
       <p className="mt-3 text-xs text-dim">{p.tech.join(" / ")}</p>
       {links.length > 0 && (

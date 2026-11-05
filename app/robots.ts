@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { SITE } from '@/lib/content'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/Andrew_Li_Resume.pdf',
     },
-    sitemap: 'https://andrewli.app/sitemap.xml',
+    sitemap: `${SITE.url}/sitemap.xml`,
   }
 }
