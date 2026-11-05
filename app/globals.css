@@ -29,6 +29,11 @@
   --radius: 0;
 }
 
+/* Short screens, such as a phone held sideways. Below this height the
+   desktop sidebar can't fit its links and bottom label with room between
+   them, so it tightens its spacing and drops the label. */
+@custom-variant short (@media (max-height: 520px));
+
 html {
   scroll-behavior: smooth;
   /* Faint ember flash on tap instead of the default blue/grey box. */

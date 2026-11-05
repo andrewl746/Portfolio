@@ -61,7 +61,9 @@ function SectionNav({
   return (
     <nav
       aria-label="Sections"
-      className={`relative flex flex-col ${mobile ? "gap-1" : "mt-12 gap-5"}`}
+      className={`relative flex flex-col ${
+        mobile ? "gap-1" : "mt-12 gap-5 short:mt-8 short:gap-3"
+      }`}
     >
       {marker && (
         <span
@@ -261,8 +263,10 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Desktop sidebar */}
-      <aside className="margin-rule fixed inset-y-0 left-0 z-20 hidden w-[180px] flex-col px-6 py-10 md:flex">
+      {/* Desktop sidebar. The bottom label always keeps a gap above it: on
+          short screens the sidebar tightens up and drops the label, and if
+          even that doesn't fit, the sidebar scrolls. */}
+      <aside className="margin-rule fixed inset-y-0 left-0 z-20 hidden w-[180px] flex-col overflow-y-auto px-6 py-10 short:py-6 md:flex">
         <a href="#about" className="font-serif text-xl leading-tight text-primary">
           {SITE.name}
         </a>
@@ -272,7 +276,7 @@ export default function Sidebar() {
 
         <SectionNav active={active} variant="desktop" />
 
-        <div className="mt-auto text-[10px] uppercase leading-relaxed tracking-[0.1em] text-faint">
+        <div className="mt-auto pt-10 text-[10px] uppercase leading-relaxed tracking-[0.1em] text-faint short:hidden">
           University of Waterloo
           <br />
           Computer Science
