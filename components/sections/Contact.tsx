@@ -2,17 +2,15 @@ import { SITE } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 
-// Month and year of the build, in Waterloo's time zone (build servers run on
-// UTC, which would flip the month a few hours early).
-const UPDATED = new Date().toLocaleDateString("en-US", {
-  month: "long",
-  year: "numeric",
-  timeZone: "America/Toronto",
-});
-
+// The footer lives on the Earth below this section (see EarthFinale). On
+// short screens the top padding tightens so this section and the whole Earth
+// still fit on the screen a jump to Contact lands on.
 export default function Contact() {
   return (
-    <section id="contact" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
+    <section
+      id="contact"
+      className="relative scroll-mt-14 pb-6 pt-20 md:scroll-mt-24 [@media(max-height:860px)]:pt-10"
+    >
       <Constellation
         name="gemini"
         className="pointer-events-none absolute right-0 top-6 w-32 md:right-8 md:top-4 md:w-48"
@@ -69,12 +67,6 @@ export default function Contact() {
           </a>
         </div>
       </Reveal>
-      <footer className="mt-24 flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-line pt-6 text-[10px] uppercase tracking-[0.1em] text-faint">
-        <span>© {new Date().getFullYear()} Andrew Li.</span>
-        {/* The page is statically built, so this is stamped at build time and
-            refreshes on every deploy: it can't go stale or be forgotten. */}
-        <span>Updated {UPDATED}</span>
-      </footer>
     </section>
   );
 }

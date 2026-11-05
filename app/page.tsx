@@ -8,6 +8,8 @@ import Experience from "@/components/sections/Experience";
 import Awards from "@/components/sections/Awards";
 import Tech from "@/components/sections/Tech";
 import Contact from "@/components/sections/Contact";
+import Footer from "@/components/sections/Footer";
+import EarthFinale from "@/components/EarthFinale";
 
 export default function Home() {
   return (
@@ -26,7 +28,19 @@ export default function Home() {
           <Experience />
           <Awards />
           <Tech />
-          <Contact />
+        </div>
+        {/* Contact and the Earth under it are the last screen: together at
+            least a viewport tall (less the offset the nav scrolls to), with
+            the Earth taking whatever height is left. So jumping to Contact
+            lands on the whole scene, the planet fully in view. The Earth
+            spans the main column's full width, past the content's max width. */}
+        <div className="contact-scene flex flex-col">
+          <div className="mx-auto w-full max-w-4xl px-6 md:px-14">
+            <Contact />
+          </div>
+          <EarthFinale className="flex-1" settleWith="contact">
+            <Footer />
+          </EarthFinale>
         </div>
       </main>
     </div>

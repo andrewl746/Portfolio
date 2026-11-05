@@ -259,6 +259,174 @@ html:not(.js) .typewriter-caret {
   background-repeat: no-repeat;
 }
 
+/* The last screen: Contact plus the Earth, at least one viewport tall less
+   the offset the nav scrolls to (Contact's scroll-mt-14 / md:scroll-mt-24),
+   so jumping to Contact shows the whole scene. svh, so it doesn't change
+   as a phone's address bar slides. */
+.contact-scene {
+  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100svh - 3.5rem);
+}
+
+@media (min-width: 48rem) {
+  .contact-scene {
+    min-height: calc(100vh - 6rem);
+    min-height: calc(100svh - 6rem);
+  }
+}
+
+/* Earth finale under the Contact section. Two renders: a tall one for
+   portrait screens and a wide one for landscape (the media query matches
+   WIDE in EarthFinale.tsx). The frame
+   (.earth-stage) keeps its rendered aspect ratio and is pinned to the
+   bottom; the element around it is at least as tall as the frame minus its
+   empty top sky (the ::before strut, sized as a share of the width), and
+   clips whatever sky doesn't fit. Ratios come from the scene data. */
+.earth-finale {
+  container-type: inline-size;
+}
+
+.earth-finale::before {
+  content: "";
+  display: block;
+  padding-top: var(--earth-tall-min);
+}
+
+/* Pinned to the bottom; once the Earth is shorter than the frame from just
+   above the arc down (100cqw * keep), the frame sinks below the bottom edge
+   instead, trimming the near side under the footer. */
+.earth-stage {
+  aspect-ratio: var(--earth-tall);
+  bottom: min(0px, 100% - 100cqw * var(--earth-tall-keep));
+}
+
+.earth-scrim {
+  aspect-ratio: var(--earth-tall-scrim);
+}
+
+.earth-wide {
+  display: none;
+}
+
+@media (orientation: landscape) {
+  .earth-finale::before {
+    padding-top: var(--earth-wide-min);
+  }
+
+  .earth-stage {
+    aspect-ratio: var(--earth-wide);
+    bottom: min(0px, 100% - 100cqw * var(--earth-wide-keep));
+  }
+
+  .earth-scrim {
+    aspect-ratio: var(--earth-wide-scrim);
+  }
+
+  .earth-wide {
+    display: block;
+  }
+
+  .earth-tall {
+    display: none;
+  }
+}
+
+/* A phone held sideways leaves the frame too short for the caption to sit
+   clear of the planet; the footer still shows. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .earth-caption {
+    display: none;
+  }
+}
+
+/* The stage stays hidden until the current framing's image layers have
+   decoded, then fades in; JS drives its rise with the scroll. After a
+   switch between framings it hides at once until the new images are in.
+   Without JS it's simply shown in its resting place, and if JS is on but
+   the component never starts (data-pending is still there), it shows
+   itself after a few seconds rather than staying blank. */
+.earth-stage {
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
+
+.earth-finale[data-ready] .earth-stage,
+html:not(.js) .earth-stage {
+  opacity: 1;
+}
+
+.earth-finale[data-switching] .earth-stage {
+  opacity: 0;
+  transition: none;
+}
+
+.js .earth-finale[data-pending] .earth-stage {
+  animation: earth-fallback 0s linear 4s forwards;
+}
+
+@keyframes earth-fallback {
+  to { opacity: 1; }
+}
+
+/* The lights and atmosphere fade with the scroll during the rise; their own
+   layers keep that off the paint path. */
+.earth-fade {
+  will-change: opacity;
+}
+
+.earth-scrim {
+  background: linear-gradient(to top, var(--void) 0%, rgba(7, 8, 13, 0.85) 30%, rgba(7, 8, 13, 0) 100%);
+}
+
+/* Waterloo's pin: a brass ring on its lights, with a leader line up and to
+   the left into the dark over Lake Huron. Appears once the Earth settles. */
+.earth-marker {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.5s;
+}
+
+.earth-finale[data-settled] .earth-marker,
+html:not(.js) .earth-marker {
+  opacity: 1;
+}
+
+.earth-marker-dot {
+  position: absolute;
+  left: -3.5px;
+  top: -3.5px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--brass);
+  border-radius: 9999px;
+  box-shadow: 0 0 6px rgba(201, 168, 106, 0.45);
+}
+
+.earth-marker-dot::after {
+  content: "";
+  position: absolute;
+  left: -13px;
+  top: -9px;
+  width: 14px;
+  height: 1px;
+  background: rgba(201, 168, 106, 0.55);
+  transform: rotate(38deg);
+  transform-origin: 100% 0;
+}
+
+.earth-marker-label {
+  position: absolute;
+  right: 16px;
+  bottom: 11px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--brass);
+}
+
 /* The mobile drawer takes focus itself when it opens (so screen readers
    announce it); its links show the focus ring, the panel doesn't need one. */
 .mobile-drawer:focus-visible {
@@ -291,4 +459,6 @@ html:not(.js) .typewriter-caret {
   .constellation-stars { opacity: 1; transition: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .tech-flash { animation: none; }
+  .earth-stage { transition: none; }
+  .earth-marker { transition: none; }
 }

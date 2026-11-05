@@ -114,7 +114,10 @@ export default function Sidebar() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) setActive(entry.target.id);
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            setActive(el.dataset.navSection ?? el.id);
+          }
         }
       },
       { rootMargin: "-40% 0px -55% 0px" }
@@ -123,6 +126,11 @@ export default function Sidebar() {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     }
+    // Areas that belong to a section without being inside it, such as the
+    // Earth under Contact, which is wider than the content column.
+    document
+      .querySelectorAll<HTMLElement>("[data-nav-section]")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
