@@ -52,7 +52,7 @@ export const metadata: Metadata = {
       {
         // A new file name when the image changes, so link previews that
         // cached the old one fetch it fresh.
-        url: "/og-image-v2.jpg",
+        url: "/og-image-v3.jpg",
         width: 1200,
         height: 630,
         alt: "Andrew Li, software engineer, aiming for space, above eastern North America at night with a satellite in orbit",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Andrew Li",
     description: DESCRIPTION,
-    images: ["/og-image-v2.jpg"],
+    images: ["/og-image-v3.jpg"],
   },
 };
 
