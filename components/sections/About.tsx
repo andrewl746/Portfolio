@@ -36,7 +36,14 @@ export default function About() {
         <TypewriterSubtitle text={SITE.tagline} />
       </p>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-body">
-        {SITE.sub}
+        {/* Each sentence gets its own line wherever the paragraph is at its
+            full 576px. Between md and lg the sidebar narrows it, so the
+            sentences flow together there instead of each wrapping. */}
+        {SITE.sub.map((s) => (
+          <span key={s} className="sm:block md:inline lg:block">
+            {s}{" "}
+          </span>
+        ))}
       </p>
 
       <div className="mt-10 flex flex-wrap gap-x-10 gap-y-8">

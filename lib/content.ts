@@ -18,7 +18,11 @@ export const SITE = {
   name: "Andrew Li",
   identity: "Computer Science student at the University of Waterloo",
   tagline: "Software engineer, aiming for space.",
-  sub: "Recently shipped Nebulosity, a live map of large codebases that makes Claude Code up to 4.4× faster on questions that span many files. Now building software that helps satellites avoid collisions.",
+  // One sentence per line on wider screens.
+  sub: [
+    "Shipped Nebulosity, which makes Claude Code up to 4.4× faster.",
+    "Now building software that helps satellites avoid collisions.",
+  ],
   email: "andrewli746@gmail.com",
   linkedIn: "https://www.linkedin.com/in/andrewl746/",
   x: "https://x.com/andrewl746",
