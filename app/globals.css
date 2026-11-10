@@ -247,11 +247,21 @@ html:not(.js) .typewriter-caret {
 }
 
 /* Viewfinder corner brackets around project screenshots, drawn as eight
-   background gradients so no extra elements are needed. */
+   background gradients on a pseudo-element: no extra elements are needed,
+   and the brackets can move without the screenshot moving. */
 .viewfinder {
+  position: relative;
+}
+
+.viewfinder::before,
+.viewfinder::after {
   --corner: var(--ember-dim);
   --len: 14px;
   --w: 1.5px;
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background:
     linear-gradient(var(--corner), var(--corner)) top left / var(--len) var(--w),
     linear-gradient(var(--corner), var(--corner)) top left / var(--w) var(--len),
@@ -262,6 +272,38 @@ html:not(.js) .typewriter-caret {
     linear-gradient(var(--corner), var(--corner)) bottom right / var(--len) var(--w),
     linear-gradient(var(--corner), var(--corner)) bottom right / var(--w) var(--len);
   background-repeat: no-repeat;
+}
+
+/* The same brackets at full ember, shown only for the flash below. */
+.viewfinder::after {
+  --corner: var(--ember);
+  opacity: 0;
+}
+
+/* Lock-on (ViewfinderLock.tsx): the first time a screenshot scrolls into
+   view, its brackets close in from just outside and flash once as they
+   settle. Until then they wait, hidden, where the animation starts. */
+.viewfinder[data-lock="armed"]::before {
+  opacity: 0;
+  transform: scale(1.045);
+}
+
+.viewfinder[data-lock="on"]::before {
+  animation: viewfinder-lock 0.42s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.viewfinder[data-lock="on"]::after {
+  animation: viewfinder-flash 0.5s ease-out 0.3s both;
+}
+
+@keyframes viewfinder-lock {
+  from { opacity: 0; transform: scale(1.045); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes viewfinder-flash {
+  0%, 100% { opacity: 0; }
+  35% { opacity: 1; }
 }
 
 /* The last screen: Contact plus the Earth, at least one viewport tall less
@@ -464,6 +506,8 @@ html:not(.js) .earth-marker {
   .constellation-stars { opacity: 1; transition: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .tech-flash { animation: none; }
+  .viewfinder[data-lock]::before { animation: none; opacity: 1; transform: none; }
+  .viewfinder[data-lock]::after { animation: none; }
   .earth-stage { transition: none; }
   .earth-marker { transition: none; }
 }

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
+import ViewfinderLock from "@/components/animations/ViewfinderLock";
 
 // The description, with its linked phrase (if it has one) as a link.
 function Description({ p }: { p: Project }) {
@@ -74,7 +75,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
         </div>
       )}
       {p.image && (
-        <div className="viewfinder mt-5 max-w-2xl p-2">
+        <ViewfinderLock className="mt-5 max-w-2xl p-2">
           <Image
             src={p.image.src}
             alt={p.image.alt}
@@ -84,7 +85,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
             quality={90}
             className="block w-full border border-white/10"
           />
-        </div>
+        </ViewfinderLock>
       )}
     </div>
   );

@@ -64,6 +64,6 @@ These are applied by the card automatically, so don't bake them into the image f
 
 - **No dimming:** screenshots are shown at full brightness. Dimming them (85% brightness, tried earlier) made small text muddier, especially grey text on dark backgrounds, so keep it off.
 - **Quality:** served at `quality={90}` (allowed by `images.qualities` in `next.config.ts`), since the default 75 softens small UI text.
-- **Frame:** static, dim ember viewfinder corner brackets (the `.viewfinder` class in `app/globals.css`). No hover effects: the image isn't clickable, and the site only uses hover effects on things that are, apart from the decorative tech stack icons.
+- **Frame:** dim ember viewfinder corner brackets (the `.viewfinder` class in `app/globals.css`). The first time a screenshot scrolls into view they close in and flash once (`components/animations/ViewfinderLock.tsx`); after that they stay still. No hover effects: the image isn't clickable, and the site only uses hover effects on things that are, apart from the decorative tech stack icons.
 
 When replacing an image during development, give the new file a new name (for example `-v2`). The running dev server caches resized images in memory by URL and keeps serving the old picture under an unchanged name. Production deploys aren't affected.
