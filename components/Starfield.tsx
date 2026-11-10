@@ -14,8 +14,41 @@ type Star = {
   twinkler: boolean;
 };
 
+// A satellite crossing the sky: a faint point moving in a straight line at a
+// steady speed, the way one looks from the ground.
+type Pass = {
+  // Where it starts (CSS px) and the direction it travels (unit vector).
+  x0: number;
+  y0: number;
+  dx: number;
+  dy: number;
+  length: number; // px travelled over the whole pass
+  duration: number; // seconds
+  start: number; // on the animation clock, seconds
+  /** Share of the path at which it enters Earth's shadow and fades out.
+   *  Above 1: it stays lit the whole way. */
+  shadowAt: number;
+  /** Share of the path at which a panel catches the Sun and it flares for a
+   *  moment. Below 0: no flare. */
+  flareAt: number;
+};
+
 // Below this canvas width (CSS px), the field switches to the phone model.
 const COMPACT_WIDTH = 768;
+
+// Seconds until the first satellite pass, then from the end of one to the
+// start of the next. The first comes early enough for a short visit to catch
+// it; after that they're rare, so each one is a small surprise.
+const FIRST_PASS: [number, number] = [7, 11];
+const PASS_GAP: [number, number] = [28, 42];
+// How long the next pass waits when the Earth finale is on screen.
+const PASS_HOLD = 4;
+
+const between = ([lo, hi]: [number, number]) => lo + Math.random() * (hi - lo);
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
 
 function motion() {
   return {
@@ -66,6 +99,76 @@ function compactField(width: number, height: number): Star[] {
   return stars;
 }
 
+// A pass runs roughly along the screen's diagonal (give or take 20°), in any
+// of the four directions, through a random point near the middle. That keeps
+// most of its length on screen on a wide desktop and a tall phone alike.
+function newPass(width: number, height: number, now: number): Pass {
+  const tilt =
+    Math.atan2(height, width) + ((Math.random() * 40 - 20) * Math.PI) / 180;
+  const angle =
+    (Math.random() < 0.5 ? tilt : -tilt) + (Math.random() < 0.5 ? Math.PI : 0);
+  const dx = Math.cos(angle);
+  const dy = Math.sin(angle);
+  const length = Math.hypot(width, height) * 0.9;
+  const midX = width * (0.3 + Math.random() * 0.4);
+  const midY = height * (0.25 + Math.random() * 0.5);
+  return {
+    x0: midX - (dx * length) / 2,
+    y0: midY - (dy * length) / 2,
+    dx,
+    dy,
+    length,
+    duration: 8 + Math.random() * 4,
+    start: now,
+    shadowAt: Math.random() < 0.4 ? 0.5 + Math.random() * 0.25 : 2,
+    flareAt: Math.random() < 0.35 ? 0.25 + Math.random() * 0.2 : -1,
+  };
+}
+
+function drawPass(ctx: CanvasRenderingContext2D, pass: Pass, now: number) {
+  const f = (now - pass.start) / pass.duration;
+  // It fades in as it starts and out as it ends, or sooner where it enters
+  // Earth's shadow.
+  const lit =
+    smoothstep(0, 0.12, f) *
+    (1 - smoothstep(pass.shadowAt - 0.1, pass.shadowAt, f)) *
+    (1 - smoothstep(0.88, 1, f));
+  if (lit < 0.01) return;
+  const flare =
+    pass.flareAt > 0 ? Math.exp(-(((f - pass.flareAt) / 0.03) ** 2)) : 0;
+  const x = pass.x0 + pass.dx * pass.length * f;
+  const y = pass.y0 + pass.dy * pass.length * f;
+
+  // A short, faint tail, so the eye reads it as moving.
+  const tailX = x - pass.dx * 28;
+  const tailY = y - pass.dy * 28;
+  const tail = ctx.createLinearGradient(tailX, tailY, x, y);
+  tail.addColorStop(0, "rgba(232,226,211,0)");
+  tail.addColorStop(1, `rgba(232,226,211,${(0.3 * lit).toFixed(3)})`);
+  ctx.strokeStyle = tail;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(tailX, tailY);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+
+  // Soft glow, warmer and wider during a flare.
+  const glowRadius = 6 + 12 * flare;
+  const tint = flare > 0.2 ? "240,214,160" : "232,226,211";
+  const glow = ctx.createRadialGradient(x, y, 0, x, y, glowRadius);
+  glow.addColorStop(0, `rgba(${tint},${((0.22 + 0.3 * flare) * lit).toFixed(3)})`);
+  glow.addColorStop(1, `rgba(${tint},0)`);
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = `rgba(255,250,240,${((0.7 + 0.3 * flare) * lit).toFixed(3)})`;
+  ctx.beginPath();
+  ctx.arc(x, y, 1.2 + flare, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 export default function Starfield() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -80,6 +183,23 @@ export default function Starfield() {
     let raf = 0;
     let width = 0;
     let height = 0;
+
+    // Satellite passes run on their own clock, which only advances while the
+    // loop does, so a pass picks up where it left off after the tab was
+    // hidden instead of jumping ahead.
+    let clock = 0;
+    let lastMs = -1;
+    let pass: Pass | null = null;
+    let nextPassAt = between(FIRST_PASS);
+    // The Earth at the bottom of the page has its own satellites, on real
+    // orbits. Passes hold off while it's on screen, so a straight-line one
+    // doesn't set off across it.
+    const earth = document.querySelector(".earth-finale");
+    const earthOnScreen = () => {
+      if (!earth) return false;
+      const rect = earth.getBoundingClientRect();
+      return rect.top < window.innerHeight && rect.bottom > 0;
+    };
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
@@ -100,6 +220,20 @@ export default function Starfield() {
         ctx.fill();
       }
       ctx.globalAlpha = 1;
+    };
+
+    const drawPasses = () => {
+      if (!pass && clock >= nextPassAt) {
+        if (earthOnScreen()) nextPassAt = clock + PASS_HOLD;
+        else pass = newPass(width, height, clock);
+      }
+      if (!pass) return;
+      if (clock - pass.start >= pass.duration) {
+        pass = null;
+        nextPassAt = clock + between(PASS_GAP);
+        return;
+      }
+      drawPass(ctx, pass, clock);
     };
 
     // The canvas is sized by CSS to the large viewport (.starfield in
@@ -131,7 +265,11 @@ export default function Starfield() {
     };
 
     const loop = (ms: number) => {
+      // Capped, so the first frame back after a pause counts as one frame.
+      if (lastMs >= 0) clock += Math.min(0.1, (ms - lastMs) / 1000);
+      lastMs = ms;
       draw(ms / 16);
+      drawPasses();
       raf = requestAnimationFrame(loop);
     };
 
