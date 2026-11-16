@@ -67,7 +67,7 @@ export const PROJECTS: Project[] = [
     name: "Pyronac",
     context: "NASA Space Apps 2026",
     description:
-      "Merges 2 NASA satellite fire records, MODIS and VIIRS, into one record for Canada, India, and Brazil from 2003 to now. VIIRS reports about 5 times more hotspots than MODIS, so raw records jumped once it came online in 2012 with no change on the ground. I built a harmonization model to remove that discrepancy, cutting the monthly error from 78.5% to 9.2%. I also led the technical design and built a tool that picks optimal locations for firefighting bases. On a decade of unseen data, its sites covered 3 times more hotspots than bases placed where fires had burned before.",
+      "Merges 2 NASA satellite fire records, MODIS and VIIRS, into one record for Canada, India, and Brazil from 2003 to now. VIIRS reports about 5 times more hotspots than MODIS, so the raw numbers jumped when it came online in 2012 even though nothing had changed on the ground. I built a harmonization model to remove that discrepancy, and it cut the monthly error from 78.5% to 9.2%. I also led the technical design and built a tool that picks optimal locations for firefighting bases. On a decade of data it had never seen, its sites covered 3 times more hotspots than bases placed where fires had burned before.",
     // The error figure links to the method write-up, for anyone who doubts it.
     descriptionLink: {
       text: "from 78.5% to 9.2%",
