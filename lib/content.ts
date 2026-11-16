@@ -45,7 +45,7 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "Nebulosity",
   context: "Live at nebulosity.ca",
-  description: "Gives Claude Code a live map of how a big codebase fits together, so a question that spans many files takes one tool call instead of a chain of searches. In 378 test runs, Claude Code answered those up to 4.4× faster and got all 42 fully right, against 29 without it. Published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
+  description: "Gives Claude Code a live map of how a big codebase fits together, so a question that spans many files takes one tool call instead of a chain of searches. In 378 test runs, Claude Code answered those up to 4.4× faster and got all 42 fully right, against 29 without it. Nebulosity is published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
   // The speedup links to how it was measured, for anyone who doubts it.
   descriptionLink: {
     text: "4.4× faster",
@@ -64,15 +64,22 @@ export const FLAGSHIP: Project = {
 
 export const PROJECTS: Project[] = [
   {
-    name: "OlympIQ",
-    context: "Live at olympiq.ca",
+    name: "Pyronac",
+    context: "NASA Space Apps 2026",
     description:
-      "Set to run scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours manually assigning 60+ competitors to events while juggling their preferences and avoiding time conflicts. A custom algorithm now does it instantly, flags any conflicts it can't resolve, and exports the schedule to Excel. It was piloted with the executives this summer before the full rollout for the 2026–27 season.",
-    tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
-    live: "https://www.olympiq.ca",
+      "Merges 2 NASA satellite fire records, MODIS and VIIRS, into one record for Canada, India, and Brazil from 2003 to now. VIIRS reports about 5 times more hotspots than MODIS, so raw records jumped once it came online in 2012 with no change on the ground. I built a harmonization model to remove that discrepancy, cutting the monthly error from 78.5% to 9.2%. I also led the technical design and built a tool that picks optimal locations for firefighting bases. On a decade of unseen data, its sites covered 3 times more hotspots than bases placed where fires had burned before.",
+    // The error figure links to the method write-up, for anyone who doubts it.
+    descriptionLink: {
+      text: "from 78.5% to 9.2%",
+      href: "https://github.com/andrewl746/pyronac/blob/main/docs/METHOD.md",
+      hint: "how it was measured",
+    },
+    tech: ["Python", "scikit-learn", "DuckDB", "FastAPI", "React"],
+    live: "https://pyronac.andrewli.app",
+    github: "https://github.com/andrewl746/pyronac",
     image: {
-      src: "/projects/olympiq-schedule-v10.webp",
-      alt: "OlympIQ's schedule page, showing each competitor's assigned events and flagged time conflicts that need review",
+      src: "/projects/pyronac-bases.webp",
+      alt: "Pyronac's fire base planner on the night globe, with 25 numbered base sites across Canada over the July 2023 fire hot spots",
     },
   },
   {
@@ -89,15 +96,15 @@ export const PROJECTS: Project[] = [
     },
   },
   {
-    name: "CourtManager",
-    context: "IB HL CS Internal Assessment",
+    name: "OlympIQ",
+    context: "Live at olympiq.ca",
     description:
-      "Plans lineups for a 12-player high school tennis doubles team by pairing teammates with a custom merge-sort algorithm.",
-    tech: ["Java", "Spring Boot", "JavaScript"],
-    github: "https://github.com/andrewl746/CourtManager",
+      "Set to run scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours manually assigning 60+ competitors to events while juggling their preferences and avoiding time conflicts. A custom algorithm now does it instantly, flags any conflicts it can't resolve, and exports the schedule to Excel. It was piloted with the executives this summer before the full rollout for the 2026–27 season.",
+    tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
+    live: "https://www.olympiq.ca",
     image: {
-      src: "/projects/courtmanager-lineups-v2.webp",
-      alt: "CourtManager's lineups page, showing ranked doubles pairs with compatibility scores on a tennis court layout",
+      src: "/projects/olympiq-schedule-v10.webp",
+      alt: "OlympIQ's schedule page, showing each competitor's assigned events and flagged time conflicts that need review",
     },
   },
 ];
