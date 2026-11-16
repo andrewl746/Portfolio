@@ -88,6 +88,7 @@ export const PROJECTS: Project[] = [
     description:
       "Checks any Toronto address against the City's four pre-approved multiplex designs and shows the result in 3D. I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
     tech: ["Python", "FastAPI", "Shapely", "three.js", "React"],
+    live: "https://suplex.andrewli.app",
     github: "https://github.com/andrewl746/suplex",
     devpost: "https://devpost.com/software/suplex",
     image: {
