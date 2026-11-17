@@ -7,10 +7,13 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative scroll-mt-14 pb-16 pt-36 md:scroll-mt-24 md:py-32"
+      className="relative scroll-mt-14 pb-16 pt-24 md:scroll-mt-24 md:py-32"
     >
-      {/* On phones, the tall top padding is the space Sagittarius sits in,
-          so the constellation stays clear of the eyebrow text below it. */}
+      {/* On phones, the top padding is the space Sagittarius sits in, so the
+          constellation stays clear of the eyebrow text below it. It's kept
+          just tall enough for a small Sagittarius, so the whole first screen
+          (buttons included) fits on a typical phone instead of sinking to
+          the bottom. */}
       {/* Stationary ember bloom behind Sagittarius */}
       <div
         aria-hidden="true"
@@ -23,7 +26,7 @@ export default function About() {
       <Constellation
         name="sagittarius"
         prominent
-        className="pointer-events-none absolute right-0 top-0 w-36 md:right-4 md:w-72 lg:w-80"
+        className="pointer-events-none absolute right-0 top-0 w-24 md:right-4 md:w-72 lg:w-80"
       />
 
       <p className="text-xs uppercase tracking-[0.14em] text-brass">
@@ -46,7 +49,7 @@ export default function About() {
         ))}
       </p>
 
-      <div className="mt-10 flex flex-wrap gap-x-10 gap-y-8">
+      <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6 md:mt-10 md:gap-y-8">
         {STATS.map((s) => (
           <div key={s.eyebrow} className="border-l-2 border-ember pl-4">
             <div className="text-[10px] uppercase tracking-[0.14em] text-brass">
@@ -71,7 +74,7 @@ export default function About() {
         ))}
       </div>
 
-      <div className="mt-12 flex flex-wrap items-center gap-x-4 gap-y-5 sm:gap-x-6">
+      <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-5 sm:gap-x-6 md:mt-12">
         <a
           href={SITE.resumeHref}
           target="_blank"
