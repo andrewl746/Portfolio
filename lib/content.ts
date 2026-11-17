@@ -38,7 +38,7 @@ export const SITE = {
 };
 
 export const STATS = [
-  { eyebrow: "Currently working at", value: "Marble Investments" },
+  { eyebrow: "Currently working at", value: "Instant Scaling" },
   { eyebrow: "Award winner at", value: "Hack the North" },
 ];
 
@@ -147,15 +147,28 @@ export type ExperienceEntry = {
 
 export const EXPERIENCE: ExperienceEntry[] = [
   {
+    org: "Instant Scaling",
+    role: "Artificial Intelligence Engineer",
+    period: "Nov 2026 to Present",
+    blurb:
+      "Performance marketing agency that runs Meta ad campaigns for direct-to-consumer brands.",
+    link: "https://instantscaling.com/",
+    bullets: [
+      "Architecting a company-wide AI platform where specialized agents handle business work 24/7.",
+      "Building agents that switch AI providers during outages, remember past work, and learn from human corrections.",
+    ],
+  },
+  {
     org: "Marble Investments",
     role: "Software Engineer",
-    period: "Sep 2026 to Present",
+    period: "Sep 2026 to Nov 2026",
     blurb:
       "Equity research firm backed by private capital, investing in the trends reshaping the world.",
     link: "https://www.marbleinvestments.ca/",
     bullets: [
-      "Building a news pipeline for the firm's stock research platform that sources and filters the latest news for every company the team tracks, then merges it into one feed.",
-      "Integrating an LLM to flag industry news that could affect those companies."
+      "Built a news pipeline for the firm's stock research platform that pulls news and SEC filings for 194 stocks every 10 minutes, filters out ads, opinion pieces, and roundups, and merges the rest into one feed. It reached 93% precision on 74 hand-checked articles.",
+      "Added an LLM classifier (Claude, structured outputs) that raised precision to 97%, and cut its API cost in half with prompt caching.",
+      "Prototyped a classifier that sorts industry news into 23 investment themes, with 88% of 89 articles on topic.",
     ],
   },
   {
@@ -166,7 +179,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "The University of Waterloo's satellite design team, building a 3U CubeSat to be the first satellite launched by Waterloo students. Now competing for the Canadian Space Agency's CUBICS program.",
     bullets: [
       "Developing the Mission Control Centre, the ground station web app operators use to send commands to the CubeSat and monitor the telemetry it sends back.",
-      "Designing and building the operator dashboard, combining satellite status, command history, telemetry, and the satellite's latest image into one unified interface.",
+      "Designing and building the operator dashboard, combining satellite status, command history, telemetry, and the satellite's latest image into a single interface.",
     ],
     link: "https://www.uworbital.org/",
   },

@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 };
 
 const DESCRIPTION =
-  "Computer Science student at the University of Waterloo. Software engineer at Marble Investments and UW Orbital.";
+  "Computer Science student at the University of Waterloo. AI engineer at Instant Scaling and software engineer at UW Orbital.";
 
 export const metadata: Metadata = {
   // Relative URLs below (canonical, link preview image) resolve against this.
