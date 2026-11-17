@@ -38,14 +38,14 @@ export const SITE = {
 };
 
 export const STATS = [
-  { eyebrow: "Currently working at", value: "Instant Scaling" },
+  { eyebrow: "Working at", value: "Instant Scaling" },
   { eyebrow: "Award winner at", value: "Hack the North" },
 ];
 
 export const FLAGSHIP: Project = {
   name: "Nebulosity",
   context: "Live at nebulosity.ca",
-  description: "Gives Claude Code a live map of how a big codebase fits together, so a question that spans many files takes one tool call instead of a chain of searches. In 378 test runs, Claude Code answered those up to 4.4× faster and got all 42 fully right, against 29 without it. Nebulosity is published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
+  description: "Gives Claude Code a live map of how a large codebase fits together, so it can answer a question that spans many files with one tool call instead of a chain of searches. On multi-file questions, Claude Code with Nebulosity answered up to 4.4× faster and was fully right in 42 of 42 test runs, versus 29 without it. Nebulosity is published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
   // The speedup links to how it was measured, for anyone who doubts it.
   descriptionLink: {
     text: "4.4× faster",
@@ -79,14 +79,14 @@ export const PROJECTS: Project[] = [
     github: "https://github.com/andrewl746/pyronac",
     image: {
       src: "/projects/pyronac-bases.webp",
-      alt: "Pyronac's fire base planner on the night globe, with 25 numbered base sites across Canada over the July 2023 fire hot spots",
+      alt: "Pyronac's fire base planner on the night globe, with 25 numbered base sites across Canada over the July 2023 fire hotspots",
     },
   },
   {
     name: "Suplex",
     context: "Hack the Valley 2026",
     description:
-      "Checks any Toronto address against the City's four pre-approved multiplex designs and shows the result in 3D. I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
+      "Checks any Toronto address against the City's 4 pre-approved multiplex designs and shows the result in 3D. I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
     tech: ["Python", "FastAPI", "Shapely", "three.js", "React"],
     live: "https://suplex.andrewli.app",
     github: "https://github.com/andrewl746/suplex",
@@ -100,7 +100,7 @@ export const PROJECTS: Project[] = [
     name: "OlympIQ",
     context: "Live at olympiq.ca",
     description:
-      "Set to run scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours manually assigning 60+ competitors to events while juggling their preferences and avoiding time conflicts. A custom algorithm now does it instantly, flags any conflicts it can't resolve, and exports the schedule to Excel. It was piloted with the executives this summer before the full rollout for the 2026–27 season.",
+      "Set to run scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours manually assigning 60+ competitors to events while juggling their preferences and avoiding time conflicts. A custom algorithm now does it instantly, flags any conflicts it can't resolve, and exports the schedule to Excel. It was piloted with the executives in summer 2026 before the full rollout for the 2027 season.",
     tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
     live: "https://www.olympiq.ca",
     image: {
@@ -166,9 +166,9 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Equity research firm backed by private capital, investing in the trends reshaping the world.",
     link: "https://www.marbleinvestments.ca/",
     bullets: [
-      "Built a news pipeline for the firm's stock research platform that pulls news and SEC filings for 194 stocks every 10 minutes, filters out ads, opinion pieces, and roundups, and merges the rest into one feed. It reached 93% precision on 74 hand-checked articles.",
-      "Added an LLM classifier (Claude, structured outputs) that raised precision to 97%, and cut its API cost in half with prompt caching.",
-      "Prototyped a classifier that sorts industry news into 23 investment themes, with 88% of 89 articles on topic.",
+      "Built a news pipeline for the firm's research platform that pulls news and SEC filings for 194 stocks every 10 minutes and filters out noise like ads and opinion pieces, at 93% precision on 74 hand-checked articles.",
+      "Added an LLM classifier (Claude, structured outputs) that raised the precision to 97%, then cut its API cost in half with prompt caching.",
+      "Prototyped another classifier that sorts industry news into 23 investment themes, with 88% of 89 articles on topic.",
     ],
   },
   {
@@ -204,7 +204,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Nonprofit coding organization providing free courses and tools to over 2,200 members worldwide.",
     bullets: [
       "Designed and taught a 5-week introductory C++ course to 11 university students covering syntax, data types, pointers, and functions.",
-      "Every student successfully built a fully functional Library Management System using arrays and custom functions for their final project."
+      "Guided every student to build a working library management system with arrays and custom functions as their final project.",
     ],
     link: "https://www.kurius.ca/",
   },

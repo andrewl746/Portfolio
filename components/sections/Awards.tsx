@@ -14,7 +14,7 @@ export default function Awards() {
       <Reveal>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
           Hackathons I&apos;ve won and my competitive programming results.
-          500+ problems solved across DMOJ, Codeforces, and USACO.
+          500+ problems solved across DMOJ and Codeforces.
         </p>
       </Reveal>
       <Reveal delay={80}>
