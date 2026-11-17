@@ -28,7 +28,7 @@ export const SITE = {
   // One sentence per line on wider screens.
   sub: [
     "Shipped Nebulosity, which makes Claude Code up to 4.4× faster.",
-    "Now building software that helps satellites avoid collisions.",
+    "Currently building software that helps satellites avoid collisions.",
   ],
   email: "andrewli746@gmail.com",
   linkedIn: "https://www.linkedin.com/in/andrewl746/",
@@ -179,7 +179,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "The University of Waterloo's satellite design team, building a 3U CubeSat to be the first satellite launched by Waterloo students. Now competing for the Canadian Space Agency's CUBICS program.",
     bullets: [
       "Developing the Mission Control Centre, the ground station web app operators use to send commands to the CubeSat and monitor the telemetry it sends back.",
-      "Designing and building the operator dashboard, combining satellite status, command history, telemetry, and the satellite's latest image into a single interface.",
+      "Designing and building the operator dashboard, combining satellite status, command history, telemetry, and the satellite's latest image into one unified interface.",
     ],
     link: "https://www.uworbital.org/",
   },
