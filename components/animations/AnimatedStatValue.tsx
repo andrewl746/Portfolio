@@ -1,26 +1,36 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { statsSettled } from "@/lib/hero-cue";
 
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const NOISE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const ANIMATION_DURATION = 1000;
+// How many characters flicker ahead of the ones that have locked in.
+const NOISE_WINDOW = 3;
 
-// Scrambles every character except spaces, so multi-word values keep their
-// word shape while they resolve.
-function randomLike(target: string) {
-  return Array.from(target, (char) =>
-    char === " "
-      ? " "
-      : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+// One frame of a value coming in like a transmission: characters lock in
+// from left to right behind a short band of static, and the ones after it
+// haven't arrived yet. Returns the locked text and the static after it.
+// Spaces stay spaces, so words keep their shape, and the locked part never
+// shifts because everything changing is to its right.
+function receiving(target: string, progress: number): [string, string] {
+  const head = progress * (target.length + NOISE_WINDOW);
+  const locked = Math.max(0, Math.min(target.length, Math.ceil(head - NOISE_WINDOW)));
+  const end = Math.max(locked, Math.min(target.length, Math.ceil(head)));
+  const noise = Array.from(target.slice(locked, end), (char) =>
+    char === " " ? " " : NOISE[Math.floor(Math.random() * NOISE.length)]
   ).join("");
+  return [target.slice(0, locked), noise];
 }
 
 // The real value is rendered and visible from the first paint, so visitors on
 // a slow connection (and crawlers, and anyone whose JS never loads) always see
-// it. Once JS is running and the stat scrolls into view, it resets to a
-// scramble or to 0 and animates back to the real value.
+// it. Once JS is running and the stat scrolls into view, it clears and comes
+// back in letter by letter (or counts up from 0, for a number).
 export default function AnimatedStatValue({ value }: { value: string }) {
   const [display, setDisplay] = useState(value);
+  // The static ahead of the received letters, drawn in brass.
+  const [noise, setNoise] = useState("");
   const ref = useRef<HTMLSpanElement>(null);
   const played = useRef(false);
 
@@ -39,17 +49,25 @@ export default function AnimatedStatValue({ value }: { value: string }) {
 
       const match = value.match(/^(\d+)(.*)$/);
 
-      // Non-numeric values scramble into place.
+      // Non-numeric values come in like a transmission, at a steady rate.
       if (!match) {
-        setDisplay(randomLike(value));
         const startedAt = performance.now();
+        const show = (progress: number) => {
+          const [locked, ahead] = receiving(value, progress);
+          setDisplay(locked);
+          setNoise(ahead);
+        };
+        show(0);
         interval = window.setInterval(() => {
-          if (performance.now() - startedAt >= ANIMATION_DURATION) {
+          const progress = (performance.now() - startedAt) / ANIMATION_DURATION;
+          if (progress >= 1) {
             window.clearInterval(interval);
             setDisplay(value);
+            setNoise("");
+            statsSettled();
             return;
           }
-          setDisplay(randomLike(value));
+          show(progress);
         }, 34);
         return;
       }
@@ -75,6 +93,7 @@ export default function AnimatedStatValue({ value }: { value: string }) {
           frame = requestAnimationFrame(tick);
         } else {
           setDisplay(value);
+          statsSettled();
         }
       };
 
@@ -100,5 +119,10 @@ export default function AnimatedStatValue({ value }: { value: string }) {
     };
   }, [value]);
 
-  return <span ref={ref}>{display}</span>;
+  return (
+    <span ref={ref}>
+      {display}
+      {noise && <span className="text-brass">{noise}</span>}
+    </span>
+  );
 }

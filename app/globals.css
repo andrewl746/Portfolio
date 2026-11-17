@@ -176,6 +176,98 @@ html:not(.js) .typewriter-caret {
   display: none;
 }
 
+/* Hero tagline hyperspace arrival (HyperdriveTagline.tsx). The line is
+   absent while the stats come in; a moment after they settle, it appears
+   stretched 20x sideways and smeared, so its
+   letters read as streaks of light, and snaps into place from the left with
+   the site's strong ease-out. A white-hot copy of the text (::after) and a soft bloom behind it
+   (::before) flash at the arrival and fade. The copy is a pseudo-element with
+   empty alt text, so screen readers don't hear the line twice, and both
+   layers only exist while it arrives. */
+.hyperdrive {
+  /* The pause after the stats settle, long enough to read what they landed on. */
+  --hyperdrive-delay: 700ms;
+  display: inline-block;
+  position: relative;
+  /* Keeps the bloom (z-index -1) behind this line, not behind the page. */
+  isolation: isolate;
+  transform-origin: right center;
+}
+
+.js .hyperdrive[data-state="waiting"] {
+  opacity: 0;
+  /* If the script never starts the arrival, show the line anyway. Later than
+     the arrival can take (the stats take 1s to come in first). */
+  animation: hyperdrive-fallback 0s linear 4s forwards;
+}
+
+.hyperdrive[data-state="arriving"] {
+  animation: hyperdrive-arrive 260ms cubic-bezier(0.23, 1, 0.32, 1) var(--hyperdrive-delay) both;
+}
+
+.hyperdrive[data-state="arriving"]::before,
+.hyperdrive[data-state="arriving"]::after {
+  position: absolute;
+  pointer-events: none;
+}
+
+.hyperdrive[data-state="arriving"]::before {
+  content: "";
+  inset: -60% -6%;
+  z-index: -1;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 240, 235, 0.5),
+    rgba(224, 69, 95, 0.22) 45%,
+    transparent 75%
+  );
+  animation: hyperdrive-bloom 700ms ease-out var(--hyperdrive-delay) both;
+}
+
+.hyperdrive[data-state="arriving"]::after {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  inset: 0;
+  color: #fff;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.85),
+    0 0 22px rgba(224, 69, 95, 0.75);
+  animation: hyperdrive-flash 900ms linear var(--hyperdrive-delay) both;
+}
+
+@keyframes hyperdrive-fallback {
+  to { opacity: 1; }
+}
+
+/* The blur is applied before the stretch, so it smears sideways like motion
+   blur and sharpens as the line lands. */
+@keyframes hyperdrive-arrive {
+  0% { opacity: 0; transform: scaleX(20); filter: blur(2px); }
+  10% { opacity: 1; }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+/* Holds white-hot through the snap, then cools quickly and trails off. */
+@keyframes hyperdrive-flash {
+  0% { opacity: 0; }
+  5% { opacity: 1; }
+  28% { opacity: 0.9; }
+  55% { opacity: 0.32; }
+  100% { opacity: 0; }
+}
+
+/* Peaks as the line lands. */
+@keyframes hyperdrive-bloom {
+  0% { opacity: 0; }
+  24% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes hyperdrive-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Star twinkle used by constellation nodes. */
 @keyframes twinkle {
   0%, 100% { opacity: 0.4; }
@@ -508,6 +600,10 @@ html:not(.js) .earth-marker {
   .tech-flash { animation: none; }
   .viewfinder[data-lock]::before { animation: none; opacity: 1; transform: none; }
   .viewfinder[data-lock]::after { animation: none; }
+  /* The tagline just fades in: no streak, no flash. */
+  .hyperdrive[data-state="arriving"] { animation: hyperdrive-fade 200ms ease-out both; }
+  .hyperdrive[data-state="arriving"]::before,
+  .hyperdrive[data-state="arriving"]::after { content: none; animation: none; }
   .earth-stage { transition: none; }
   .earth-marker { transition: none; }
 }

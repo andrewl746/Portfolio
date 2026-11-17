@@ -1,7 +1,7 @@
 import { SITE, STATS } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import AnimatedStatValue from "@/components/animations/AnimatedStatValue";
-import TypewriterSubtitle from "@/components/animations/TypewriterSubtitle";
+import HyperdriveTagline from "@/components/animations/HyperdriveTagline";
 
 export default function About() {
   return (
@@ -33,7 +33,7 @@ export default function About() {
         {SITE.name}
       </h1>
       <p className="mt-6 max-w-xl text-lg leading-relaxed text-primary/90 sm:text-xl">
-        <TypewriterSubtitle text={SITE.tagline} />
+        <HyperdriveTagline text={SITE.tagline} />
       </p>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-body">
         {/* Each sentence gets its own line wherever the paragraph is at its
