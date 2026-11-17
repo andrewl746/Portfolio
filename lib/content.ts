@@ -166,7 +166,8 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Equity research firm backed by private capital, investing in the trends reshaping the world.",
     link: "https://www.marbleinvestments.ca/",
     bullets: [
-      "Built a news pipeline for the firm's research platform that pulls news and SEC filings for 194 stocks every 10 minutes and filters out noise like ads and opinion pieces, at 93% precision on 74 hand-checked articles.",
+      "Built a news pipeline for the firm's stock research platform that pulls news and SEC filings for 194 stocks every 10 minutes and merges them into one feed.",
+      "Filtered out noise like ads and opinion pieces, reaching 93% precision on 74 hand-checked articles.",
       "Added an LLM classifier (Claude, structured outputs) that raised the precision to 97%, then cut its API cost in half with prompt caching.",
       "Prototyped another classifier that sorts industry news into 23 investment themes, with 88% of 89 articles on topic.",
     ],
