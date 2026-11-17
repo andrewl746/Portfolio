@@ -31,6 +31,10 @@ const DRAW_SECONDS = 1.8;
 // One pass of the hero satellite across the frame, and the pause between.
 const PASS_SECONDS = 15;
 const GAP_SECONDS = 3.2;
+// When the first pass's glint lands, in seconds after the orbit appears. The
+// first pass starts part-way along its arc to get there, so the glint comes
+// before a visitor has had time to scroll away.
+const FIRST_GLINT_SECONDS = 1.4;
 // Length of the satellite's trail, in radians of orbit behind it.
 const TRAIL_SPAN = 0.05;
 // Share of the frame height kept as the bottom scrim under the footer.
@@ -144,6 +148,9 @@ type Geometry = {
   /** Seconds of animation per second of real orbital motion. */
   timeScale: number;
   restU: number;
+  /** Seconds of the first pass skipped so its glint lands FIRST_GLINT_SECONDS
+   *  after the orbit appears. */
+  lead: number;
 };
 
 function buildGeometry(frame: EarthFrame): Geometry {
@@ -153,12 +160,17 @@ function buildGeometry(frame: EarthFrame): Geometry {
   let limbIndex = n;
   let restU = o.start;
   let restY = Infinity;
+  let sunIndex = -1;
+  let lastSun = 0;
   for (let i = 0; i <= n; i++) {
     const u = o.start + ((o.end - o.start) * i) / n;
     const p = orbitPoint(o, u);
     const s = see(frame, p);
     path.push({ x: s.x, y: s.y });
     if (limbIndex === n && !overEarth(frame, p)) limbIndex = i;
+    // Where the pass leaves Earth's shadow, which is where it glints.
+    if (sunIndex < 0 && lastSun < 0.5 && s.sun >= 0.5) sunIndex = i;
+    lastSun = s.sun;
     // The still frame for reduced motion: the top of the arc, in sunlight.
     if (s.y < restY) {
       restY = s.y;
@@ -166,7 +178,8 @@ function buildGeometry(frame: EarthFrame): Geometry {
     }
   }
   const realSeconds = (o.end - o.start) / angularSpeed(o);
-  return { frame, path, limbIndex, timeScale: PASS_SECONDS / realSeconds, restU };
+  const lead = sunIndex < 0 ? 0 : Math.max(0, (PASS_SECONDS * sunIndex) / n - FIRST_GLINT_SECONDS);
+  return { frame, path, limbIndex, timeScale: PASS_SECONDS / realSeconds, restU, lead };
 }
 
 type Traffic = { orbit: Orbit; duration: number; period: number; offset: number };
@@ -479,10 +492,12 @@ export default function EarthFinale({
       }
       const o = geo.frame.orbit;
       // The hero's first pass starts the moment the line starts drawing, so
-      // something is moving as soon as the orbit appears (the line races
-      // ahead of it). Each pass runs on past the set until its trail has
-      // followed it down.
-      const time = since;
+      // something is moving as soon as the orbit appears. It starts part-way
+      // along its arc (geo.lead), so it reaches sunlight and glints within
+      // FIRST_GLINT_SECONDS, and fades in once the racing line has passed
+      // it. Later passes start from the edge of the frame. Each pass runs on
+      // past the set until its trail has followed it down.
+      const time = since + geo.lead;
       const sinkSeconds = (TRAIL_SPAN / (o.end - o.start)) * PASS_SECONDS;
       let hero: { u: number; glint: number } | null = null;
       if (time >= 0) {
@@ -528,7 +543,11 @@ export default function EarthFinale({
         ctx.restore();
       }
       for (const m of moving) drawTraffic(ctx, geo.frame, k, m.o, m.u, m.fade);
-      if (hero) drawHero(ctx, geo, k, hero.u, hero.glint);
+      if (hero) {
+        ctx.globalAlpha = smoothstep(0.12, 0.42, since);
+        drawHero(ctx, geo, k, hero.u, hero.glint);
+        ctx.globalAlpha = 1;
+      }
     };
 
     const resize = () => {
