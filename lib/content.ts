@@ -9,6 +9,9 @@ export type Project = {
   video?: string;
   // Hackathon write-up.
   devpost?: string;
+  // A headline number shown in the subheading after the context, brighter
+  // than the rest of it, such as a download count.
+  stat?: string;
   award?: string;
   // Card screenshot in public/, made per docs/project-images.md.
   image?: { src: string; alt: string };
@@ -45,7 +48,10 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "Nebulosity",
   context: "Live at nebulosity.ca",
-  description: "Gives Claude Code a live map of how a large codebase fits together, so it can answer a question that spans many files with one tool call instead of a chain of searches. On multi-file questions, Claude Code with Nebulosity answered up to 4.4× faster and was fully right in 42 of 42 test runs, versus 29 without it. Nebulosity is published on npm and the VS Code Marketplace, with an interactive map you can explore in VS Code or the browser.",
+  description: "Gives Claude Code a live map of how a large codebase fits together, so it can answer a question that spans many files with one tool call instead of a chain of searches. On multi-file questions, Claude Code with Nebulosity answered up to 4.4× faster and was fully right in 42 of 42 test runs, versus 29 without it. Nebulosity is published on npm, the VS Code Marketplace, and Open VSX, and you can explore its interactive map in VS Code or the browser.",
+  // {downloads} is filled in with the live total from those three stores
+  // (lib/downloads.ts).
+  stat: "{downloads} downloads",
   // The speedup links to how it was measured, for anyone who doubts it.
   descriptionLink: {
     text: "4.4× faster",

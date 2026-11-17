@@ -11,6 +11,11 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import EarthFinale from "@/components/EarthFinale";
 
+// The page is built ahead of time and rebuilt in the background at most once
+// a day, so Nebulosity's download count (lib/downloads.ts) stays current
+// without visitors ever waiting on the stores.
+export const revalidate = 86400;
+
 export default function Home() {
   return (
     <div>

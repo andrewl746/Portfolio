@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
+import { formatDownloads, nebulosityDownloads } from "@/lib/downloads";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 import ViewfinderLock from "@/components/animations/ViewfinderLock";
@@ -53,6 +54,12 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
       <h3 className="font-serif text-2xl text-primary">{p.name}</h3>
       <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-brass">
         {p.context}
+        {p.stat && (
+          <>
+            {" / "}
+            <span className="text-primary">{p.stat}</span>
+          </>
+        )}
         {p.award ? ` / ${p.award}` : ""}
       </p>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
@@ -91,7 +98,15 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
   );
 }
 
-export default function Projects() {
+export default async function Projects() {
+  // Nebulosity's card quotes its live download total (lib/downloads.ts).
+  const downloads = formatDownloads(await nebulosityDownloads());
+  const fill = (text: string) => text.replaceAll("{downloads}", downloads);
+  const flagship = {
+    ...FLAGSHIP,
+    description: fill(FLAGSHIP.description),
+    stat: FLAGSHIP.stat && fill(FLAGSHIP.stat),
+  };
   return (
     <section id="projects" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
       <Constellation
@@ -107,7 +122,7 @@ export default function Projects() {
       </Reveal>
       <div className="mt-8">
         <Reveal>
-          <Row p={FLAGSHIP} current />
+          <Row p={flagship} current />
         </Reveal>
         {PROJECTS.map((p, i) => (
           <Reveal key={p.name} delay={Math.min(i * 60, 240)}>
