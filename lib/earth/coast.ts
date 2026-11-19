@@ -271,6 +271,7 @@ export function startCoast({
     write("band", bandY === null ? "" : bandY.toFixed(0) + "px", (px) =>
       px ? heroEl!.style.setProperty("--band-y", px) : heroEl!.style.removeProperty("--band-y"),
     );
+    // The text fades in as the name rises, and out as it sets.
     const fade = (1 - smoothstep(0.06, 0.36, t)) * smoothstep(0.5, 1.7, time);
     write("fade", fade.toFixed(3), (value) => heroEl!.style.setProperty("--hero-fade", value));
     // Faded out: not clickable, not in the tab order.

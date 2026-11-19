@@ -156,121 +156,6 @@ html:not(.js) .typewriter-caret {
   display: none;
 }
 
-/* Hero tagline hyperspace arrival (HyperdriveTagline.tsx). The line is
-   absent while the stats come in; a moment after they settle, it comes out of
-   the distance toward you. It grows from 60% with a little blur and snaps into
-   place with the site's strong ease-out, leaving two fading copies behind it,
-   smaller and slower, like a trail back into the distance (.hyperdrive-echo).
-   As it lands, a white-hot copy of the text (::after) and a soft bloom behind
-   it (::before) flash and fade. The copy is a pseudo-element with empty alt
-   text, so screen readers don't hear the line twice, and every layer only
-   exists while it arrives. */
-.hyperdrive {
-  /* The pause after the stats settle, long enough to read what they landed on. */
-  --hyperdrive-delay: 700ms;
-  display: inline-block;
-  position: relative;
-  /* Keeps the bloom (z-index -1) behind this line, not behind the page. */
-  isolation: isolate;
-  /* It grows from its own middle. */
-  transform-origin: center;
-}
-
-.js .hyperdrive[data-state="waiting"] {
-  opacity: 0;
-  /* If the script never starts the arrival, show the line anyway. Later than
-     the arrival can take (the stats take 1s to come in first). */
-  animation: hyperdrive-fallback 0s linear 4s forwards;
-}
-
-.hyperdrive[data-state="arriving"] {
-  animation: hyperdrive-approach 260ms cubic-bezier(0.23, 1, 0.32, 1) var(--hyperdrive-delay) both;
-}
-
-.hyperdrive[data-state="arriving"]::before,
-.hyperdrive[data-state="arriving"]::after,
-.hyperdrive-echo {
-  position: absolute;
-  pointer-events: none;
-}
-
-.hyperdrive[data-state="arriving"]::before {
-  content: "";
-  inset: -60% -6%;
-  z-index: -1;
-  background: radial-gradient(
-    closest-side,
-    rgba(255, 240, 235, 0.5),
-    rgba(224, 69, 95, 0.22) 45%,
-    transparent 75%
-  );
-  animation: hyperdrive-bloom 700ms ease-out var(--hyperdrive-delay) both;
-}
-
-.hyperdrive[data-state="arriving"]::after {
-  content: attr(data-text);
-  content: attr(data-text) / "";
-  inset: 0;
-  color: #fff;
-  text-shadow:
-    0 0 8px rgba(255, 255, 255, 0.85),
-    0 0 22px rgba(224, 69, 95, 0.75);
-  animation: hyperdrive-flash 900ms linear var(--hyperdrive-delay) both;
-}
-
-.hyperdrive-echo {
-  --echo-from: 0.78;
-  --echo-peak: 0.5;
-  inset: 0;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(224, 69, 95, 0.8);
-  transform-origin: center;
-  animation: hyperdrive-echo 380ms cubic-bezier(0.23, 1, 0.32, 1) var(--hyperdrive-delay) both;
-}
-
-.hyperdrive-echo[data-echo="far"] {
-  --echo-from: 0.55;
-  --echo-peak: 0.3;
-  animation-duration: 480ms;
-}
-
-@keyframes hyperdrive-fallback {
-  to { opacity: 1; }
-}
-
-@keyframes hyperdrive-approach {
-  0% { opacity: 0; transform: scale(0.6); filter: blur(3px); }
-  15% { opacity: 1; }
-  100% { opacity: 1; transform: none; filter: none; }
-}
-
-@keyframes hyperdrive-echo {
-  0% { opacity: 0; transform: scale(var(--echo-from)); }
-  15% { opacity: var(--echo-peak); }
-  100% { opacity: 0; transform: none; }
-}
-
-/* Holds white-hot through the snap, then cools quickly and trails off. */
-@keyframes hyperdrive-flash {
-  0% { opacity: 0; }
-  5% { opacity: 1; }
-  28% { opacity: 0.9; }
-  55% { opacity: 0.32; }
-  100% { opacity: 0; }
-}
-
-/* Peaks as the line lands. */
-@keyframes hyperdrive-bloom {
-  0% { opacity: 0; }
-  24% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-@keyframes hyperdrive-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 /* Star twinkle used by constellation nodes. */
 @keyframes twinkle {
   0%, 100% { opacity: 0.4; }
@@ -784,26 +669,12 @@ html:not(.js) .typewriter-caret {
 }
 
 .hero-stat dd {
-  position: relative;
   margin-top: 4px;
   font-family: var(--serif);
   font-size: 24px;
   line-height: 32px;
   white-space: nowrap;
   color: var(--text-primary);
-}
-
-/* The value's final width, held from the start (see Hero.tsx). */
-.hero-stat dd::before {
-  content: attr(data-value);
-  visibility: hidden;
-}
-
-.hero-stat dd > span {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .hero-actions {
@@ -1256,11 +1127,6 @@ html:not(.js) .hero-pin {
   .tech-flash { animation: none; }
   .viewfinder[data-lock]::before { animation: none; opacity: 1; transform: none; }
   .viewfinder[data-lock]::after { animation: none; }
-  /* The tagline just fades in: no streak, no flash. */
-  .hyperdrive[data-state="arriving"] { animation: hyperdrive-fade 200ms ease-out both; }
-  .hyperdrive-echo { display: none; }
-  .hyperdrive[data-state="arriving"]::before,
-  .hyperdrive[data-state="arriving"]::after { content: none; animation: none; }
   .topbar, .topbar-brand, .topbar-menu i { transition: none; }
   .coast[data-gl="off"] .scene-pin { transition: none; }
 }

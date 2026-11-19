@@ -1,11 +1,4 @@
 import { SITE, STATS } from "@/lib/content";
-import AnimatedStatValue from "@/components/animations/AnimatedStatValue";
-import HyperdriveTagline from "@/components/animations/HyperdriveTagline";
-
-// The hero text fades in as the name rises (lib/earth/coast.ts). The stat
-// values wait this long before they come in, so they do it where they can be
-// seen, and the tagline arrives after them.
-const STATS_DELAY_MS = 400;
 
 /**
  * The first screen: the name as wide as the screen allows, standing behind
@@ -21,6 +14,9 @@ const STATS_DELAY_MS = 400;
  * The tagline is here twice and CSS shows one: above the name on wide
  * screens, with the two sentences under the limb on narrower ones, where the
  * top would get crowded.
+ *
+ * All of the text fades in together as the name rises. The name and the
+ * Earth are the one thing that moves on this screen; the text just arrives.
  */
 export default function Hero() {
   return (
@@ -32,35 +28,20 @@ export default function Hero() {
         <div data-scene="hero-top" className="hero-top hero-text">
           <div className="hero-who">
             <p className="hero-eyebrow">{SITE.identity}</p>
-            <p className="hero-tagline">
-              <HyperdriveTagline text={SITE.tagline} />
-            </p>
+            <p className="hero-tagline">{SITE.tagline}</p>
           </div>
           <dl className="hero-stats">
             {STATS.map((s) => (
               <div key={s.eyebrow} className="hero-stat">
                 <dt>{s.eyebrow}</dt>
-                {/* An invisible ::before copy of the final value reserves the
-                    width, so the letters coming in never shift their
-                    neighbours. It's a pseudo-element so the value isn't
-                    duplicated in the page text that crawlers and screen
-                    readers see. */}
-                <dd data-value={s.value}>
-                  {/* Clipped: scrambled letters (m, w...) can be wider than
-                      the final word. */}
-                  <span>
-                    <AnimatedStatValue value={s.value} delay={STATS_DELAY_MS} />
-                  </span>
-                </dd>
+                <dd>{s.value}</dd>
               </div>
             ))}
           </dl>
         </div>
 
         <div data-scene="hero-band" className="hero-band hero-text">
-          <p className="hero-tagline">
-            <HyperdriveTagline text={SITE.tagline} />
-          </p>
+          <p className="hero-tagline">{SITE.tagline}</p>
           <p className="hero-sub">
             {SITE.sub.map((s) => (
               <span key={s}>{s} </span>
