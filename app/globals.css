@@ -403,7 +403,7 @@ html:not(.js) .typewriter-caret {
 }
 
 /* ==========================================================================
-   The home page, "Down the coast" (app/page.tsx, docs/earth.md).
+   The home page, "Down the coast" (app/page.tsx).
 
    The live Earth is drawn over the page, so the name sets behind it and
    every section rises from behind it. Layers, back to front:

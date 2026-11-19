@@ -5,7 +5,7 @@
 // lights dim and redden toward the limb (Kasten-Young air mass), and the
 // twilight band, the faint blue limb and the green airglow layer use the
 // script's own formulas. So from the finale's camera it draws the finale, and
-// the page can end on that image (docs/earth.md).
+// the page can end on that image.
 //
 // Lights come from a high-resolution map of eastern North America, where the
 // camera spends its time, and from the global map elsewhere. The maps are

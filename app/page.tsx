@@ -18,7 +18,7 @@ export const revalidate = 86400;
 
 const km = (altitude: number) => altitude.toLocaleString("en-US");
 
-// The whole page is one flight (docs/earth.md): the live Earth is drawn over
+// The whole page is one flight: the live Earth is drawn over
 // everything, the name sets behind it, each section rises from behind it,
 // and the camera ends on the Contact finale's view. EarthScene runs it and
 // finds what it moves by the data-scene attributes below and in the section

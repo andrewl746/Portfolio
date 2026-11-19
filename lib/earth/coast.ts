@@ -7,7 +7,7 @@
 // page, so the name sets behind it and every section rises from behind it.
 //
 // The page marks the elements this needs with data-scene attributes
-// (app/page.tsx and the section components); docs/earth.md has the picture.
+// (app/page.tsx and the section components).
 import { clamp01, easeInOut, easeOut, ecef, mix, smoothstep, DEG } from "./math";
 import { createEarthRenderer } from "./renderer";
 import { createStage, type Moment, type Shot } from "./stage";

@@ -33,7 +33,7 @@ function Pin({ frame, className }: { frame: EarthFrame; className: string }) {
 }
 
 /**
- * The Earth the whole page is built around (lib/earth, docs/earth.md): the
+ * The Earth the whole page is built around (lib/earth): the
  * live planet drawn over the page, its satellites on a canvas over it and
  * another under the page's content, and the rendered Contact finale image
  * (scripts/render-earth.py) that the live Earth's last frame hands over to.
