@@ -1,5 +1,5 @@
-// Turns a raw screenshot into a project card image that follows
-// docs/project-images.md: 16:10, 1280x800, WebP, all metadata stripped.
+// Turns a raw screenshot into a project card image: 16:10, 1280x800, WebP,
+// all metadata stripped.
 //
 // Usage:
 //   node scripts/process-project-image.mjs <input> <slug> [position]

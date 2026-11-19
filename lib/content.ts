@@ -13,7 +13,7 @@ export type Project = {
   // than the rest of it, such as a download count.
   stat?: string;
   award?: string;
-  // Card screenshot in public/, made per docs/project-images.md.
+  // Card screenshot in public/projects/, made with scripts/process-project-image.mjs.
   image?: { src: string; alt: string };
   // Turns a phrase in the description into a link, such as a claim into the
   // evidence behind it. `text` must appear in the description exactly once
