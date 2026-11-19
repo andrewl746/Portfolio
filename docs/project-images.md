@@ -13,7 +13,7 @@ The standard for screenshots shown on project cards, so every image matches on d
 | Metadata | all stripped (EXIF, GPS location, XMP) |
 | Location | `public/projects/<slug>.webp`, for example `public/projects/suplex.webp` |
 
-Why these numbers: on desktop the image sits below the text at up to 672 px wide, and on a phone it spans the full width (about 330 px). 1280 × 800 is sharp at 2× density on desktop and 3× on phones, and 16:10 suits app screenshots, which are usually wider than tall. Next.js's `<Image>` component serves smaller resized copies to small screens automatically, so the one large file is fine.
+Why these numbers: on a wide screen the image sits beside the text at up to 720 px wide, on a narrower one below it at up to 656 px, and on a phone it spans the full width (about 330 px). 1280 × 800 is sharp at 2× density on desktop and 3× on phones, and 16:10 suits app screenshots, which are usually wider than tall. Next.js's `<Image>` component serves smaller resized copies to small screens automatically, so the one large file is fine.
 
 ## Making one
 
@@ -46,7 +46,7 @@ Most screenshots need some cleanup first. Do it on a copy in `images-src/` (Pyth
 
 - The one moment that sells the project, for example the 3D design rising on a lot for Suplex, or the schedule view for OlympIQ.
 - Dark mode where the app has it, so it sits well on the site's dark background.
-- Text big enough to read at card size. The card shows the image about 640 px wide, so text needs to be roughly 2% of the screenshot's width or more to stay readable (about 40 px tall in a 2000 px screenshot). Apps screenshotted on a wide monitor shrink a lot; zoom the browser to 125–150% or narrow the window before capturing, or crop to the part that matters. For canvas apps (graphs, maps, 3D scenes), zoom the canvas itself so the content fills it; tiny node labels stay blurry no matter how they're cropped.
+- Text big enough to read at card size. The card shows the image about 650 to 700 px wide, so text needs to be roughly 2% of the screenshot's width or more to stay readable (about 40 px tall in a 2000 px screenshot). Apps screenshotted on a wide monitor shrink a lot; zoom the browser to 125–150% or narrow the window before capturing, or crop to the part that matters. For canvas apps (graphs, maps, 3D scenes), zoom the canvas itself so the content fills it; tiny node labels stay blurry no matter how they're cropped.
 - A tight crop with no browser chrome, no personal tabs or bookmarks, and no small unreadable text.
 - No personal data in the screenshot (real names, emails, addresses) unless it's public or yours to share.
 
@@ -58,7 +58,7 @@ Add the image to the project in `lib/content.ts`:
 image: { src: "/projects/<slug>.webp", alt: "What the screenshot shows" },
 ```
 
-The card (`components/sections/Projects.tsx`) then shows it below the text and links, as wide as the description (up to 672 px) on desktop and full width on mobile, through `next/image` with a thin border. Projects without an image keep the plain text layout.
+The card (`components/sections/Projects.tsx`) then shows it through `next/image` with a thin border. On screens 1280 px wide and up it sits beside the text (up to 720 px wide, and never taller than about half the window), so a whole project fits on one screen above the Earth. On narrower screens it sits below the text and links, as wide as the description (up to 656 px), and full width on a phone. Projects without an image keep the plain text layout.
 
 These are applied by the card automatically, so don't bake them into the image files:
 

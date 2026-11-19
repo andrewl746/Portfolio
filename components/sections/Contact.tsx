@@ -2,20 +2,15 @@ import { SITE } from "@/lib/content";
 import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 
-// The footer lives on the Earth below this section (see EarthFinale). On
-// short screens the top padding tightens so this section and the whole Earth
-// still fit on the screen a jump to Contact lands on.
+// Contact stands in the sky of the last screen, over the finale's Earth
+// (.end in app/page.tsx; the footer sits on the Earth at the bottom of it).
+// The scene keeps the Earth below the last line here (data-scene), sinking
+// the whole finale a little on a short window.
 export default function Contact() {
   return (
-    <section
-      id="contact"
-      className="relative scroll-mt-14 pb-6 pt-20 md:scroll-mt-24 [@media(max-height:860px)]:pt-10"
-    >
-      <Constellation
-        name="gemini"
-        className="pointer-events-none absolute right-0 top-6 w-32 md:right-8 md:top-4 md:w-48"
-      />
-      <h2 className="font-serif text-3xl text-primary">Contact</h2>
+    <section id="contact" className="section">
+      <Constellation name="gemini" className="section-constellation" />
+      <h2 className="section-title">Contact</h2>
       <Reveal>
         <p className="mt-6 max-w-xl font-serif text-2xl leading-snug text-primary/90">
           Looking for a Summer 2027 co-op. If you&apos;re building something
@@ -25,7 +20,7 @@ export default function Contact() {
       <Reveal delay={100}>
         {/* Ranked by how to reach me: ways to message first (email, then
             LinkedIn, then X), then places to look (GitHub, resume). */}
-        <div className="mt-8 flex flex-wrap items-center gap-6 text-sm">
+        <div data-scene="contact-last" className="mt-8 flex flex-wrap items-center gap-6 text-sm">
           <a
             href={`mailto:${SITE.email}`}
             className="border border-ember bg-ember/10 px-6 py-3 text-[#f2a3ae] shadow-[0_0_14px_rgba(224,69,95,0.25)] transition-shadow hover:shadow-[0_0_22px_rgba(224,69,95,0.4)] max-sm:w-full max-sm:text-center"
@@ -36,7 +31,7 @@ export default function Contact() {
             href={SITE.linkedIn}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-body transition-colors hover:text-ember"
+            className="tap text-body transition-colors hover:text-ember"
           >
             LinkedIn
           </a>
@@ -45,7 +40,7 @@ export default function Contact() {
             aria-label="X (formerly Twitter)"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-body transition-colors hover:text-ember"
+            className="tap text-body transition-colors hover:text-ember"
           >
             X
           </a>
@@ -53,7 +48,7 @@ export default function Contact() {
             href={SITE.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-body transition-colors hover:text-ember"
+            className="tap text-body transition-colors hover:text-ember"
           >
             GitHub
           </a>
@@ -61,7 +56,7 @@ export default function Contact() {
             href={SITE.resumeHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-body transition-colors hover:text-ember"
+            className="tap text-body transition-colors hover:text-ember"
           >
             Resume
           </a>

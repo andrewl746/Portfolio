@@ -29,11 +29,6 @@
   --radius: 0;
 }
 
-/* Short screens, such as a phone held sideways. Below this height the
-   desktop sidebar can't fit its links and bottom label with room between
-   them, so it tightens its spacing and drops the label. */
-@custom-variant short (@media (max-height: 520px));
-
 html {
   scroll-behavior: smooth;
   /* Faint ember flash on tap instead of the default blue/grey box. */
@@ -114,21 +109,6 @@ html {
   transform: scaleX(0);
   transform-origin: left;
   pointer-events: none;
-}
-
-/* Coordinate grid over the main content area, draws in on load. */
-.coord-grid {
-  background-image:
-    linear-gradient(var(--surface-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--surface-line) 1px, transparent 1px);
-  background-size: 60px 60px;
-  opacity: 0.35;
-  animation: grid-in 1.4s ease-out;
-}
-
-@keyframes grid-in {
-  from { opacity: 0; }
-  to { opacity: 0.35; }
 }
 
 @keyframes terminal-cursor-post {
@@ -329,14 +309,15 @@ html:not(.js) .typewriter-caret {
   opacity: 1;
 }
 
-/* Scroll reveal: content settles up into place when it enters the viewport. */
-.reveal {
+/* Scroll reveal: content settles up into place when it enters the viewport.
+   Only with JS, which is what shows it again. */
+.js .reveal {
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.45s ease-out, transform 0.45s ease-out;
 }
 
-.reveal-shown {
+.js .reveal-shown {
   opacity: 1;
   transform: none;
 }
@@ -355,7 +336,7 @@ html:not(.js) .typewriter-caret {
   animation: tech-flash 0.9s ease-in-out backwards;
 }
 
-/* Thin rule with a faint ember edge on the sidebar's (and drawer's) right side. */
+/* Thin rule with a faint ember edge on the phone drawer's right side. */
 .margin-rule {
   border-right: 1px solid #221f26;
   box-shadow: 1px 0 0 rgba(224, 69, 95, 0.15);
@@ -421,141 +402,93 @@ html:not(.js) .typewriter-caret {
   35% { opacity: 1; }
 }
 
-/* The last screen: Contact plus the Earth, at least one viewport tall less
-   the offset the nav scrolls to (Contact's scroll-mt-14 / md:scroll-mt-24),
-   so jumping to Contact shows the whole scene. svh, so it doesn't change
-   as a phone's address bar slides. */
-.contact-scene {
-  min-height: calc(100vh - 3.5rem);
-  min-height: calc(100svh - 3.5rem);
+/* ==========================================================================
+   The home page, "Down the coast" (app/page.tsx, docs/earth.md).
+
+   The live Earth is drawn over the page, so the name sets behind it and
+   every section rises from behind it. Layers, back to front:
+     -10  stars                      (.starfield)
+       1  the name                   (.hero-name)
+       2  satellites over the sky    (.scene-sky)
+       3  the page's content         (.page, Contact)
+       5  the Earth, then the finale image over its last frame
+       6  satellites crossing the Earth's face  (.scene-face)
+       8  the shade under the footer (.end-scrim)
+      10  the first screen's text, the footer
+      40  the bar (30: its phone drawer), 50: reading progress
+   None of the elements in between may form a stacking context, or the Earth
+   could no longer pass between a section and the sky behind it.
+   ========================================================================== */
+
+.coast {
+  --gutter: clamp(24px, 5.5vw, 88px);
+  --bar: 64px;
+  /* Every constellation sits the same way against its section's title: its
+     box starts --rise above the top of the title, on the same right edge.
+     --sec-top is the space above a title. */
+  --rise: 56px;
+  --sec-top: 96px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  /* Projects are wider than the reading column on wide screens, and 100vw
+     counts the scrollbar; nothing may widen the page into a sideways scroll. */
+  overflow-x: clip;
 }
 
-@media (min-width: 48rem) {
-  .contact-scene {
-    min-height: calc(100vh - 6rem);
-    min-height: calc(100svh - 6rem);
-  }
+/* --- The Earth's layers ------------------------------------------------------ */
+
+/* Sized like the starfield: to the screen with a phone's toolbars away, and
+   pinned by the top edge, so nothing resizes or jumps while they slide. The
+   scene sets the exact size in px (lib/earth/stage.ts). */
+.scene-layer,
+.scene-plate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
+  pointer-events: none;
 }
 
-/* Earth finale under the Contact section. Two renders: a tall one for
-   portrait screens and a wide one for landscape (the media query matches
-   WIDE in EarthFinale.tsx). The frame
-   (.earth-stage) keeps its rendered aspect ratio and is pinned to the
-   bottom; the element around it is at least as tall as the frame minus its
-   empty top sky (the ::before strut, sized as a share of the width), and
-   clips whatever sky doesn't fit. Ratios come from the scene data. */
-.earth-finale {
-  container-type: inline-size;
-}
+.scene-sky { z-index: 2; }
+.scene-earth { z-index: 5; }
+.scene-face { z-index: 6; }
 
-.earth-finale::before {
-  content: "";
-  display: block;
-  padding-top: var(--earth-tall-min);
-}
-
-/* Pinned to the bottom; once the Earth is shorter than the frame from just
-   above the arc down (100cqw * keep), the frame sinks below the bottom edge
-   instead, trimming the near side under the footer. */
-.earth-stage {
-  aspect-ratio: var(--earth-tall);
-  bottom: min(0px, 100% - 100cqw * var(--earth-tall-keep));
-}
-
-.earth-scrim {
-  aspect-ratio: var(--earth-tall-scrim);
-}
-
-.earth-wide {
-  display: none;
-}
-
-@media (orientation: landscape) {
-  .earth-finale::before {
-    padding-top: var(--earth-wide-min);
-  }
-
-  .earth-stage {
-    aspect-ratio: var(--earth-wide);
-    bottom: min(0px, 100% - 100cqw * var(--earth-wide-keep));
-  }
-
-  .earth-scrim {
-    aspect-ratio: var(--earth-wide-scrim);
-  }
-
-  .earth-wide {
-    display: block;
-  }
-
-  .earth-tall {
-    display: none;
-  }
-}
-
-/* A phone held sideways leaves the frame too short for the caption to sit
-   clear of the planet; the footer still shows. */
-@media (orientation: landscape) and (max-height: 500px) {
-  .earth-caption {
-    display: none;
-  }
-}
-
-/* The stage stays hidden until the current framing's image layers have
-   decoded, then fades in; JS drives its rise with the scroll. After a
-   switch between framings it hides at once until the new images are in.
-   Without JS it's simply shown in its resting place, and if JS is on but
-   the component never starts (data-pending is still there), it shows
-   itself after a few seconds rather than staying blank. */
-.earth-stage {
+/* The rendered finale image, laid exactly over the live Earth's last frame:
+   as wide as the screen, standing on the bottom edge. Two renders, a tall one
+   for portrait screens and a wide one for landscape (ratios from the scene
+   data, set in EarthScene.tsx). The scene fades it in at the end. */
+.scene-plate {
+  z-index: 5;
   opacity: 0;
-  transition: opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: transform;
 }
 
-.earth-finale[data-ready] .earth-stage,
-html:not(.js) .earth-stage {
-  opacity: 1;
+.scene-plate-frame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  aspect-ratio: var(--plate-tall);
 }
 
-.earth-finale[data-switching] .earth-stage {
-  opacity: 0;
-  transition: none;
-}
-
-.js .earth-finale[data-pending] .earth-stage {
-  animation: earth-fallback 0s linear 4s forwards;
-}
-
-@keyframes earth-fallback {
-  to { opacity: 1; }
-}
-
-/* The lights and atmosphere fade with the scroll during the rise; their own
-   layers keep that off the paint path. */
-.earth-fade {
-  will-change: opacity;
-}
-
-.earth-scrim {
-  background: linear-gradient(to top, var(--void) 0%, rgba(7, 8, 13, 0.85) 30%, rgba(7, 8, 13, 0) 100%);
+.scene-plate img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
 }
 
 /* Waterloo's pin: a brass ring on its lights, with a leader line up and to
-   the left into the dark over Lake Huron. Appears once the Earth settles. */
-.earth-marker {
+   the left into the dark over Lake Huron. */
+.scene-pin {
+  position: absolute;
   width: 0;
   height: 0;
-  opacity: 0;
-  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.5s;
 }
 
-.earth-finale[data-settled] .earth-marker,
-html:not(.js) .earth-marker {
-  opacity: 1;
-}
-
-.earth-marker-dot {
+.scene-pin-dot {
   position: absolute;
   left: -3.5px;
   top: -3.5px;
@@ -566,7 +499,7 @@ html:not(.js) .earth-marker {
   box-shadow: 0 0 6px rgba(201, 168, 106, 0.45);
 }
 
-.earth-marker-dot::after {
+.scene-pin-dot::after {
   content: "";
   position: absolute;
   left: -13px;
@@ -578,7 +511,7 @@ html:not(.js) .earth-marker {
   transform-origin: 100% 0;
 }
 
-.earth-marker-label {
+.scene-pin-label {
   position: absolute;
   right: 16px;
   bottom: 11px;
@@ -587,6 +520,707 @@ html:not(.js) .earth-marker {
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--brass);
+}
+
+/* Whichever belongs to the finale render on screen (the wide one or the tall
+   one): its pin, its caption. */
+.only-wide { display: none; }
+
+@media (orientation: landscape) {
+  .scene-plate-frame { aspect-ratio: var(--plate-wide); }
+  .only-wide { display: inline; }
+  .only-tall { display: none; }
+}
+
+/* Without WebGL2 the finale image stands in for the live Earth all the way
+   down the page; its Waterloo label belongs to the last screen only. */
+.coast[data-gl="off"] .scene-pin {
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+.coast[data-gl="off"] .scene-plate.at-end .scene-pin { opacity: 1; }
+
+/* --- The bar ------------------------------------------------------------------ */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: var(--bar);
+  padding: 0 var(--gutter);
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+
+/* Clear over the first screen; it gets its backing once the page moves. */
+.topbar[data-solid] {
+  background: rgba(7, 8, 13, 0.85);
+  border-bottom-color: var(--surface-line);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+}
+
+.topbar-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+.topbar-role {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+/* While the big name is still on the first screen, the bar doesn't repeat it. */
+.topbar[data-top] .topbar-brand {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.topbar-nav a {
+  position: relative;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  color: var(--text-body);
+  transition: color 0.15s ease;
+}
+
+.topbar-nav a:hover { color: var(--text-primary); }
+
+.topbar-nav a[aria-current] {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.topbar-nav a[aria-current]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -7px;
+  height: 2px;
+  background: var(--ember);
+  box-shadow: 0 0 8px rgba(224, 69, 95, 0.5);
+}
+
+.topbar-resume {
+  padding: 6px 12px;
+  border: 1px solid rgba(224, 69, 95, 0.4);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f2a3ae;
+  transition: border-color 0.15s ease;
+}
+
+.topbar-resume:hover { border-color: var(--ember); }
+
+.topbar-menu { display: none; }
+
+/* --- The first screen --------------------------------------------------------- */
+
+/* The name: as wide as the screen allows, standing behind the Earth's limb.
+   The scene sizes and places it (lib/earth/coast.ts); the values here are
+   only what shows if it never starts. */
+.hero-name {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  z-index: 1;
+  font-family: var(--serif);
+  font-size: min(24.5vw, 46vh);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: var(--text-primary);
+  transform: translate3d(-50%, 26vh, 0);
+  will-change: transform;
+}
+
+/* The first screen stays put for one more screen of scrolling while the name
+   sets behind the Earth and the horizon sinks to become the floor of the page. */
+.hero-pin {
+  height: 200vh;
+  height: 200svh;
+}
+
+.hero {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 100vh;
+  height: 100svh;
+  pointer-events: none;
+}
+
+.hero a { pointer-events: auto; }
+
+/* Above the name, in clear sky: school and tagline on the left, the two
+   credits on the right. Under the limb, on the dark ocean at the left: the
+   two sentences and the buttons. Nothing sits on the city lights, so nothing
+   has to dim them; this soft shade in the corner is all there is. */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  width: min(100%, 880px);
+  height: 30%;
+  background: radial-gradient(
+    ellipse 100% 100% at 0% 100%,
+    rgba(7, 8, 13, 0.85) 0%,
+    rgba(7, 8, 13, 0.6) 40%,
+    rgba(7, 8, 13, 0) 100%
+  );
+  opacity: var(--hero-fade, 1);
+}
+
+/* It sits on its bottom edge, a little over the name's capitals (--top-y). */
+.hero-top {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 48px;
+  transform: translate3d(0, calc(var(--top-y, 24vh) - 100%), 0);
+}
+
+.hero-who {
+  display: grid;
+  gap: 4px;
+}
+
+.hero-band {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 36px;
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+/* The text fades in as the name rises and out as it sets (--hero-fade).
+   Faded out, it can't be clicked or tabbed to. */
+.hero-text { opacity: var(--hero-fade, 1); }
+.hero.gone .hero-text { visibility: hidden; }
+
+.hero-eyebrow {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.hero-tagline {
+  font-size: 20px;
+  line-height: 1.625;
+  color: rgba(236, 238, 244, 0.9);
+}
+
+.hero-top .hero-tagline { line-height: 1.5; }
+/* Wide screens have the tagline above the name; narrower ones show this copy
+   and hide that one. */
+.hero-band .hero-tagline { display: none; }
+
+.hero-sub {
+  font-size: 14px;
+  line-height: 1.625;
+  color: var(--text-body);
+}
+
+/* One sentence per line. */
+.hero-sub span { display: block; }
+
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+}
+
+.hero-stat {
+  padding-left: 16px;
+  border-left: 2px solid var(--ember);
+}
+
+.hero-stat dt {
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.hero-stat dd {
+  position: relative;
+  margin-top: 4px;
+  font-family: var(--serif);
+  font-size: 24px;
+  line-height: 32px;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+/* The value's final width, held from the start (see Hero.tsx). */
+.hero-stat dd::before {
+  content: attr(data-value);
+  visibility: hidden;
+}
+
+.hero-stat dd > span {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 24px;
+}
+
+.hero-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Without WebGL the stand-in image has city lights where this text is, so it
+   gets a full shade. */
+.coast[data-gl="off"] .hero::after {
+  width: 100%;
+  height: 46%;
+  background: linear-gradient(
+    to top,
+    rgba(7, 8, 13, 0.92) 0%,
+    rgba(7, 8, 13, 0.6) 45%,
+    rgba(7, 8, 13, 0) 100%
+  );
+}
+
+/* Until the scene has placed the first screen, the name and the text wait
+   out of sight, so they don't show in one place and jump to another. If the
+   scene never starts they show themselves after a few seconds, and without
+   JS they simply show: the name then scrolls with the page, where the scene
+   would have set it behind the Earth. */
+.coast:not([data-scene]) .hero-pin { position: relative; }
+.coast:not([data-scene]) .hero-name { position: absolute; }
+
+.js .coast:not([data-scene]) .hero-name {
+  visibility: hidden;
+  animation: scene-late 0s linear 4s forwards;
+}
+
+.js .coast:not([data-scene]) .hero-text,
+.js .coast:not([data-scene]) .hero::after {
+  opacity: 0;
+  animation: scene-late-fade 0.4s ease-out 4s forwards;
+}
+
+html:not(.js) .hero-pin {
+  height: 100vh;
+  height: 100svh;
+}
+
+@keyframes scene-late {
+  to { visibility: visible; }
+}
+
+@keyframes scene-late-fade {
+  to { opacity: 1; }
+}
+
+/* --- The page ----------------------------------------------------------------- */
+
+/* The reading column, on the left. It sits above the satellites that are
+   over the sky, and under the Earth. */
+.page {
+  position: relative;
+  z-index: 3;
+  max-width: calc(60rem + 2 * var(--gutter));
+  padding: 14vh var(--gutter) 34vh;
+}
+
+.section {
+  position: relative;
+  padding: var(--sec-top) 0 104px;
+  scroll-margin-top: 96px;
+}
+
+/* Section titles rise from behind the Earth at full size. */
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(3.75rem, 11vw, 10.5rem);
+  font-optical-sizing: auto;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.section-constellation {
+  position: absolute;
+  right: 0;
+  top: calc(var(--sec-top) - var(--rise));
+  width: 208px;
+  pointer-events: none;
+}
+
+/* The Earth covers the bottom of the window, so a link reached with the
+   keyboard is brought up clear of it, not just onto the screen. */
+.page a { scroll-margin-bottom: 22vh; }
+
+/* Wide screens: a project's screenshot sits beside its words, so a whole
+   project fits on one screen above the Earth. The list is wider than the
+   reading column for it. The screenshot is never taller than about half the
+   window. */
+@media (min-width: 1280px) {
+  .project-list {
+    width: calc(100vw - 2 * var(--gutter));
+    max-width: 86rem;
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 56px;
+  }
+
+  .project-shot {
+    justify-self: end;
+    width: 100%;
+    max-width: min(46rem, calc(86.4vh + 16px));
+    margin-top: 4px;
+  }
+}
+
+/* --- The last screen ---------------------------------------------------------- */
+
+/* Contact in the sky, the finale's Earth under it. At least a screen tall
+   (with a phone's toolbars away), so the page ends on the whole scene. The
+   top padding leaves Contact's constellation room under the bar. */
+.end {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100lvh;
+  padding: calc(var(--bar) + var(--rise) + 16px) var(--gutter) max(132px, 20vh);
+}
+
+.end .section {
+  z-index: 3;
+  max-width: 60rem;
+  padding: 0;
+}
+
+.end .section-title { font-size: clamp(3rem, 7vw, 6.5rem); }
+.end .section-constellation { top: calc(-1 * var(--rise)); }
+
+/* The near side of the planet fades into the page, so the footer reads
+   cleanly over it. */
+.end-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 8;
+  height: 24vh;
+  background: linear-gradient(to top, var(--void) 0%, rgba(7, 8, 13, 0.85) 30%, rgba(7, 8, 13, 0) 100%);
+  pointer-events: none;
+}
+
+.end-foot {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 32px;
+  z-index: 10;
+}
+
+.end-caption {
+  max-width: 20rem;
+  margin: 0 0 16px auto;
+  font-size: 10px;
+  line-height: 1.625;
+  letter-spacing: 0.1em;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* --- Other sizes -------------------------------------------------------------- */
+
+/* Short windows: less air around the text, so the name can stay big. */
+@media (min-width: 1100px) and (max-height: 719px) {
+  .hero-band {
+    bottom: 24px;
+    gap: 10px;
+  }
+}
+
+/* Narrower windows and phones: no dark side to stand on. The top stays light
+   (credits over the school line); the tagline leads the two sentences and
+   the buttons under the limb, which get a shade behind them and sit clear of
+   the bottom edge, where they would be read last. */
+@media (max-width: 1099px) {
+  .hero::after { display: none; }
+
+  .hero-top {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+
+  .hero-top .hero-tagline { display: none; }
+  .hero-band .hero-tagline { display: block; }
+  /* Without WebGL the stand-in Earth sits low on a narrow screen: no room
+     under it for the tagline, plenty above. */
+  .coast[data-gl="off"] .hero-top .hero-tagline { display: block; }
+  .coast[data-gl="off"] .hero-band .hero-tagline { display: none; }
+
+  /* Placed by the scene, in the upper middle of the Earth on show. */
+  .hero-band {
+    top: var(--band-y, 58vh);
+    bottom: auto;
+  }
+
+  .hero-band::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: calc(-1 * var(--gutter));
+    right: calc(-1 * var(--gutter));
+    top: -56px;
+    bottom: -72px;
+    background: linear-gradient(
+      to bottom,
+      rgba(7, 8, 13, 0) 0%,
+      rgba(7, 8, 13, 0.8) 28%,
+      rgba(7, 8, 13, 0.8) 72%,
+      rgba(7, 8, 13, 0) 100%
+    );
+  }
+}
+
+/* A phone held sideways has almost no height: one row above the name, one
+   row under it. */
+@media (max-width: 1099px) and (max-height: 519px) {
+  .hero-top {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 14px 24px;
+  }
+
+  .hero-who {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* Sideways there is room for the tagline up here and none below. */
+  .hero-top .hero-tagline { display: block; }
+  .hero-band .hero-tagline { display: none; }
+
+  .hero-stats {
+    flex: none;
+    flex-wrap: nowrap;
+  }
+
+  .hero-band {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 32px;
+  }
+
+  .hero-band .hero-actions { margin-top: 0; }
+
+  .hero-band::before {
+    top: -28px;
+    bottom: -32px;
+  }
+}
+
+/* Too short for the caption to sit clear of the planet; the footer still shows. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .end-caption { display: none; }
+}
+
+/* Tablet widths: the full bar only just fits, so it loses the small label
+   and some air. */
+@media (min-width: 768px) and (max-width: 999px) {
+  .topbar { gap: 16px; }
+  .topbar-role { display: none; }
+  .topbar-nav { gap: 16px; }
+  .topbar-nav a { font-size: 13px; }
+}
+
+/* Phones. */
+@media (max-width: 767px) {
+  .coast {
+    --gutter: 24px;
+    --bar: 56px;
+    --rise: 32px;
+    --sec-top: 72px;
+  }
+
+  /* The bar: menu button, name, resume. Symmetric columns keep the name on
+     the screen's true centre. The section links move into the drawer. */
+  .topbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    padding: 0 12px;
+    background: rgba(7, 8, 13, 0.85);
+    border-bottom-color: var(--surface-line);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .topbar-nav { display: none; }
+
+  .topbar-brand {
+    grid-column: 2;
+    justify-self: center;
+  }
+
+  .topbar-name { font-size: 18px; }
+  .topbar-role { display: none; }
+
+  .topbar-resume {
+    grid-column: 3;
+    justify-self: end;
+    margin-right: 12px;
+  }
+
+  .topbar-menu {
+    display: grid;
+    place-items: center;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    width: 44px;
+    height: 44px;
+  }
+
+  .topbar-menu span {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 14px;
+  }
+
+  .topbar-menu i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: var(--text-primary);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  }
+
+  .topbar-menu i:nth-child(1) { top: 0; }
+  .topbar-menu i:nth-child(2) { top: 6.25px; }
+  .topbar-menu i:nth-child(3) { bottom: 0; }
+  .topbar-menu[aria-expanded="true"] i:nth-child(1) { transform: translateY(6.25px) rotate(45deg); }
+
+  .topbar-menu[aria-expanded="true"] i:nth-child(2) {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  .topbar-menu[aria-expanded="true"] i:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
+
+  /* The name sets over a shorter scroll and the page starts under it, so the
+     screen is never empty for long. */
+  .hero-pin {
+    height: 170vh;
+    height: 170svh;
+  }
+
+  .page {
+    margin-top: -22vh;
+    margin-top: -22svh;
+    padding-top: 0;
+  }
+
+  .hero-tagline { font-size: 18px; }
+  .hero-stats { gap: 12px 16px; }
+  .hero-stat { padding-left: 12px; }
+
+  .hero-stat dd {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .hero-band .hero-actions { margin-top: 6px; }
+
+  .section {
+    padding-bottom: 80px;
+    scroll-margin-top: 56px;
+  }
+
+  .section-constellation { width: 128px; }
+  .end-foot { bottom: 20px; }
+  .end-caption { max-width: 10.5rem; }
+}
+
+/* The narrowest phones: the two credits shrink a little so they still share
+   one row. */
+@media (max-width: 349px) {
+  .hero-stats { gap: 10px 12px; }
+  .hero-stat { padding-left: 10px; }
+
+  .hero-stat dd {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+/* Touch screens: small text links get a finger-sized target without looking
+   any different. */
+@media (pointer: coarse) {
+  .tap { position: relative; }
+
+  .tap::after {
+    content: "";
+    position: absolute;
+    inset: -14px -8px;
+  }
+
+  /* A project's links can wrap onto two rows: a little less each, and more
+     room between the rows. */
+  .project-links { gap: 24px; }
+  .project-links .tap::after { inset: -12px -8px; }
 }
 
 /* The mobile drawer takes focus itself when it opens (so screen readers
@@ -613,13 +1247,12 @@ html:not(.js) .earth-marker {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .coord-grid { animation: none; }
   .animate-terminal-cursor-pre,
   .animate-terminal-cursor-post { animation: none; }
   .constellation-star { animation: none; }
   .constellation-line { stroke-dashoffset: 0; animation: none; }
   .constellation-stars { opacity: 1; transition: none; }
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
   .tech-flash { animation: none; }
   .viewfinder[data-lock]::before { animation: none; opacity: 1; transform: none; }
   .viewfinder[data-lock]::after { animation: none; }
@@ -628,6 +1261,6 @@ html:not(.js) .earth-marker {
   .hyperdrive-echo { display: none; }
   .hyperdrive[data-state="arriving"]::before,
   .hyperdrive[data-state="arriving"]::after { content: none; animation: none; }
-  .earth-stage { transition: none; }
-  .earth-marker { transition: none; }
+  .topbar, .topbar-brand, .topbar-menu i { transition: none; }
+  .coast[data-gl="off"] .scene-pin { transition: none; }
 }

@@ -4,15 +4,12 @@ import Reveal from "@/components/animations/Reveal";
 
 export default function Awards() {
   return (
-    <section id="awards" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
-      <Constellation
-        name="coronaBorealis"
-        className="pointer-events-none absolute right-0 top-6 w-32 md:right-6 md:w-52"
-      />
-      <h2 className="font-serif text-3xl text-primary">Awards</h2>
+    <section id="awards" className="section">
+      <Constellation name="coronaBorealis" className="section-constellation" />
+      <h2 className="section-title">Awards</h2>
 
       <Reveal>
-        <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
+        <p className="mt-8 max-w-xl text-sm leading-relaxed text-body">
           Hackathons I&apos;ve won at and my competitive programming results.
           500+ problems solved across DMOJ and Codeforces.
         </p>
@@ -32,7 +29,7 @@ export default function Awards() {
                     href={a.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
+                    className="tap underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
                   >
                     {a.event}
                   </a>

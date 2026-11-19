@@ -41,8 +41,6 @@ const COMPACT_WIDTH = 768;
 // it; after that they're rare, so each one is a small surprise.
 const FIRST_PASS: [number, number] = [7, 11];
 const PASS_GAP: [number, number] = [28, 42];
-// How long the next pass waits when the Earth finale is on screen.
-const PASS_HOLD = 4;
 
 const between = ([lo, hi]: [number, number]) => lo + Math.random() * (hi - lo);
 const smoothstep = (a: number, b: number, x: number) => {
@@ -93,6 +91,44 @@ function compactField(width: number, height: number): Star[] {
           0.24 + 0.5 * Math.pow(size, 0.6) + Math.random() * 0.12
         ),
         ...motion(),
+      });
+    }
+  }
+  return stars;
+}
+
+// The home page's sky: the same sky on every visit (seeded), so the stars
+// around the name are composed rather than dealt. Mostly faint pinpricks on
+// an even, jittered grid at every size, a little sparser on a wide screen,
+// since the Earth and its satellites are the busy part of that page.
+function seeded(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function stillField(width: number, height: number): Star[] {
+  const rand = seeded(11);
+  const target = Math.min(520, Math.floor((width * height) / (width < COMPACT_WIDTH ? 1700 : 3200)));
+  const cols = Math.max(1, Math.round(Math.sqrt((target * width) / height)));
+  const rows = Math.max(1, Math.round(target / cols));
+  const stars: Star[] = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const size = Math.pow(rand(), 2.6);
+      const baseAlpha = Math.min(0.8, 0.16 + 0.5 * Math.pow(size, 0.6) + rand() * 0.1);
+      stars.push({
+        x: (col + rand()) / cols,
+        y: (row + rand()) / rows,
+        r: 0.3 + size * 1.1,
+        baseAlpha,
+        phase: 0,
+        speed: 0,
+        twinkler: false,
       });
     }
   }
@@ -169,7 +205,16 @@ function drawPass(ctx: CanvasRenderingContext2D, pass: Pass, now: number) {
   ctx.fill();
 }
 
-export default function Starfield() {
+/**
+ * The night sky behind everything.
+ *
+ * classic: stars that twinkle, and now and then a satellite crossing in a
+ * straight line (the 404 page).
+ * still: a fixed sky that is drawn once and never moves (the home page, where
+ * the Earth has its own satellites on real orbits, and its canvases are
+ * already redrawn every frame).
+ */
+export default function Starfield({ variant = "classic" }: { variant?: "classic" | "still" }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -178,7 +223,9 @@ export default function Starfield() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Nothing moves in the still sky, or for anyone who asked for less motion.
+    const still =
+      variant === "still" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let stars: Star[] = [];
     let raf = 0;
     let width = 0;
@@ -191,24 +238,15 @@ export default function Starfield() {
     let lastMs = -1;
     let pass: Pass | null = null;
     let nextPassAt = between(FIRST_PASS);
-    // The Earth at the bottom of the page has its own satellites, on real
-    // orbits. Passes hold off while it's on screen, so a straight-line one
-    // doesn't set off across it.
-    const earth = document.querySelector(".earth-finale");
-    const earthOnScreen = () => {
-      if (!earth) return false;
-      const rect = earth.getBoundingClientRect();
-      return rect.top < window.innerHeight && rect.bottom > 0;
-    };
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = "#e8e2d3";
       for (const s of stars) {
-        let alpha = reduced
+        let alpha = still
           ? s.baseAlpha
           : s.baseAlpha * (0.65 + 0.35 * Math.sin(s.phase + t * s.speed));
-        if (!reduced && s.twinkler) {
+        if (!still && s.twinkler) {
           // Occasional sharp flash: a high-powered sine spends most of its
           // period near zero, then spikes briefly.
           const flash = Math.pow(Math.max(0, Math.sin(s.phase + t * s.speed * 2.5)), 12);
@@ -223,10 +261,7 @@ export default function Starfield() {
     };
 
     const drawPasses = () => {
-      if (!pass && clock >= nextPassAt) {
-        if (earthOnScreen()) nextPassAt = clock + PASS_HOLD;
-        else pass = newPass(width, height, clock);
-      }
+      if (!pass && clock >= nextPassAt) pass = newPass(width, height, clock);
       if (!pass) return;
       if (clock - pass.start >= pass.duration) {
         pass = null;
@@ -257,11 +292,13 @@ export default function Starfield() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       if (widthChanged || stars.length === 0) {
         stars =
-          width < COMPACT_WIDTH
-            ? compactField(width, height)
-            : wideField(width, height);
+          variant === "still"
+            ? stillField(width, height)
+            : width < COMPACT_WIDTH
+              ? compactField(width, height)
+              : wideField(width, height);
       }
-      if (reduced) draw(0);
+      if (still) draw(0);
     };
 
     const loop = (ms: number) => {
@@ -275,7 +312,7 @@ export default function Starfield() {
 
     // Pause the render loop while the tab is hidden to save CPU and battery.
     const onVisibility = () => {
-      if (reduced) return;
+      if (still) return;
       if (document.hidden) {
         cancelAnimationFrame(raf);
         raf = 0;
@@ -288,14 +325,14 @@ export default function Starfield() {
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
     document.addEventListener("visibilitychange", onVisibility);
-    if (!reduced) raf = requestAnimationFrame(loop);
+    if (!still) raf = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(raf);
       observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [variant]);
 
   return <canvas ref={canvasRef} aria-hidden="true" className="starfield" />;
 }

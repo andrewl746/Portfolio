@@ -20,27 +20,17 @@ function lockPage(locked: boolean) {
   if (main) main.inert = locked;
 }
 
-// The section links with the sliding ember needle, shared by the desktop
-// sidebar and the mobile drawer. Each copy measures its own links, since only
-// one of the two is laid out at a given screen size.
-function SectionNav({
-  active,
-  variant,
-  onNavigate,
-}: {
-  active: string;
-  variant: "desktop" | "mobile";
-  onNavigate?: () => void;
-}) {
+// The section links in the mobile drawer, with the sliding ember needle.
+function DrawerNav({ active, onNavigate }: { active: string; onNavigate: () => void }) {
   const [marker, setMarker] = useState<{ top: number; height: number } | null>(
     null
   );
   const entryRefs = useRef<Record<string, HTMLSpanElement | null>>({});
-  const mobile = variant === "mobile";
 
   // Slide the needle to the active link. Re-measured on resize, once web fonts
-  // finish loading, and when the active link changes. A copy that's
-  // display: none measures as zero height, so it keeps its last position.
+  // finish loading, and when the active link changes. While the drawer is
+  // display: none (wider screens) it measures as zero height, so it keeps its
+  // last position.
   useEffect(() => {
     let cancelled = false;
     const measure = () => {
@@ -59,12 +49,7 @@ function SectionNav({
   }, [active]);
 
   return (
-    <nav
-      aria-label="Sections"
-      className={`relative flex flex-col ${
-        mobile ? "gap-1" : "mt-12 gap-5 short:mt-8 short:gap-3"
-      }`}
-    >
+    <nav aria-label="Sections" className="relative flex flex-col gap-1">
       {marker && (
         <span
           aria-hidden="true"
@@ -83,17 +68,15 @@ function SectionNav({
             href={`#${id}`}
             onClick={onNavigate}
             aria-current={current ? "location" : undefined}
-            className={`block ${mobile ? "py-2.5" : ""}`}
+            className="block py-2.5"
           >
-            {/* The needle is measured against this inner span, so padding
-                that enlarges the mobile tap target doesn't stretch it. */}
+            {/* The needle is measured against this inner span, so the padding
+                that enlarges the tap target doesn't stretch it. */}
             <span
               ref={(el) => {
                 entryRefs.current[id] = el;
               }}
-              className={`block transition-colors ${
-                mobile ? "text-base" : "text-sm"
-              } ${
+              className={`block text-base transition-colors ${
                 current ? "font-bold text-primary" : "text-body hover:text-primary"
               }`}
             >
@@ -106,12 +89,22 @@ function SectionNav({
   );
 }
 
-export default function Sidebar() {
+/**
+ * The bar along the top: the name (once the big one in the hero has set), the
+ * section links with the current one marked, and the resume. On phones the
+ * links move into a drawer behind the menu button. Its looks are the .topbar
+ * rules in globals.css.
+ */
+export default function TopBar() {
   const [active, setActive] = useState("about");
   const [menuOpen, setMenuOpen] = useState(false);
+  const barRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
+  // Which section is being read. A section counts once its top has come a
+  // little past the middle of the screen, which is about when its title has
+  // risen clear of the Earth.
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -122,18 +115,46 @@ export default function Sidebar() {
           }
         }
       },
-      { rootMargin: "-40% 0px -55% 0px" }
+      { rootMargin: "-55% 0px -40% 0px" }
     );
     for (const { id } of ENTRIES) {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     }
     // Areas that belong to a section without being inside it, such as the
-    // Earth under Contact, which is wider than the content column.
+    // whole last screen around Contact.
     document
       .querySelectorAll<HTMLElement>("[data-nav-section]")
       .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  // The bar is clear over the first screen and gets its backing once the page
+  // moves. The name in it waits until the big name in the hero has mostly set
+  // behind the Earth, so the two are never on screen together for long.
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+    const hero = document.getElementById("about");
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const nameSets = hero ? (hero.offsetHeight - window.innerHeight) * 0.75 : 0;
+      bar.toggleAttribute("data-solid", y > 24);
+      bar.toggleAttribute("data-top", y < nameSets);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
   }, []);
 
   // While the drawer is open: lock the page, move focus into the drawer, and
@@ -178,10 +199,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile top bar: menu button, name, resume. Symmetric padding keeps
-          the name on the screen's true center; the button's icon and the
-          resume button's margin line both edges up with the page content. */}
-      <header className="fixed inset-x-0 top-0 z-40 grid h-14 grid-cols-[1fr_auto_1fr] items-center border-b border-line bg-void/85 px-3 backdrop-blur-sm md:hidden">
+      <header ref={barRef} className="topbar" data-top="">
         <button
           ref={toggleRef}
           type="button"
@@ -189,44 +207,44 @@ export default function Sidebar() {
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
           onClick={() => setMenuOpen((open) => !open)}
-          className="grid h-11 w-11 place-items-center justify-self-start"
+          className="topbar-menu"
         >
-          <span aria-hidden="true" className="relative block h-3.5 w-5">
-            <span
-              className={`absolute inset-x-0 top-0 h-[1.5px] bg-primary transition duration-300 ease-out motion-reduce:transition-none ${
-                menuOpen ? "translate-y-[6.25px] rotate-45" : ""
-              }`}
-            />
-            <span
-              className={`absolute inset-x-0 top-[6.25px] h-[1.5px] bg-primary transition duration-300 ease-out motion-reduce:transition-none ${
-                menuOpen ? "scale-x-0 opacity-0" : ""
-              }`}
-            />
-            <span
-              className={`absolute inset-x-0 bottom-0 h-[1.5px] bg-primary transition duration-300 ease-out motion-reduce:transition-none ${
-                menuOpen ? "-translate-y-[6.25px] -rotate-45" : ""
-              }`}
-            />
+          <span aria-hidden="true">
+            <i />
+            <i />
+            <i />
           </span>
         </button>
         <a
           href="#about"
           onClick={menuOpen ? closeForNavigation : undefined}
-          className="font-serif text-lg text-primary"
+          className="topbar-brand"
         >
-          {SITE.name}
+          <span className="topbar-name">{SITE.name}</span>
+          <span className="topbar-role">Software Engineer</span>
         </a>
+        <nav aria-label="Sections" className="topbar-nav">
+          {ENTRIES.map(({ id, label }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              aria-current={active === id ? "location" : undefined}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
         <a
           href={SITE.resumeHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="mr-3 justify-self-end border border-ember/40 px-3 py-1.5 text-xs uppercase tracking-[0.12em] text-[#f2a3ae] transition-colors hover:border-ember"
+          className="topbar-resume tap"
         >
           Resume
         </a>
       </header>
 
-      {/* Mobile drawer: the sidebar, sliding out under the bar */}
+      {/* Mobile drawer: the section links, sliding out under the bar */}
       <div
         aria-hidden="true"
         onClick={() => setMenuOpen(false)}
@@ -251,37 +269,13 @@ export default function Sidebar() {
             : "invisible -translate-x-full transition-[translate,visibility]"
         }`}
       >
-        <SectionNav
-          active={active}
-          variant="mobile"
-          onNavigate={closeForNavigation}
-        />
+        <DrawerNav active={active} onNavigate={closeForNavigation} />
         <div className="mt-auto pt-10 text-[10px] uppercase leading-relaxed tracking-[0.1em] text-faint">
           University of Waterloo
           <br />
           Computer Science
         </div>
       </div>
-
-      {/* Desktop sidebar. The bottom label always keeps a gap above it: on
-          short screens the sidebar tightens up and drops the label, and if
-          even that doesn't fit, the sidebar scrolls. */}
-      <aside className="margin-rule fixed inset-y-0 left-0 z-20 hidden w-[180px] flex-col overflow-y-auto px-6 py-10 short:py-6 md:flex">
-        <a href="#about" className="font-serif text-xl leading-tight text-primary">
-          {SITE.name}
-        </a>
-        <p className="mt-2 text-[10px] uppercase tracking-[0.14em] text-brass">
-          Software Engineer
-        </p>
-
-        <SectionNav active={active} variant="desktop" />
-
-        <div className="mt-auto pt-10 text-[10px] uppercase leading-relaxed tracking-[0.1em] text-faint short:hidden">
-          University of Waterloo
-          <br />
-          Computer Science
-        </div>
-      </aside>
     </>
   );
 }

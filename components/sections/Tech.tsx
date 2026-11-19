@@ -31,14 +31,11 @@ export default function Tech() {
   }, []);
 
   return (
-    <section id="tech" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
-      <Constellation
-        name="orion"
-        className="pointer-events-none absolute right-0 top-6 w-32 md:right-2 md:w-56"
-      />
-      <h2 className="font-serif text-3xl text-primary">Tech Stack</h2>
+    <section id="tech" className="section">
+      <Constellation name="orion" className="section-constellation" />
+      <h2 className="section-title">Tech Stack</h2>
       <Reveal>
-        <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
+        <p className="mt-8 max-w-xl text-sm leading-relaxed text-body">
           Languages, frameworks, and tools I build with.
         </p>
       </Reveal>

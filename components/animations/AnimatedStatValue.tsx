@@ -27,7 +27,14 @@ function receiving(target: string, progress: number): [string, string] {
 // a slow connection (and crawlers, and anyone whose JS never loads) always see
 // it. Once JS is running and the stat scrolls into view, it clears and comes
 // back in letter by letter (or counts up from 0, for a number).
-export default function AnimatedStatValue({ value }: { value: string }) {
+export default function AnimatedStatValue({
+  value,
+  delay = 0,
+}: {
+  value: string;
+  /** How long to wait, once in view, before it starts (ms). */
+  delay?: number;
+}) {
   const [display, setDisplay] = useState(value);
   // The static ahead of the received letters, drawn in brass.
   const [noise, setNoise] = useState("");
@@ -37,6 +44,7 @@ export default function AnimatedStatValue({ value }: { value: string }) {
   useEffect(() => {
     let frame = 0;
     let interval = 0;
+    let timer = 0;
     const node = ref.current;
     if (!node) return;
 
@@ -103,7 +111,8 @@ export default function AnimatedStatValue({ value }: { value: string }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          run();
+          if (delay > 0) timer = window.setTimeout(run, delay);
+          else run();
           observer.disconnect();
         }
       },
@@ -116,8 +125,9 @@ export default function AnimatedStatValue({ value }: { value: string }) {
       observer.disconnect();
       cancelAnimationFrame(frame);
       window.clearInterval(interval);
+      window.clearTimeout(timer);
     };
-  }, [value]);
+  }, [value, delay]);
 
   return (
     <span ref={ref}>

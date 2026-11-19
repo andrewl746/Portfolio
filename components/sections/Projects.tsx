@@ -43,52 +43,59 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
   if (p.devpost) links.push({ href: p.devpost, label: "Devpost" });
   if (p.github) links.push({ href: p.github, label: "GitHub" });
 
+  // On wide screens (.project in globals.css) the screenshot sits beside the
+  // words, so a whole project fits on one screen above the Earth. The scene
+  // measures these rows (data-scene) to keep the horizon low enough for the
+  // tallest one.
   return (
     <div
-      className={`border-t border-white/8 py-7 pl-5 ${
+      data-scene="project"
+      className={`project border-t border-white/8 py-7 pl-5 ${
         current
           ? "border-l-2 border-l-ember bg-gradient-to-r from-ember/8 to-transparent"
           : "border-l-2 border-l-ember/35"
       }`}
     >
-      <h3 className="font-serif text-2xl text-primary">{p.name}</h3>
-      <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-brass">
-        {p.context}
-        {p.stat && (
-          <>
-            {" / "}
-            <span className="text-primary">{p.stat}</span>
-          </>
+      <div>
+        <h3 className="font-serif text-2xl text-primary">{p.name}</h3>
+        <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-brass">
+          {p.context}
+          {p.stat && (
+            <>
+              {" / "}
+              <span className="text-primary">{p.stat}</span>
+            </>
+          )}
+          {p.award ? ` / ${p.award}` : ""}
+        </p>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
+          <Description p={p} />
+        </p>
+        <p className="mt-3 text-xs text-dim">{p.tech.join(" / ")}</p>
+        {links.length > 0 && (
+          <div className="project-links mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs uppercase tracking-[0.1em]">
+            {links.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tap text-primary underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
         )}
-        {p.award ? ` / ${p.award}` : ""}
-      </p>
-      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
-        <Description p={p} />
-      </p>
-      <p className="mt-3 text-xs text-dim">{p.tech.join(" / ")}</p>
-      {links.length > 0 && (
-        <div className="mt-3 flex gap-6 text-xs uppercase tracking-[0.1em]">
-          {links.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-      )}
+      </div>
       {p.image && (
-        <ViewfinderLock className="mt-5 max-w-2xl p-2">
+        <ViewfinderLock className="project-shot mt-5 max-w-2xl p-2">
           <Image
             src={p.image.src}
             alt={p.image.alt}
             width={1280}
             height={800}
-            sizes="(min-width: 768px) 656px, 100vw"
+            sizes="(min-width: 1280px) 720px, (min-width: 768px) 656px, 100vw"
             quality={90}
             className="block w-full border border-white/10"
           />
@@ -108,19 +115,16 @@ export default async function Projects() {
     stat: FLAGSHIP.stat && fill(FLAGSHIP.stat),
   };
   return (
-    <section id="projects" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
-      <Constellation
-        name="ursaMajor"
-        className="pointer-events-none absolute right-0 top-6 w-32 md:top-8 md:w-64"
-      />
-      <h2 className="font-serif text-3xl text-primary">Projects</h2>
+    <section id="projects" className="section">
+      <Constellation name="sagittarius" className="section-constellation" />
+      <h2 className="section-title">Projects</h2>
       <Reveal>
-        <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
+        <p className="mt-8 max-w-xl text-sm leading-relaxed text-body">
           Featured tools I&apos;ve built to solve real problems, from mapping huge codebases
           to scheduling a 60+ member team.
         </p>
       </Reveal>
-      <div className="mt-8">
+      <div className="project-list mt-8">
         <Reveal>
           <Row p={flagship} current />
         </Reveal>
@@ -134,7 +138,7 @@ export default async function Projects() {
         href={SITE.github}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-8 inline-block text-xs uppercase tracking-[0.1em] text-dim transition-colors hover:text-ember"
+        className="tap mt-8 inline-block text-xs uppercase tracking-[0.1em] text-dim transition-colors hover:text-ember"
       >
         More on GitHub
       </a>

@@ -4,15 +4,12 @@ import Reveal from "@/components/animations/Reveal";
 
 export default function Experience() {
   return (
-    <section id="experience" className="relative scroll-mt-14 py-20 md:scroll-mt-24">
-      <Constellation
-        name="cygnus"
-        className="pointer-events-none absolute right-0 top-6 w-32 md:right-6 md:top-10 md:w-52"
-      />
-      <h2 className="font-serif text-3xl text-primary">Experience</h2>
+    <section id="experience" className="section">
+      <Constellation name="cygnus" className="section-constellation" />
+      <h2 className="section-title">Experience</h2>
 
       <Reveal>
-        <p className="mt-6 max-w-xl text-sm leading-relaxed text-body">
+        <p className="mt-8 max-w-xl text-sm leading-relaxed text-body">
           Where I work, have worked, and led.
         </p>
       </Reveal>
@@ -20,7 +17,7 @@ export default function Experience() {
       <div className="mt-10 space-y-12">
         {EXPERIENCE.map((e) => (
           <Reveal key={e.org}>
-            <div className="grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-8">
+            <div className="grid gap-2 sm:grid-cols-[200px_minmax(0,1fr)] sm:gap-8">
               <div className="text-xs uppercase tracking-[0.1em] text-dim">
                 {e.period}
               </div>
@@ -31,7 +28,7 @@ export default function Experience() {
                       href={e.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
+                      className="tap underline decoration-ember/60 underline-offset-4 transition-colors hover:text-ember"
                     >
                       {e.org}
                     </a>

@@ -4,9 +4,14 @@ import { Analytics } from "@vercel/analytics/next";
 import { SITE } from "@/lib/content";
 import "./globals.css";
 
+// With its optical size axis: the same face draws the small headings sturdy
+// and the name on the first screen, a third of the window tall, with the
+// fine contrast of a display cut. The name's placement on the Earth's limb
+// is measured from that cut (lib/earth/coast.ts).
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
