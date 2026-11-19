@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { CONSTELLATIONS, type ConstellationName } from "@/lib/constellations";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { LOOKS, placed, type ConstellationName } from "@/lib/constellations";
 
 export default function Constellation({
   name,
@@ -12,7 +12,13 @@ export default function Constellation({
   className?: string;
   prominent?: boolean;
 }) {
-  const { stars, edges } = CONSTELLATIONS[name];
+  const { stars, edges, width, height } = placed(name);
+  // What the page sizes it by (.section-constellation in globals.css): its
+  // frame's width in --star-size units, and the frame's shape.
+  const frame = {
+    "--w": Math.round((width / LOOKS) * 10000) / 10000,
+    "--r": Math.round((width / height) * 10000) / 10000,
+  } as CSSProperties;
   const lineAlpha = prominent ? 0.17 : 0.12;
   const starAlpha = prominent ? 0.52 : 0.4;
   const ref = useRef<SVGSVGElement>(null);
@@ -45,7 +51,8 @@ export default function Constellation({
   return (
     <svg
       ref={ref}
-      viewBox="0 0 300 260"
+      viewBox={`0 0 ${width} ${height}`}
+      style={frame}
       className={`${className ?? ""} ${drawn ? "constellation-drawn" : ""}`}
       aria-hidden="true"
       fill="none"

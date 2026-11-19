@@ -308,9 +308,16 @@ html:not(.js) .typewriter-caret {
 .coast {
   --gutter: clamp(24px, 5.5vw, 88px);
   --bar: 64px;
-  /* Every constellation sits the same way against its section's title: its
-     box starts --rise above the top of the title, on the same right edge.
-     --sec-top is the space above a title. */
+  /* Every constellation looks the same size and sits the same way against
+     its section's title. --star-size is how large each one looks (its width
+     averaged over every direction; placed() in lib/constellations.ts scales
+     them all to match), so a tall thin one comes out taller than a round one
+     is wide. Its frame starts --rise above the top of the title, on the same
+     right edge. --sec-top is the space above a title. --star-size shrinks
+     with the window and --rise grows on narrower ones (below), so a figure
+     always clears the title beside it and the text under that title. Phones
+     hang them differently (below). */
+  --star-size: clamp(103px, 6px + 16.1vw, 176px);
   --rise: 56px;
   --sec-top: 96px;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -766,7 +773,8 @@ html:not(.js) .hero-pin {
   position: absolute;
   right: 0;
   top: calc(var(--sec-top) - var(--rise));
-  width: 208px;
+  width: calc(var(--star-size) * var(--w, 1));
+  height: auto;
   pointer-events: none;
 }
 
@@ -947,6 +955,12 @@ html:not(.js) .hero-pin {
   .end-caption { display: none; }
 }
 
+/* Tablet widths: the text under a title reaches under the constellation, so
+   the constellations sit higher. */
+@media (max-width: 899px) {
+  .coast { --rise: 76px; }
+}
+
 /* Tablet widths: the full bar only just fits, so it loses the small label
    and some air. */
 @media (min-width: 768px) and (max-width: 999px) {
@@ -961,8 +975,28 @@ html:not(.js) .hero-pin {
   .coast {
     --gutter: 24px;
     --bar: 56px;
-    --rise: 32px;
+    --star-size: clamp(80px, 24vw, 92px);
+    /* How far below the top of its title a constellation's frame ends. */
+    --star-drop: 14px;
     --sec-top: 72px;
+  }
+
+  /* A long title ("Experience") runs almost to the edge of a phone, so a
+     constellation can't hang beside it. It stands on the title's top right
+     corner instead: every frame ends at the same height, just under the top
+     of the title, and a taller figure reaches further up into the space
+     above. The last screen leaves room under the bar for its own one
+     (--end-star, its frame's height, set in app/page.tsx). */
+  .section-constellation {
+    top: calc(var(--sec-top) + var(--star-drop) - var(--star-size) * var(--w, 1) / var(--r, 1));
+  }
+
+  .end .section-constellation {
+    top: calc(var(--star-drop) - var(--star-size) * var(--w, 1) / var(--r, 1));
+  }
+
+  .end {
+    padding-top: calc(var(--bar) + 16px + var(--star-size) * var(--end-star, 1.15) - var(--star-drop));
   }
 
   /* The bar: menu button, name, resume. Symmetric columns keep the name on
@@ -1060,9 +1094,14 @@ html:not(.js) .hero-pin {
     scroll-margin-top: 56px;
   }
 
-  .section-constellation { width: 128px; }
   .end-foot { bottom: 20px; }
   .end-caption { max-width: 10.5rem; }
+}
+
+/* Narrow phones: a long title reaches right under the constellation, so it
+   stands a little higher, clear of the tallest letters. */
+@media (max-width: 384px) {
+  .coast { --star-drop: 4px; }
 }
 
 /* The narrowest phones: the two credits shrink a little so they still share

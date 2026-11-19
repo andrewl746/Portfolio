@@ -32,7 +32,7 @@ export default function Tech() {
 
   return (
     <section id="tech" className="section">
-      <Constellation name="orion" className="section-constellation" />
+      <Constellation name="ursaMajor" className="section-constellation" />
       <h2 className="section-title">Tech Stack</h2>
       <Reveal>
         <p className="mt-8 max-w-xl text-sm leading-relaxed text-body">

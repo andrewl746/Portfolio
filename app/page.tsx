@@ -9,6 +9,8 @@ import Awards from "@/components/sections/Awards";
 import Tech from "@/components/sections/Tech";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
+import type { CSSProperties } from "react";
+import { LOOKS, placed } from "@/lib/constellations";
 import { EARTH_DESKTOP, EARTH_MOBILE } from "@/lib/earth-scene";
 
 // The page is built ahead of time and rebuilt in the background at most once
@@ -17,6 +19,11 @@ import { EARTH_DESKTOP, EARTH_MOBILE } from "@/lib/earth-scene";
 export const revalidate = 86400;
 
 const km = (altitude: number) => altitude.toLocaleString("en-US");
+
+// How tall Contact's constellation is, in --star-size units. On a phone the
+// last screen starts its text far enough down to leave that much room under
+// the bar (.end in globals.css).
+const END_STAR = { "--end-star": Math.round((placed("gemini").height / LOOKS) * 10000) / 10000 } as CSSProperties;
 
 // The whole page is one flight: the live Earth is drawn over
 // everything, the name sets behind it, each section rises from behind it,
@@ -43,7 +50,7 @@ export default function Home() {
         {/* The last screen: Contact in the sky, the finale's Earth under it,
             the caption and footer on the Earth's dark near side. A screen
             tall, so jumping to Contact lands on the whole scene. */}
-        <div data-scene="end" data-nav-section="contact" className="end">
+        <div data-scene="end" data-nav-section="contact" className="end" style={END_STAR}>
           <Contact />
           <div aria-hidden="true" className="end-scrim" />
           <div className="end-foot">

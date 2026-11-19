@@ -5,7 +5,7 @@ import Reveal from "@/components/animations/Reveal";
 export default function Experience() {
   return (
     <section id="experience" className="section">
-      <Constellation name="cygnus" className="section-constellation" />
+      <Constellation name="bootes" className="section-constellation" />
       <h2 className="section-title">Experience</h2>
 
       <Reveal>
