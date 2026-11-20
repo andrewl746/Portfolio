@@ -647,11 +647,11 @@ html:not(.js) .typewriter-caret {
    and hide that one. */
 .hero-band .hero-tagline { display: none; }
 
-/* A little larger and lighter than body text: it sits on the Earth. */
+/* A little larger than body text, and in the title colour: it sits on the Earth. */
 .hero-sub {
   font-size: 15px;
   line-height: 1.6;
-  color: color-mix(in srgb, var(--text-primary) 60%, var(--text-body));
+  color: var(--text-primary);
 }
 
 /* One sentence per line. */
@@ -1087,7 +1087,10 @@ html:not(.js) .hero-pin {
 
   .page .section:last-child { padding-bottom: 16px; }
 
-  .hero-tagline { font-size: 18px; }
+  /* A phone's first screen leaves the tagline out: the two sentences under
+     it say the same more exactly, and it was one piece of text too many. */
+  .hero .hero-tagline,
+  .coast[data-gl="off"] .hero-top .hero-tagline { display: none; }
   .hero-stats { gap: 12px 16px; }
   .hero-stat { padding-left: 12px; }
 

@@ -12,7 +12,7 @@ export default function Contact() {
       <Constellation name="gemini" className="section-constellation" />
       <h2 className="section-title">Contact</h2>
       <Reveal>
-        <p className="mt-6 max-w-[40rem] font-serif text-2xl leading-snug text-primary/90">
+        <p className="mt-6 max-w-[40rem] font-serif text-2xl leading-snug text-primary">
           Looking for a Summer 2027 co-op. If you&apos;re building something
           interesting, I&apos;d love to hear from you.
         </p>

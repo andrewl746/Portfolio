@@ -27,6 +27,8 @@ export const SITE = {
   // sitemap, canonical URL and link previews all use this address.
   url: "https://www.andrewli.app",
   identity: "Computer Science student at the University of Waterloo",
+  // The same on a phone, where the full line wraps onto two rows.
+  identityShort: "CS @ University of Waterloo",
   tagline: "Software engineer, aiming for space.",
   // One sentence per line on wider screens.
   sub: [

@@ -13,7 +13,8 @@ import { SITE, STATS } from "@/lib/content";
  *
  * The tagline is here twice and CSS shows one: above the name on wide
  * screens, with the two sentences under the limb on narrower ones, where the
- * top would get crowded.
+ * top would get crowded. Phones show neither, and a shorter school line: six
+ * pieces of text were too many for a small first screen.
  *
  * All of the text fades in together as the name rises. The name and the
  * Earth are the one thing that moves on this screen; the text just arrives.
@@ -27,7 +28,10 @@ export default function Hero() {
       <div data-scene="hero" className="hero">
         <div data-scene="hero-top" className="hero-top hero-text">
           <div className="hero-who">
-            <p className="hero-eyebrow">{SITE.identity}</p>
+            <p className="hero-eyebrow">
+              <span className="max-md:hidden">{SITE.identity}</span>
+              <span className="md:hidden">{SITE.identityShort}</span>
+            </p>
             <p className="hero-tagline">{SITE.tagline}</p>
           </div>
           <dl className="hero-stats">
