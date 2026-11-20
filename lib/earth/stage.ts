@@ -8,16 +8,24 @@
 import { SUN } from "@/lib/earth-scene";
 import { clamp01, smoothstep, type Vec3 } from "./math";
 import type { EarthRenderer } from "./renderer";
-import { angularSpeed, drawDot, drawHero, drawTrack, orbitPoint, ring, type Ring } from "./satellites";
-import { camera, centreFor, finaleFrame, finalePose, see, type Pose } from "./view";
+import { angularSpeed, drawDot, drawHero, drawTrack, flashPoint, orbitPoint, ring, type Cover, type Ring } from "./satellites";
+import { camera, centreFor, finaleFrame, finalePose, type Pose } from "./view";
 
 /** Seconds of orbit per second on screen. */
 const TIME_SCALE = 66;
+/** How near the flash point counts as at it, in radians of orbit (2 degrees:
+ *  half a second of a satellite's travel, and a few px on screen). */
+const GLINT_NEAR = 0.035;
+/** One flash a pass: a satellite that has just flashed sits out this long, in
+ *  seconds on screen, so a flash point that moves ahead of it while the page
+ *  scrolls can't set it off twice. */
+const GLINT_REST = 6;
 /** Three more shells that fade in while reading: OneWeb's near-polar one, a
  *  sun-synchronous one, and Starlink's 70° one. */
 const SHELLS: Ring[] = [ring(1200, 87.9, -58), ring(560, 97.6, -104), ring(570, 70, -132)];
 /** With reduced motion nothing moves by itself: the scene holds this moment. */
 const STILL_TIME = 7;
+const TURN = Math.PI * 2;
 
 /** One frame's facts about the window and the scroll. */
 export type Moment = {
@@ -43,9 +51,14 @@ export type Shot = Pose & {
   plateShift: number;
   /** How strongly the extra shells show, 0 to 1. */
   shells: number;
+  /** The bottom edge of the bar, and the page content that hides the sky
+   *  behind it (screenshots, the tech tiles), where they are in the window.
+   *  The ember satellites flash clear of both. */
+  top: number;
+  covers: Cover[];
 };
 
-type Sat = { orbit: Ring; u0: number; hero: boolean; lastSun: number; glintAt: number };
+type Sat = { orbit: Ring; u0: number; hero: boolean; glintAt: number; past: number };
 
 export type Stage = {
   /** Ask for a fresh frame after something outside the scroll changed (a re-measure, say). */
@@ -96,6 +109,8 @@ export function createStage({
   let plateAsked = false;
   let plateTransform = "";
   let plateOpacity = "";
+  let flashAt: number | null = null; // where on their orbit the ember satellites flash, as the page stands
+  let flashKey = "";
 
   // On a phone the browser's toolbars come and go and the visible height
   // changes with them. Everything is laid out for the tallest view (toolbars
@@ -114,11 +129,11 @@ export function createStage({
     const fr = finaleFrame(W, H);
     fleet = [];
     for (let i = 0; i < 6; i++) {
-      fleet.push({ orbit: fr.orbit, u0: fr.orbit.start + (i * Math.PI) / 3, hero: true, lastSun: 1, glintAt: -99 });
+      fleet.push({ orbit: fr.orbit, u0: fr.orbit.start + (i * Math.PI) / 3, hero: true, glintAt: -99, past: Math.PI });
     }
     fr.traffic.forEach((o, k) => {
       for (let i = 0; i < 4; i++) {
-        fleet.push({ orbit: o, u0: o.start + (i * Math.PI) / 2 + k, hero: false, lastSun: 1, glintAt: -99 });
+        fleet.push({ orbit: o, u0: o.start + (i * Math.PI) / 2 + k, hero: false, glintAt: -99, past: Math.PI });
       }
     });
     track = fr.orbit;
@@ -220,6 +235,17 @@ export function createStage({
     if (!still) pace(now, drew, time);
     place(m, shot);
 
+    // Where the ember satellites flash depends on the camera, the Sun and what
+    // the page has in front of the sky, so it is worked out again only when
+    // one of those has changed. A phone's toolbars cover the bottom of the
+    // canvas while they show, so the window ends where they begin.
+    const bottom = Math.min(H, window.innerHeight);
+    const sightKey = `${key}|${y}|${W}|${bottom}`;
+    if (!still && sightKey !== flashKey) {
+      flashKey = sightKey;
+      flashAt = flashPoint(cam, track, shot.sun, { W, H: bottom, top: shot.top, covers: shot.covers });
+    }
+
     // Satellites.
     for (const c of [face, sky]) {
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -235,10 +261,15 @@ export function createStage({
           drawDot(face, sky, cam, at, shot.sun, a, 0.9);
           continue;
         }
-        // A glint as it comes out of Earth's shadow.
-        const lit = see(cam, at, shot.sun).sun;
-        if (sat.lastSun < 0.5 && lit >= 0.5) sat.glintAt = time;
-        sat.lastSun = lit;
+        // A glint as it passes the flash point: a frame ago it was just short
+        // of the point and now it is just past it. Either may have moved (the
+        // point drifts as the page scrolls), but only by a little: the point
+        // jumping across a satellite doesn't set one off, and nor does the
+        // clock skipping ahead after the tab was in the background, so a
+        // flash is always at the point.
+        const past = flashAt === null ? Math.PI : (((u - flashAt) % TURN) + TURN) % TURN;
+        if (sat.past > TURN - GLINT_NEAR && past < GLINT_NEAR && time - sat.glintAt > GLINT_REST) sat.glintAt = time;
+        sat.past = past;
         const g = time - sat.glintAt;
         const glint = still || g < 0 ? 0 : g < 0.12 ? g / 0.12 : Math.exp(-(g - 0.12) / 0.6);
         drawHero(face, sky, cam, sat.orbit, u, shot.sun, { alpha: a, glint });

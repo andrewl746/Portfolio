@@ -44,8 +44,11 @@ export default function Tech() {
         className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5"
       >
         {TECH_STACK.map((t, i) => (
+          // The tiles are solid, so the scene keeps the satellites' flash
+          // clear of them (data-scene).
           <div
             key={t.name}
+            data-scene="cover"
             className="group flex flex-col items-center gap-3 border border-white/8 bg-void px-2 py-5 transition-colors hover:border-white/20 hover:bg-[#0a0c14] sm:px-4 sm:py-6"
           >
             <svg

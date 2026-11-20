@@ -97,6 +97,8 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
             height={800}
             sizes="(min-width: 1280px) 720px, (min-width: 768px) 656px, 100vw"
             quality={90}
+            // Solid, so the scene keeps the satellites' flash clear of it.
+            data-scene="cover"
             className="block w-full border border-white/10"
           />
         </ViewfinderLock>

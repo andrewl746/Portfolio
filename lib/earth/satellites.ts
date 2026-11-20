@@ -5,7 +5,7 @@
 // satellite passes behind a screenshot, not across it, and still crosses the
 // planet in front.
 import { MU, type Orbit } from "@/lib/earth-scene";
-import { DEG, RE, mix, smoothstep, type Vec3 } from "./math";
+import { DEG, RE, dot, mix, smoothstep, type Vec3 } from "./math";
 import { behindLimb, see, type Camera, type Seen } from "./view";
 
 type Ctx = CanvasRenderingContext2D;
@@ -37,6 +37,111 @@ export const orbitPoint = (o: Ring, u: number): Vec3 => {
 
 /** Orbital angular speed (rad/s) at an orbit's radius. */
 export const angularSpeed = (o: Ring) => Math.sqrt(MU / o.radius ** 3);
+
+// --- Where the ember satellites flash -------------------------------------------------
+// A satellite glints as it comes out of the Earth's shadow. That point isn't
+// always one the reader can see: near the top of the page the orbit never
+// enters the shadow at all, on a short window the point drops below the bottom
+// edge, and in the sky it can be behind a screenshot. So the flash is at that
+// point when it can be seen, and otherwise at the nearest point of the orbit
+// that can, which puts one flash on every pass wherever the page is. "Seen"
+// covers the whole flash: the satellite has to stay in view while it fades.
+
+/** Part of the window that hides the sky behind it: left, top, right, bottom, px. */
+export type Cover = [number, number, number, number];
+/** Where in the window a satellite can be seen: the window's size, the bottom
+ *  edge of the bar, and what hides the sky (screenshots, the tech tiles). The
+ *  Earth's face is drawn over those, the sky under them. */
+export type Sight = { W: number; H: number; top: number; covers: Cover[] };
+
+/** Room kept between a flash and the window's edges, and anything hiding the sky, px. */
+const FLASH_MARGIN = 44;
+const COVER_MARGIN = 10;
+/** A flash takes most of a second to fade, so the satellite has to stay in
+ *  sight for this much of its orbit after it starts (about 0.7 s of travel). */
+const FLASH_SPAN = 3 * DEG;
+
+/** Where on its orbit a satellite leaves the Earth's shadow (the cylinder
+ *  see() uses), or null when the orbit never enters it. Sunlight along the
+ *  orbit depends only on the angle from the Sun's direction within the
+ *  orbit's plane; the shadow is the stretch within acos(c) of the point
+ *  opposite the Sun. */
+export function shadowExit(o: Ring, sun: Vec3): number | null {
+  const x = dot(o.node, sun);
+  const y = dot(o.ahead, sun);
+  const c = Math.sqrt(1 - (RE / o.radius) ** 2) / Math.hypot(x, y);
+  return c < 1 ? Math.atan2(y, x) + Math.PI + Math.acos(c) : null;
+}
+
+/** Can a satellite at this point of the orbit be seen, this far inside the window? */
+function visible(cam: Camera, o: Ring, u: number, sight: Sight, m: number) {
+  const p = orbitPoint(o, u);
+  const s = see(cam, p);
+  if (s.z <= 0 || s.clearance <= 0) return false;
+  if (s.x < m || s.x > sight.W - m || s.y < sight.top + m || s.y > sight.H - m) return false;
+  if (behindLimb(cam, p)) return true;
+  const c = COVER_MARGIN;
+  return !sight.covers.some(([l, t, r, b]) => s.x > l - c && s.x < r + c && s.y > t - c && s.y < b + c);
+}
+
+/** Can a flash that starts at this point of the orbit be seen through? It
+ *  starts clear of the window's edges, and stays on screen while it fades. */
+function inSight(cam: Camera, o: Ring, u: number, sight: Sight) {
+  for (let i = 0; i <= 3; i++) {
+    if (!visible(cam, o, u + (FLASH_SPAN * i) / 3, sight, i ? 0 : FLASH_MARGIN)) return false;
+  }
+  return true;
+}
+
+/** Where a satellite passes in front of the Earth's limb, or off it into the
+ *  sky: of the two such points, the one nearer the middle of the window. */
+function limbCrossing(cam: Camera, o: Ring, sight: Sight): number | null {
+  // 1 over the Earth's face, 0 in the sky, -1 behind the Earth or the camera.
+  const side = (u: number) => {
+    const p = orbitPoint(o, u);
+    const s = see(cam, p);
+    return s.z > 0 && s.clearance > 0 ? (behindLimb(cam, p) ? 1 : 0) : -1;
+  };
+  const step = DEG;
+  let best: number | null = null;
+  let least = Infinity;
+  let a = side(0);
+  for (let u = step; u < 2 * Math.PI + step / 2; u += step) {
+    const b = side(u);
+    if (a >= 0 && b >= 0 && a !== b) {
+      let lo = u - step;
+      let hi = u;
+      for (let i = 0; i < 14; i++) {
+        const mid = (lo + hi) / 2;
+        if (side(mid) === a) lo = mid;
+        else hi = mid;
+      }
+      const s = see(cam, orbitPoint(o, hi));
+      const off = Math.hypot(s.x - sight.W / 2, s.y - (sight.top + sight.H) / 2);
+      if (off < least) {
+        least = off;
+        best = hi;
+      }
+    }
+    a = b;
+  }
+  return best;
+}
+
+/** Where on the orbit the ember satellites flash for a view, or null when no
+ *  part of the orbit can be seen. */
+export function flashPoint(cam: Camera, o: Ring, sun: Vec3, sight: Sight): number | null {
+  // Out of the shadow; where there is no shadow, across the horizon.
+  const from = shadowExit(o, sun) ?? limbCrossing(cam, o, sight);
+  if (from === null) return null;
+  if (inSight(cam, o, from, sight)) return from;
+  const step = 0.25 * DEG;
+  for (let d = step; d <= Math.PI; d += step) {
+    if (inSight(cam, o, from - d, sight)) return from - d;
+    if (inSight(cam, o, from + d, sight)) return from + d;
+  }
+  return null;
+}
 
 /** A whole orbit as a brass line: faint in front of the night side, clearer
  *  over the sky. */
