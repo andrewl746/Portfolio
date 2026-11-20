@@ -11,7 +11,7 @@
 import { clamp01, easeInOut, easeOut, ecef, mix, smoothstep, DEG } from "./math";
 import { createEarthRenderer } from "./renderer";
 import { createStage, type Moment, type Shot } from "./stage";
-import { aim, blend, finalePose, limbDrop, type Pose } from "./view";
+import { aim, blend, finalePose, glowHeight, limbDrop, type Pose } from "./view";
 
 // --- The name -------------------------------------------------------------------------
 // Fraunces at its display size, measured in name sizes: from the top of the
@@ -25,6 +25,8 @@ const BASELINE = 0.7915;
 const SUNK = 0.0715;
 /** The least space kept between the name and each edge of the window, px. */
 const NAME_MARGIN = 12;
+/** Sky kept clear between the last line of Contact and the Earth's glow, px. */
+const CONTACT_CLEAR = 14;
 
 // --- The camera's night ---------------------------------------------------------------
 // Only a strip of the Earth shows while reading, and a strip is the far
@@ -219,8 +221,9 @@ export function startCoast({
     const fin = finalePose(W, H);
     // The Contact text stands in the sky over the finale's Earth. On a short
     // window the Earth would rise past it, so there the whole finale sits
-    // lower by the difference.
-    const sink = Math.max(0, H - end!.offsetHeight + contactBottom + 20 - fin.apex[1]);
+    // lower by the difference. The gap is kept to the top of the limb's
+    // glow, which is taller the larger the Earth is drawn.
+    const sink = Math.max(0, H - end!.offsetHeight + contactBottom + CONTACT_CLEAR + glowHeight(fin) - fin.apex[1]);
     fin.apex = [fin.apex[0], fin.apex[1] + sink];
     if (!m.gl) hero.apex[1] = Math.max(hero.apex[1], fin.apex[1]); // no WebGL: the image can't sit higher than this
     const way: Pose = { ...cruise(p), roll: 0, f: hero.f, apex: hero.apex };

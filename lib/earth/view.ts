@@ -69,6 +69,15 @@ export function limbApex(cam: Camera): [number, number] {
   return [cam.cx + t * Math.sin(cam.roll), cam.cy - t * Math.cos(cam.roll)];
 }
 
+/** The air above the limb glows up to about this height, km: the haze has
+ *  thinned out a little above the green airglow layer (renderer.ts). */
+const AIR_TOP = 140;
+
+/** How tall that glow is on screen for a pose, px. It grows with the Earth:
+ *  about 32 px on a laptop's finale, 7 on a phone's. */
+export const glowHeight = (pose: { C: Vec3; f: number }) =>
+  (AIR_TOP * pose.f) / Math.sqrt(dot(pose.C, pose.C) - RE * RE);
+
 /** The Contact finale's render for a window: the wide one on landscape
  *  screens, the tall one on portrait ones (as the image's CSS picks them). */
 export const finaleFrame = (W: number, H: number): EarthFrame => (W > H ? EARTH_DESKTOP : EARTH_MOBILE);
