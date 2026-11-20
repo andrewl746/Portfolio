@@ -294,11 +294,10 @@ html:not(.js) .typewriter-caret {
    every section rises from behind it. Layers, back to front:
      -10  stars                      (.starfield)
        1  the name                   (.hero-name)
-       2  satellites over the sky    (.scene-sky)
        3  the page's content         (.page, Contact)
        5  the Earth, then the finale image over its last frame
        6  the feet of the name, at rest  (.hero-name-front)
-       7  satellites crossing the Earth's face  (.scene-face)
+       7  the satellites and their orbit lines  (.scene-face)
        8  the shade under the footer (.end-scrim)
       10  the first screen's text, the footer
       40  the bar (30: its phone drawer), 50: reading progress
@@ -425,7 +424,6 @@ html:not(.js) .typewriter-caret {
   to { visibility: hidden; }
 }
 
-.scene-sky { z-index: 2; }
 .scene-earth { z-index: 5; }
 .scene-face { z-index: 7; }
 

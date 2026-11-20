@@ -1,9 +1,7 @@
-// Satellites and their orbit lines, drawn on 2D canvases in the same
-// projection as the Earth under them (view.ts). Every draw takes two canvases:
-// what is over the sky goes on `sky`, which sits under the page's content, and
-// what crosses the face of the Earth goes on `face`, which sits over it. So a
-// satellite passes behind a screenshot, not across it, and still crosses the
-// planet in front.
+// Satellites and their orbit lines, drawn on one 2D canvas in the same
+// projection as the Earth under it (view.ts). The canvas sits over the page's
+// content and the Earth, so nothing on the page can hide part of a line or a
+// satellite; only the Earth itself does, where one goes behind it.
 import { MU, type Orbit } from "@/lib/earth-scene";
 import { DEG, RE, dot, mix, smoothstep, type Vec3 } from "./math";
 import { behindLimb, overEarth, see, type Camera, type Seen } from "./view";
@@ -41,24 +39,20 @@ export const angularSpeed = (o: Ring) => Math.sqrt(MU / o.radius ** 3);
 // --- Where the ember satellites flash -------------------------------------------------
 // A satellite glints as it comes out of the Earth's shadow. That point isn't
 // always one the reader can see: near the top of the page the orbit never
-// enters the shadow at all, on a short window the point drops below the bottom
-// edge, and in the sky it can be behind a screenshot. So the flash is at that
+// enters the shadow at all, and on a short window the point drops below the
+// bottom edge. So the flash is at that
 // point when it can be seen, and otherwise at the nearest point of the orbit
 // that can, which puts one flash on every pass wherever the page is. "Seen"
 // covers the whole flash: the satellite has to stay in view while it fades.
 
-/** Part of the window that hides the sky behind it: left, top, right, bottom, px. */
-export type Cover = [number, number, number, number];
-/** Where in the window a satellite can be seen: the window's size, the bottom
- *  edge of the bar, and what hides the sky (screenshots, the tech tiles). The
- *  Earth's face is drawn over those, the sky under them. */
-export type Sight = { W: number; H: number; top: number; covers: Cover[] };
+/** Where in the window a satellite can be seen: the window's size and the
+ *  bottom edge of the bar. */
+export type Sight = { W: number; H: number; top: number };
 
-/** Room kept between a flash and the window's edges, and anything hiding the sky, px. */
+/** Room kept between a flash and the window's edges, px. */
 const FLASH_MARGIN = 44;
 /** The flash comes no later than this far through a pass (0 to 1). */
 const FLASH_BY = 0.75;
-const COVER_MARGIN = 10;
 /** A flash takes most of a second to fade, so the satellite has to stay in
  *  sight for this much of its orbit after it starts. It is still moving fast
  *  then (stage.ts), so this is a fifth of a second of travel. */
@@ -81,10 +75,7 @@ function visible(cam: Camera, o: Ring, u: number, sight: Sight, m: number) {
   const p = orbitPoint(o, u);
   const s = see(cam, p);
   if (s.z <= 0 || s.clearance <= 0) return false;
-  if (s.x < m || s.x > sight.W - m || s.y < sight.top + m || s.y > sight.H - m) return false;
-  if (overEarth(cam, p)) return true;
-  const c = COVER_MARGIN;
-  return !sight.covers.some(([l, t, r, b]) => s.x > l - c && s.x < r + c && s.y > t - c && s.y < b + c);
+  return s.x >= m && s.x <= sight.W - m && s.y >= sight.top + m && s.y <= sight.H - m;
 }
 
 /** Can a flash that starts at this point of the orbit be seen through? It
@@ -174,61 +165,41 @@ export function flashPoint(cam: Camera, o: Ring, sun: Vec3, sight: Sight): numbe
   return null;
 }
 
-// --- Which canvas ---------------------------------------------------------------------
-// What is in front of the Earth or its glow goes on the top canvas. So does
-// anything below `lift` on screen: while the feet of the name stand in front
-// of the Earth, they would otherwise hide the stretch of sky beside them.
-// One thing is never split between the canvases where the Earth could hide
-// part of it: a stretch of line goes on top if either end is over the Earth,
-// and a satellite does if any of its halo is.
-let lift = Infinity;
-/** From this height down the window, draw on the top canvas (Infinity: don't). */
-export const setLift = (y: number) => {
-  lift = y;
-};
-const onTop = (cam: Camera, p: Vec3, y: number, reach = 0) => y + reach > lift || overEarth(cam, p, reach);
-
 /** A whole orbit as a brass line: faint in front of the night side, clearer
  *  over the sky. */
 export function drawTrack(
-  face: Ctx,
-  sky: Ctx,
+  c: Ctx,
   cam: Camera,
   o: Ring,
   alpha: number,
   steps: number,
   { width = 1.1, onEarth = 0.18 }: { width?: number; onEarth?: number } = {},
 ) {
-  for (const c of [face, sky]) {
-    c.lineWidth = width;
-    // Butt ends: the line is drawn a short stretch at a time, and round ends
-    // would overlap at every join and bead a see-through line.
-    c.lineCap = "butt";
-  }
-  let prev: { x: number; y: number; ok: boolean; top: boolean } | null = null;
+  c.lineWidth = width;
+  // Butt ends: the line is drawn a short stretch at a time, and round ends
+  // would overlap at every join and bead a see-through line.
+  c.lineCap = "butt";
+  let prev: { x: number; y: number; ok: boolean } | null = null;
   for (let i = 0; i <= steps; i++) {
     const p = orbitPoint(o, (Math.PI * 2 * i) / steps);
     const s = see(cam, p);
     const ok = s.z > 0 && s.clearance > 0;
     const onFace = s.clearance < 9000 && overEarth(cam, p);
-    const top = onFace || s.y > lift;
     if (prev && ok && prev.ok) {
-      const c = top || prev.top ? face : sky;
       c.strokeStyle = rgba(BRASS, (onFace ? onEarth : 0.42) * alpha * smoothstep(0, 60, s.clearance + 60));
       c.beginPath();
       c.moveTo(prev.x, prev.y);
       c.lineTo(s.x, s.y);
       c.stroke();
     }
-    prev = { x: s.x, y: s.y, ok, top };
+    prev = { x: s.x, y: s.y, ok };
   }
 }
 
 /** The ember satellite with its trail: dim in Earth's shadow, a glint as it
  *  comes out into sunlight, dimmer and redder through the air near the limb. */
 export function drawHero(
-  face: Ctx,
-  sky: Ctx,
+  c: Ctx,
   cam: Camera,
   o: Ring,
   u: number,
@@ -242,16 +213,13 @@ export function drawHero(
   const red = 1 - smoothstep(8, 60, here.clearance);
   const k = Math.min(1.5, Math.max(0.8, 4200 / here.distance));
   let prev: Seen | null = null;
-  let prevTop = false;
   for (let i = 0; i <= 26; i++) {
     const t = i / 26;
     const q = orbitPoint(o, u - trail * (1 - t));
     const s = see(cam, q, sun);
-    const top = onTop(cam, q, s.y);
     // Both ends in front of the camera: an end behind it projects to nonsense
     // and the stroke would cross the whole screen.
     if (prev && s.z > 0 && prev.z > 0 && s.clearance > 0 && prev.clearance > 0) {
-      const c = top || prevTop ? face : sky;
       c.strokeStyle = rgba(EMBER, Math.pow(t, 1.7) * 0.75 * mix(0.55, 1, lightAs ?? s.sun) * smoothstep(-2, 45, s.clearance) * alpha);
       c.lineWidth = (0.35 + 1.5 * t) * k;
       c.beginPath();
@@ -260,12 +228,10 @@ export function drawHero(
       c.stroke();
     }
     prev = s;
-    prevTop = top;
   }
   if (here.clearance < -2) return;
   const lit = lightAs ?? here.sun;
   const r = (9 + 9 * lit + 16 * glint) * k;
-  const c = onTop(cam, at, here.y, r) ? face : sky;
   const halo = c.createRadialGradient(here.x, here.y, 0, here.x, here.y, r);
   const glow = (0.32 + 0.3 * lit + 0.35 * glint) * air * alpha;
   halo.addColorStop(0, rgba(EMBER, glow));
@@ -284,12 +250,11 @@ export function drawHero(
 }
 
 /** A faint parchment point: one of the other satellites. */
-export function drawDot(face: Ctx, sky: Ctx, cam: Camera, p: Vec3, sun: Vec3, alpha: number, r: number) {
+export function drawDot(c: Ctx, cam: Camera, p: Vec3, sun: Vec3, alpha: number, r: number) {
   const s = see(cam, p, sun);
   if (s.z <= 0 || s.clearance < 0) return;
   const a = (0.16 + 0.42 * s.sun) * smoothstep(0, 45, s.clearance) * alpha;
   if (a <= 0.01) return;
-  const c = onTop(cam, p, s.y) ? face : sky;
   c.fillStyle = `rgba(232,226,211,${a})`;
   c.beginPath();
   c.arc(s.x, s.y, r, 0, Math.PI * 2);

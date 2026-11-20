@@ -34,8 +34,8 @@ function Pin({ frame, className }: { frame: EarthFrame; className: string }) {
 
 /**
  * The Earth the whole page is built around (lib/earth): the
- * live planet drawn over the page, its satellites on a canvas over it and
- * another under the page's content, and the rendered Contact finale image
+ * live planet drawn over the page, its satellites on a canvas over that, and
+ * the rendered Contact finale image
  * (scripts/render-earth.py) that the live Earth's last frame hands over to.
  *
  * It finds the page's own elements by their data-scene attributes, inside
@@ -44,7 +44,6 @@ function Pin({ frame, className }: { frame: EarthFrame; className: string }) {
 export default function EarthScene() {
   const earthRef = useRef<HTMLCanvasElement>(null);
   const faceRef = useRef<HTMLCanvasElement>(null);
-  const skyRef = useRef<HTMLCanvasElement>(null);
   const plateRef = useRef<HTMLDivElement>(null);
   // The finale image is only fetched once the reader is past halfway (or at
   // once, when it stands in for the live Earth).
@@ -53,16 +52,14 @@ export default function EarthScene() {
   useEffect(() => {
     const earth = earthRef.current;
     const face = faceRef.current;
-    const sky = skyRef.current;
     const plate = plateRef.current;
     const root = earth?.closest<HTMLElement>(".coast");
-    if (!earth || !face || !sky || !plate || !root) return;
-    return startCoast({ root, earth, face, sky, plate, needPlate: () => setPlateWanted(true) });
+    if (!earth || !face || !plate || !root) return;
+    return startCoast({ root, earth, face, plate, needPlate: () => setPlateWanted(true) });
   }, []);
 
   return (
     <>
-      <canvas ref={skyRef} aria-hidden="true" className="scene-layer scene-sky" />
       <canvas ref={earthRef} aria-hidden="true" className="scene-layer scene-earth" />
       <div ref={plateRef} aria-hidden="true" className="scene-plate">
         <div className="scene-plate-frame" style={RATIOS}>

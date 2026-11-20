@@ -154,16 +154,13 @@ export function behindLimb(cam: Camera, p: Vec3) {
   return b < 0 && b * b - (dot(cam.C, cam.C) - RE * RE) > 0;
 }
 
-/** Is the Earth or the glow of its air behind this point? The Earth is drawn
- *  over the sky's canvas, glow included, so anything in front of either has
- *  to go on the canvas above it or the glow hides it. `reach` asks the same
- *  of anything within that many px of the point on screen (a halo round it). */
-export function overEarth(cam: Camera, p: Vec3, reach = 0) {
+/** Is the Earth or the glow of its air behind this point? An orbit line is
+ *  drawn a little differently in front of them. */
+export function overEarth(cam: Camera, p: Vec3) {
   const v: Vec3 = [p[0] - cam.C[0], p[1] - cam.C[1], p[2] - cam.C[2]];
   const b = dot(cam.C, v) / len(v);
-  const far = dot(cam.C, cam.C);
-  const r = RE + AIR_TOP + (reach * Math.sqrt(far - RE * RE)) / cam.f;
-  return b < 0 && b * b - (far - r * r) > 0;
+  const r = RE + AIR_TOP;
+  return b < 0 && b * b - (dot(cam.C, cam.C) - r * r) > 0;
 }
 
 /** How far below its top the limb has dropped, dx px to the side of it, for a

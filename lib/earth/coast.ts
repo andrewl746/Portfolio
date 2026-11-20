@@ -10,7 +10,6 @@
 // (app/page.tsx and the section components).
 import { clamp01, easeInOut, easeOut, ecef, mix, smoothstep, DEG } from "./math";
 import { createEarthRenderer } from "./renderer";
-import type { Cover } from "./satellites";
 import { createStage, type Moment, type Shot } from "./stage";
 import { aim, blend, finalePose, glowHeight, limbDrop, type Pose } from "./view";
 
@@ -108,14 +107,12 @@ export function startCoast({
   root,
   earth,
   face,
-  sky,
   plate,
   needPlate,
 }: {
   root: HTMLElement;
   earth: HTMLCanvasElement;
   face: HTMLCanvasElement;
-  sky: HTMLCanvasElement;
   plate: HTMLElement;
   needPlate: () => void;
 }): () => void {
@@ -131,8 +128,6 @@ export function startCoast({
   const lastLine = find("contact-last");
   if (!name || !pin || !heroEl || !topEl || !bandEl || !page || !end) return () => {};
   const projects = [...root.querySelectorAll<HTMLElement>('[data-scene="project"]')];
-  // What hides the sky behind it: the screenshots and the tech tiles.
-  const coverEls = [...root.querySelectorAll<HTMLElement>('[data-scene="cover"]')];
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const renderer = createEarthRenderer(earth);
@@ -211,13 +206,7 @@ export function startCoast({
   // little, so a project keeps some room.
   let tallest = 0;
   let contactBottom = 0; // where the Contact text ends, below the top of the last screen
-  let covers: Cover[] = []; // in the page: left, top, right, bottom
   const measure = () => {
-    covers = coverEls.map((el) => {
-      const r = el.getBoundingClientRect();
-      const top = offsetWithin(el, document.body);
-      return [r.left, top, r.right, top + el.offsetHeight];
-    });
     const beside = projects.length > 0 && getComputedStyle(projects[0]).display === "grid";
     tallest = beside ? Math.max(...projects.map((el) => el.offsetHeight)) : 0;
     contactBottom = lastLine ? offsetWithin(lastLine, end) + lastLine.offsetHeight : 0;
@@ -262,10 +251,6 @@ export function startCoast({
         : mix(floor, fin.apex[1], easeInOut(endT));
     const glow = glowHeight(hero);
     v = { pinLen, heroY: hero.apex[1], apexY, size, gap, glow, bandY };
-    // While the feet of the name show in front of the Earth (see place), the
-    // satellites near them are drawn over them, from the top of that copy down.
-    const t = clamp01(y / pinLen);
-    const feet = m.time > PEAK && t < LIFT;
     return {
       ...cam,
       apex: [W / 2, apexY],
@@ -275,8 +260,6 @@ export function startCoast({
       plateShift: sink,
       shells: smoothstep(0.12, 0.7, y / pinLen) * (1 - smoothstep(0.3, 0.75, endT)),
       top: W < 768 ? 56 : 64,
-      covers: covers.filter((c) => c[3] > y && c[1] < y + H).map((c) => [c[0], c[1] - y, c[2], c[3] - y]),
-      lift: feet ? apexY - glow : Infinity,
     };
   }
 
@@ -365,7 +348,6 @@ export function startCoast({
     earth,
     renderer,
     face,
-    sky,
     plate,
     reduced,
     pose,

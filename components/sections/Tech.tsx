@@ -48,7 +48,6 @@ export default function Tech() {
           // clear of them (data-scene).
           <div
             key={t.name}
-            data-scene="cover"
             className="group flex flex-col items-center gap-3 border border-white/8 bg-void px-2 py-5 transition-colors hover:border-white/20 hover:bg-[#0a0c14] sm:px-4 sm:py-6"
           >
             <svg

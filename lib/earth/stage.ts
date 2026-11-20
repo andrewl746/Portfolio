@@ -14,13 +14,11 @@ import {
   drawDot,
   drawHero,
   drawTrack,
-  setLift,
   flashPoint,
   inView,
   orbitPoint,
   passStart,
   ring,
-  type Cover,
   type Ring,
 } from "./satellites";
 import { camera, centreFor, finaleFrame, finalePose, type Pose } from "./view";
@@ -82,14 +80,8 @@ export type Shot = Pose & {
   plateShift: number;
   /** How strongly the extra shells show, 0 to 1. */
   shells: number;
-  /** The bottom edge of the bar, and the page content that hides the sky
-   *  behind it (screenshots, the tech tiles), where they are in the window.
-   *  The ember satellites flash clear of both. */
+  /** The bottom edge of the bar: the ember satellites flash clear of it. */
   top: number;
-  covers: Cover[];
-  /** From this height down the window the satellites are drawn on the top
-   *  canvas, over the feet of the name (Infinity when those aren't showing). */
-  lift: number;
 };
 
 /** `u0` is where a satellite is on its orbit when the scene starts (for the
@@ -106,7 +98,6 @@ export function createStage({
   earth: earthCanvas,
   renderer: earth,
   face: faceCanvas,
-  sky: skyCanvas,
   plate,
   reduced,
   pose,
@@ -118,10 +109,8 @@ export function createStage({
   /** The WebGL canvas the Earth is drawn on, and what draws it. */
   earth: HTMLCanvasElement;
   renderer: EarthRenderer;
-  /** Satellites crossing the face of the Earth, above it. */
+  /** The satellites and their orbit lines, above the page and the Earth. */
   face: HTMLCanvasElement;
-  /** Satellites over the sky, under the page's content. */
-  sky: HTMLCanvasElement;
   /** The finale image. */
   plate: HTMLElement;
   reduced: boolean;
@@ -136,10 +125,8 @@ export function createStage({
   onBegin: () => void;
 }): Stage | null {
   const faceContext = faceCanvas.getContext("2d");
-  const skyContext = skyCanvas.getContext("2d");
-  if (!faceContext || !skyContext) return null;
+  if (!faceContext) return null;
   const face: CanvasRenderingContext2D = faceContext;
-  const sky: CanvasRenderingContext2D = skyContext;
   const still = reduced;
   // The scene's clock stays at zero until the opening can play without a
   // hitch: see `begin`.
@@ -210,16 +197,14 @@ export function createStage({
   function size() {
     W = window.innerWidth;
     H = Math.max(window.innerHeight, tall.offsetHeight);
-    for (const c of [earthCanvas, faceCanvas, skyCanvas]) {
+    for (const c of [earthCanvas, faceCanvas]) {
       c.style.width = W + "px";
       c.style.height = H + "px";
     }
     dpr = Math.min(2, window.devicePixelRatio || 1);
     earth.resize(dpr * quality);
-    for (const c of [faceCanvas, skyCanvas]) {
-      c.width = Math.round(W * dpr);
-      c.height = Math.round(H * dpr);
-    }
+    faceCanvas.width = Math.round(W * dpr);
+    faceCanvas.height = Math.round(H * dpr);
     build();
     dirty = true;
   }
@@ -293,11 +278,10 @@ export function createStage({
     if (!still) pace(now, drew, time);
     place(m, shot);
 
-    // Where the ember satellites flash depends on the camera, the Sun and what
-    // the page has in front of the sky, so it is worked out again only when
-    // one of those has changed. A phone's toolbars cover the bottom of the
+    // Where the ember satellites flash depends on the camera and the Sun, so
+    // it is worked out again only when one of those has changed. A phone's toolbars cover the bottom of the
     // canvas while they show, so the window ends where they begin.
-    const sight = { W, H: Math.min(H, window.innerHeight), top: shot.top, covers: shot.covers };
+    const sight = { W, H: Math.min(H, window.innerHeight), top: shot.top };
     const sightKey = `${key}|${y}|${W}|${sight.H}`;
     if (!still && sightKey !== flashKey) {
       flashKey = sightKey;
@@ -305,16 +289,13 @@ export function createStage({
     }
 
     // Satellites.
-    setLift(shot.lift);
-    for (const c of [face, sky]) {
-      c.setTransform(dpr, 0, 0, dpr, 0, 0);
-      c.clearRect(0, 0, W, H);
-    }
+    face.setTransform(dpr, 0, 0, dpr, 0, 0);
+    face.clearRect(0, 0, W, H);
     const a = smoothstep(0.3, 1.6, time);
     if (a > 0.01) {
       // The ember orbit: as clear over the Earth as over the sky, and a little
       // heavier on a phone, where a hairline all but disappears.
-      drawTrack(face, sky, cam, track, a, 240, { width: W < 768 ? 1.5 : 1.1, onEarth: 0.4 });
+      drawTrack(face, cam, track, a, 240, { width: W < 768 ? 1.5 : 1.1, onEarth: 0.4 });
       if (lead !== null && Math.abs(y - openedAt) > 4) {
         // The page has moved since the opening was timed. Before the leading
         // satellite has come up, time it again for where the page is now;
@@ -357,7 +338,7 @@ export function createStage({
         }
         const at = orbitPoint(sat.orbit, u);
         if (!sat.hero) {
-          drawDot(face, sky, cam, at, shot.sun, a, 0.9);
+          drawDot(face, cam, at, shot.sun, a, 0.9);
           continue;
         }
         if (sat.held) {
@@ -386,16 +367,16 @@ export function createStage({
           if (gap > 0 && here >= 0 && here <= gap + 0.05) lit = 1;
           else if (gap < 0 && here < 0 && here >= gap - 0.05) lit = 0;
         }
-        drawHero(face, sky, cam, sat.orbit, u, shot.sun, { alpha: a, glint, lit });
+        drawHero(face, cam, sat.orbit, u, shot.sun, { alpha: a, glint, lit });
       }
     }
     const sh = shot.shells * a;
     if (sh > 0.01) {
       SHELLS.forEach((o, k) => {
-        drawTrack(face, sky, cam, o, sh * 0.62, 200);
+        drawTrack(face, cam, o, sh * 0.62, 200);
         for (let i = 0; i < 5; i++) {
           const u = k * 1.7 + (i * Math.PI * 2) / 5 + angularSpeed(o) * TIME_SCALE * time;
-          drawDot(face, sky, cam, orbitPoint(o, u), shot.sun, sh, 1.05);
+          drawDot(face, cam, orbitPoint(o, u), shot.sun, sh, 1.05);
         }
       });
     }
@@ -522,10 +503,8 @@ export function createStage({
       density?.removeEventListener("change", onDensity);
       earth.onchange = null;
       tall.remove();
-      for (const c of [face, sky]) {
-        c.setTransform(1, 0, 0, 1, 0, 0);
-        c.clearRect(0, 0, c.canvas.width, c.canvas.height);
-      }
+      face.setTransform(1, 0, 0, 1, 0, 0);
+      face.clearRect(0, 0, faceCanvas.width, faceCanvas.height);
     },
   };
 }
