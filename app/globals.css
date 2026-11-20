@@ -537,7 +537,7 @@ html:not(.js) .typewriter-caret {
 
 /* --- The first screen --------------------------------------------------------- */
 
-/* The name: as wide as the screen allows, standing behind the Earth's limb.
+/* The name: as wide as the screen allows, standing on the Earth's limb.
    The scene sizes and places it (lib/earth/coast.ts); the values here are
    only what shows if it never starts. */
 .hero-name {

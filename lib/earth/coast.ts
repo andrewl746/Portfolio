@@ -1,7 +1,7 @@
 // "Down the coast": what the page does with the live Earth.
 //
 // The camera starts off Newfoundland at dusk, looking down the lit coast with
-// the name standing behind the limb. Scrolling carries it out over the
+// the name standing on the limb. Scrolling carries it out over the
 // Atlantic and south through the night, always looking back at the coast, and
 // lands it exactly on the Contact finale's view. The Earth is drawn over the
 // page, so the name sets behind it and every section rises from behind it.
@@ -19,11 +19,13 @@ import { aim, blend, finalePose, glowHeight, limbDrop, type Pose } from "./view"
 // limb up to the bottom of the line above the name, and the baseline's
 // distance below the top of the name's line box. If the heading typeface or
 // the name ever changes, these need measuring again.
-const CAPS = 0.63;
+const CAPS = 0.7015;
 const BASELINE = 0.7915;
-/** The baseline rests this far below the top of the limb, so the Earth covers
- *  the feet of the middle letters. */
-const SUNK = 0.0715;
+/** The baseline rests this far below the top of the limb. None: the name
+ *  stands on the Earth, so every letter is whole and only the glow of the air
+ *  washes over their feet (sunk into it, the letters looked cut off at a
+ *  phone's size). CAPS above counts this in. */
+const SUNK = 0;
 /** The least space kept between the name and each edge of the window, px. */
 const NAME_MARGIN = 12;
 /** Sky kept clear between the last line of Contact and the Earth's glow, px. */
@@ -276,7 +278,7 @@ export function startCoast({
     const { pinLen, heroY, apexY, size, gap, bandY } = v;
     const t = clamp01(y / pinLen);
     write("size", size.toFixed(1) + "px", (px) => (name!.style.fontSize = px));
-    // Resting place: baseline a little below the top of the limb. On load the
+    // Resting place: baseline on the top of the limb. On load the
     // name rises into place; on scroll it sets behind the Earth.
     const rest = heroY + (SUNK - BASELINE) * size;
     const rise = (1 - easeOut(clamp01((time - 0.15) / 1.5))) * size * 0.55;

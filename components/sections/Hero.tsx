@@ -1,7 +1,7 @@
 import { SITE, STATS } from "@/lib/content";
 
 /**
- * The first screen: the name as wide as the screen allows, standing behind
+ * The first screen: the name as wide as the screen allows, standing on
  * the Earth's limb. Above it, in clear sky, the school line and the two
  * credits. Under the limb at the left, on dark ocean, the two sentences and
  * the buttons, so nothing sits on the city lights.
