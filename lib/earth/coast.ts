@@ -24,13 +24,17 @@ const BASELINE = 0.7915;
 /** The baseline rests this far below the top of the limb, so the feet of the
  *  middle letters stand across it. At rest a second copy of the name shows
  *  them in front of the Earth (hidden behind it, the letters looked cut off
- *  at a phone's size); it fades as the page scrolls and the name sets. */
+ *  at a phone's size). */
 const SUNK = 0.0715;
-/** The copy of the name in front of the Earth starts to show this long after
- *  the scene starts (the name has risen), and is gone by this far through
- *  the first screen's scroll. */
-const FEET_IN = 1.35;
-const FEET_OUT = 0.16;
+/** The name comes up from behind the Earth to just clear of it (its baseline
+ *  on the top of the limb) by PEAK seconds, then comes forward and settles
+ *  down across the limb, in front, over SETTLE seconds. Scrolling undoes it
+ *  over the first LIFT of the first screen's scroll: up clear of the Earth,
+ *  then back behind it, where it sets. At the top of that move nothing of
+ *  the name is over the Earth, which is when it changes sides. */
+const PEAK = 1.3;
+const SETTLE = 0.6;
+const LIFT = 0.08;
 /** The least space kept between the name and each edge of the window, px. */
 const NAME_MARGIN = 12;
 /** Sky kept clear between the last line of Contact and the Earth's glow, px. */
@@ -261,7 +265,7 @@ export function startCoast({
     // While the feet of the name show in front of the Earth (see place), the
     // satellites near them are drawn over them, from the top of that copy down.
     const t = clamp01(y / pinLen);
-    const feet = m.time > FEET_IN && t < FEET_OUT;
+    const feet = m.time > PEAK && t < LIFT;
     return {
       ...cam,
       apex: [W / 2, apexY],
@@ -272,7 +276,7 @@ export function startCoast({
       shells: smoothstep(0.12, 0.7, y / pinLen) * (1 - smoothstep(0.3, 0.75, endT)),
       top: W < 768 ? 56 : 64,
       covers: covers.filter((c) => c[3] > y && c[1] < y + H).map((c) => [c[0], c[1] - y, c[2], c[3] - y]),
-      lift: feet ? apexY + t * t * size * 1.05 - glow : Infinity,
+      lift: feet ? apexY - glow : Infinity,
     };
   }
 
@@ -290,28 +294,34 @@ export function startCoast({
     const { pinLen, heroY, apexY, size, gap, glow, bandY } = v;
     const t = clamp01(y / pinLen);
     write("size", size.toFixed(1) + "px", (px) => (name!.style.fontSize = px));
-    // Resting place: baseline a little below the top of the limb. On load the
-    // name rises into place; on scroll it sets behind the Earth.
+    // Resting place: baseline a little below the top of the limb, in front
+    // of the Earth. On load the name rises from behind the Earth until it
+    // stands clear on the limb, then settles down in front of it. On scroll
+    // it goes back up clear, then behind, and sets.
     const rest = heroY + (SUNK - BASELINE) * size;
-    const rise = (1 - easeOut(clamp01((time - 0.15) / 1.5))) * size * 0.55;
+    const rise = (1 - easeOut(clamp01((time - 0.15) / (PEAK - 0.15)))) * size * 0.55;
     const set = t * t * size * 1.05 + (apexY - heroY);
-    write("name", (rest + rise + set).toFixed(1), (px) => (name!.style.transform = `translate3d(-50%, ${px}px, 0)`));
+    // How far the name is from its place in front, back toward clear of the
+    // Earth: 1 at the top of the move, 0 at rest.
+    const clear = Math.max(1 - easeInOut((time - PEAK) / SETTLE), easeInOut(t / LIFT));
+    const y0 = rest + rise + set - clear * SUNK * size;
+    write("name", y0.toFixed(1), (px) => (name!.style.transform = `translate3d(-50%, ${px}px, 0)`));
     write("gone", t >= 0.995 ? "hidden" : "", (value) => (name!.style.visibility = value));
     if (front) {
-      // The copy in front of the Earth: only the part of the name from the
-      // top of the Earth's glow down, once the name has risen into place,
-      // and fading out as soon as the page moves, so the name still rises
-      // from behind the Earth and sets behind it.
-      const shown = smoothstep(FEET_IN, FEET_IN + 0.4, time) * (1 - smoothstep(0.02, FEET_OUT, t));
-      write("front", shown.toFixed(3), (value) => {
-        front.style.opacity = value;
-        front.style.visibility = value === "0.000" ? "hidden" : "";
+      // The copy in front of the Earth: the part of the name below the top
+      // of the Earth's glow, while the name is on the near side. It changes
+      // sides at the top of the move, over a moment, because the glow the
+      // feet stand in there tints them a little when they are behind it.
+      const near = Math.min(smoothstep(PEAK - 0.08, PEAK + 0.08, time), 1 - smoothstep(LIFT * 0.85, LIFT, t));
+      write("front", near > 0 ? near.toFixed(3) : "", (value) => {
+        front.style.opacity = value || "0";
+        front.style.visibility = value ? "" : "hidden";
       });
-      if (shown > 0) {
+      if (near > 0) {
         front.style.fontSize = name!.style.fontSize;
         front.style.transform = name!.style.transform;
-        const cut = (BASELINE - SUNK) * size - glow;
-        write("cut", cut.toFixed(1), (px) => (front.style.clipPath = `inset(${px}px -10% -50% -10%)`));
+        const line = apexY - glow - y0; // the top of the glow, below the top of the name's box
+        write("cut", line.toFixed(1), (px) => (front.style.clipPath = `inset(${px}px -10% -50% -10%)`));
       }
     }
     // The line above the name sits on its bottom edge, a little over the capitals.
