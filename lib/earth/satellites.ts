@@ -6,7 +6,7 @@
 // planet in front.
 import { MU, type Orbit } from "@/lib/earth-scene";
 import { DEG, RE, dot, mix, smoothstep, type Vec3 } from "./math";
-import { behindLimb, see, type Camera, type Seen } from "./view";
+import { behindLimb, overEarth, see, type Camera, type Seen } from "./view";
 
 type Ctx = CanvasRenderingContext2D;
 type Rgb = [number, number, number];
@@ -56,10 +56,12 @@ export type Sight = { W: number; H: number; top: number; covers: Cover[] };
 
 /** Room kept between a flash and the window's edges, and anything hiding the sky, px. */
 const FLASH_MARGIN = 44;
+/** The flash comes no later than this far through a pass (0 to 1). */
+const FLASH_BY = 0.75;
 const COVER_MARGIN = 10;
 /** A flash takes most of a second to fade, so the satellite has to stay in
  *  sight for this much of its orbit after it starts. It is still moving fast
- *  then (stage.ts), so this is under half a second of travel. */
+ *  then (stage.ts), so this is a fifth of a second of travel. */
 const FLASH_SPAN = 4 * DEG;
 
 /** Where on its orbit a satellite leaves the Earth's shadow (the cylinder
@@ -80,7 +82,7 @@ function visible(cam: Camera, o: Ring, u: number, sight: Sight, m: number) {
   const s = see(cam, p);
   if (s.z <= 0 || s.clearance <= 0) return false;
   if (s.x < m || s.x > sight.W - m || s.y < sight.top + m || s.y > sight.H - m) return false;
-  if (behindLimb(cam, p)) return true;
+  if (overEarth(cam, p)) return true;
   const c = COVER_MARGIN;
   return !sight.covers.some(([l, t, r, b]) => s.x > l - c && s.x < r + c && s.y > t - c && s.y < b + c);
 }
@@ -155,8 +157,16 @@ export function flashPoint(cam: Camera, o: Ring, sun: Vec3, sight: Sight): numbe
   // Out of the shadow; where there is no shadow, across the horizon.
   const from = shadowExit(o, sun) ?? limbCrossing(cam, o, sight);
   if (from === null) return null;
-  if (inSight(cam, o, from, sight)) return from;
   const step = 0.25 * DEG;
+  // No later than partway through the pass: a flash near the end of it is one
+  // most readers have scrolled past, or the satellite has all but left.
+  if (inView(cam, o, from, sight)) {
+    const start = passStart(cam, o, from, sight);
+    let end = from;
+    for (let d = 0; d < Math.PI && inView(cam, o, end + step, sight); d += step) end += step;
+    for (let u = start + FLASH_BY * (end - start); u < from; u += step) if (inSight(cam, o, u, sight)) return u;
+  }
+  if (inSight(cam, o, from, sight)) return from;
   for (let d = step; d <= Math.PI; d += step) {
     if (inSight(cam, o, from - d, sight)) return from - d;
     if (inSight(cam, o, from + d, sight)) return from + d;
@@ -173,7 +183,7 @@ export function drawTrack(
   o: Ring,
   alpha: number,
   steps: number,
-  { width = 1.1, overEarth = 0.18 }: { width?: number; overEarth?: number } = {},
+  { width = 1.1, onEarth = 0.18 }: { width?: number; onEarth?: number } = {},
 ) {
   for (const c of [face, sky]) {
     c.lineWidth = width;
@@ -185,9 +195,9 @@ export function drawTrack(
     const s = see(cam, p);
     const ok = s.z > 0 && s.clearance > 0;
     if (prev && ok && prev.ok) {
-      const onFace = s.clearance < 9000 && behindLimb(cam, p);
+      const onFace = s.clearance < 9000 && overEarth(cam, p);
       const c = onFace ? face : sky;
-      c.strokeStyle = rgba(BRASS, (onFace ? overEarth : 0.42) * alpha * smoothstep(0, 60, s.clearance + 60));
+      c.strokeStyle = rgba(BRASS, (onFace ? onEarth : 0.42) * alpha * smoothstep(0, 60, s.clearance + 60));
       c.beginPath();
       c.moveTo(prev.x, prev.y);
       c.lineTo(s.x, s.y);
@@ -206,7 +216,7 @@ export function drawHero(
   o: Ring,
   u: number,
   sun: Vec3,
-  { glint = 0, alpha = 1, trail = 0.05 }: { glint?: number; alpha?: number; trail?: number } = {},
+  { glint = 0, alpha = 1, trail = 0.05, lit: lightAs }: { glint?: number; alpha?: number; trail?: number; lit?: number } = {},
 ) {
   const at = orbitPoint(o, u);
   const here = see(cam, at, sun);
@@ -222,8 +232,8 @@ export function drawHero(
     // Both ends in front of the camera: an end behind it projects to nonsense
     // and the stroke would cross the whole screen.
     if (prev && s.z > 0 && prev.z > 0 && s.clearance > 0 && prev.clearance > 0) {
-      const c = behindLimb(cam, q) ? face : sky;
-      c.strokeStyle = rgba(EMBER, Math.pow(t, 1.7) * 0.75 * mix(0.55, 1, s.sun) * smoothstep(-2, 45, s.clearance) * alpha);
+      const c = overEarth(cam, q) ? face : sky;
+      c.strokeStyle = rgba(EMBER, Math.pow(t, 1.7) * 0.75 * mix(0.55, 1, lightAs ?? s.sun) * smoothstep(-2, 45, s.clearance) * alpha);
       c.lineWidth = (0.35 + 1.5 * t) * k;
       c.beginPath();
       c.moveTo(prev.x, prev.y);
@@ -233,8 +243,8 @@ export function drawHero(
     prev = s;
   }
   if (here.clearance < -2) return;
-  const c = behindLimb(cam, at) ? face : sky;
-  const lit = here.sun;
+  const c = overEarth(cam, at) ? face : sky;
+  const lit = lightAs ?? here.sun;
   const r = (9 + 9 * lit + 16 * glint) * k;
   const halo = c.createRadialGradient(here.x, here.y, 0, here.x, here.y, r);
   const glow = (0.32 + 0.3 * lit + 0.35 * glint) * air * alpha;
@@ -259,7 +269,7 @@ export function drawDot(face: Ctx, sky: Ctx, cam: Camera, p: Vec3, sun: Vec3, al
   if (s.z <= 0 || s.clearance < 0) return;
   const a = (0.16 + 0.42 * s.sun) * smoothstep(0, 45, s.clearance) * alpha;
   if (a <= 0.01) return;
-  const c = behindLimb(cam, p) ? face : sky;
+  const c = overEarth(cam, p) ? face : sky;
   c.fillStyle = `rgba(232,226,211,${a})`;
   c.beginPath();
   c.arc(s.x, s.y, r, 0, Math.PI * 2);

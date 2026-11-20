@@ -10,6 +10,7 @@ import { clamp01, smoothstep, type Vec3 } from "./math";
 import type { EarthRenderer } from "./renderer";
 import {
   angularSpeed,
+  shadowExit,
   drawDot,
   drawHero,
   drawTrack,
@@ -38,11 +39,13 @@ const SHELLS: Ring[] = [ring(1200, 87.9, -58), ring(560, 97.6, -104), ring(570, 
 /** With reduced motion nothing moves by itself: the scene holds this moment. */
 const STILL_TIME = 7;
 const TURN = Math.PI * 2;
-/** An ember satellite hurries from where it comes into view to its flash
- *  point, so the flash isn't a long wait: it covers that stretch in FAST_FOR
- *  seconds, flashes, and eases back to its usual speed over EASE_FOR. */
-const FAST_FOR = 2;
-const EASE_FOR = 0.9;
+/** An angle brought into -pi to pi. */
+const wrap = (a: number) => ((((a + Math.PI) % TURN) + TURN) % TURN) - Math.PI;
+/** The ember satellites go round this many times faster than the rest, at one
+ *  steady speed, so the flash comes a few seconds after one appears. A lap
+ *  takes about 29 s on screen, so two of them keep a pass coming every 14.5. */
+const EMBER_PACE = 3;
+const EMBERS = 2;
 /** How long after the satellites first show the leading ember one comes into
  *  view, in seconds: as the name and the text settle. */
 const RISE_AFTER = 1.1;
@@ -133,22 +136,6 @@ export function createStage({
   let plateOpacity = "";
   let flashAt: number | null = null; // where on their orbit the ember satellites flash, as the page stands
   let flashKey = "";
-  // The hurry, as a bend in where a satellite is for its place in the queue:
-  // the `quick` radians of queue before the flash point `to` are stretched
-  // over `span` radians of orbit (`fast` times the usual speed). Past the
-  // point the speed eases down over `ease` radians of queue to `rest`, a
-  // little under the usual, which keeps a lap a lap.
-  let warp: { to: number; span: number; quick: number; fast: number; ease: number; rest: number } | null = null;
-  const along = (place: number) => {
-    if (!warp) return place;
-    const { to, quick, fast, ease, rest } = warp;
-    const d = (((place - to) % TURN) + TURN) % TURN;
-    if (d >= TURN - quick) return to - (TURN - d) * fast;
-    // Speed past the point is rest + (fast - rest) (1 - d / ease)^2, which adds up to this.
-    const left = Math.max(0, 1 - d / ease);
-    return to + rest * d + ((fast - rest) * ease * (1 - left * left * left)) / 3;
-  };
-
   // On a phone the browser's toolbars come and go and the visible height
   // changes with them. Everything is laid out for the tallest view (toolbars
   // away), so the Earth isn't moved or rebuilt each time they slide.
@@ -174,8 +161,8 @@ export function createStage({
   const build = () => {
     const fr = finaleFrame(W, H);
     fleet = [];
-    for (let i = 0; i < 6; i++) {
-      fleet.push({ orbit: fr.orbit, u0: (i * Math.PI) / 3, hero: true, glintAt: -99, past: Math.PI, held: false });
+    for (let i = 0; i < EMBERS; i++) {
+      fleet.push({ orbit: fr.orbit, u0: (i * TURN) / EMBERS, hero: true, glintAt: -99, past: Math.PI, held: false });
     }
     fr.traffic.forEach((o, k) => {
       for (let i = 0; i < 4; i++) {
@@ -290,18 +277,6 @@ export function createStage({
     if (!still && sightKey !== flashKey) {
       flashKey = sightKey;
       flashAt = flashPoint(cam, track, shot.sun, sight);
-      warp = null;
-      if (flashAt !== null) {
-        const pace = angularSpeed(track) * TIME_SCALE;
-        const span = flashAt - passStart(cam, track, flashAt, sight);
-        const quick = pace * FAST_FOR;
-        const ease = pace * EASE_FOR;
-        const fast = span / quick;
-        if (fast > 1) {
-          const rest = (TURN - span - (fast * ease) / 3) / (TURN - quick - ease / 3);
-          warp = { to: flashAt, span, quick, fast, ease, rest };
-        }
-      }
     }
 
     // Satellites.
@@ -313,7 +288,7 @@ export function createStage({
     if (a > 0.01) {
       // The ember orbit: as clear over the Earth as over the sky, and a little
       // heavier on a phone, where a hairline all but disappears.
-      drawTrack(face, sky, cam, track, a, 240, { width: W < 768 ? 1.5 : 1.1, overEarth: 0.4 });
+      drawTrack(face, sky, cam, track, a, 240, { width: W < 768 ? 1.5 : 1.1, onEarth: 0.4 });
       if (lead !== null && Math.abs(y - openedAt) > 4) {
         // The page has moved since the opening was timed. Before the leading
         // satellite has come up, time it again for where the page is now;
@@ -326,21 +301,22 @@ export function createStage({
       if (first === null) {
         openedAt = y;
         openUntil = time + RISE_AFTER;
-        const speed = angularSpeed(track) * TIME_SCALE;
+        const speed = angularSpeed(track) * TIME_SCALE * EMBER_PACE;
         // Held still (reduced motion), or with nowhere to flash, the
         // satellites stand where the finale's render has them.
         first = finaleFrame(W, H).orbit.start;
         if (!still && flashAt !== null) {
-          first = (warp ? warp.to - warp.quick : passStart(cam, track, flashAt, sight)) - speed * (time + RISE_AFTER);
+          first = passStart(cam, track, flashAt, sight) - speed * (time + RISE_AFTER);
           // Any other that would start out in view waits until it has left
           // it, so none of them just appears in the middle of the sky.
-          for (const sat of fleet) sat.held = sat.hero && inView(cam, track, along(first + sat.u0 + speed * time), sight);
+          for (const sat of fleet) sat.held = sat.hero && inView(cam, track, first + sat.u0 + speed * time, sight);
         }
         lead = first;
       }
+      const edge = still ? null : shadowExit(track, shot.sun);
       for (const sat of fleet) {
-        const place = sat.u0 + angularSpeed(sat.orbit) * TIME_SCALE * time;
-        const u = sat.hero ? along(first + place) : place;
+        const pace = angularSpeed(sat.orbit) * TIME_SCALE * time;
+        const u = sat.hero ? first + sat.u0 + pace * EMBER_PACE : sat.u0 + pace;
         const at = orbitPoint(sat.orbit, u);
         if (!sat.hero) {
           drawDot(face, sky, cam, at, shot.sun, a, 0.9);
@@ -361,7 +337,18 @@ export function createStage({
         sat.past = past;
         const g = time - sat.glintAt;
         const glint = still || g < 0 ? 0 : g < 0.12 ? g / 0.12 : Math.exp(-(g - 0.12) / 0.6);
-        drawHero(face, sky, cam, sat.orbit, u, shot.sun, { alpha: a, glint });
+        // The flash stands for coming out of the shadow. Where it has been
+        // moved off the shadow's real edge, the satellite stays dim up to the
+        // flash and bright after it, so it doesn't brighten a second time.
+        let lit: number | undefined;
+        if (flashAt !== null && edge !== null) {
+          const gap = wrap(edge - flashAt);
+          const here = wrap(u - flashAt);
+          // (0.05 past the edge either way, to clear its soft half-light.)
+          if (gap > 0 && here >= 0 && here <= gap + 0.05) lit = 1;
+          else if (gap < 0 && here < 0 && here >= gap - 0.05) lit = 0;
+        }
+        drawHero(face, sky, cam, sat.orbit, u, shot.sun, { alpha: a, glint, lit });
       }
     }
     const sh = shot.shells * a;

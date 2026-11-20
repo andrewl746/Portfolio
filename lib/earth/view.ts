@@ -154,6 +154,16 @@ export function behindLimb(cam: Camera, p: Vec3) {
   return b < 0 && b * b - (dot(cam.C, cam.C) - RE * RE) > 0;
 }
 
+/** Is the Earth or the glow of its air behind this point? The Earth is drawn
+ *  over the sky's canvas, glow included, so anything in front of either has
+ *  to go on the canvas above it or the glow hides it. */
+export function overEarth(cam: Camera, p: Vec3) {
+  const v: Vec3 = [p[0] - cam.C[0], p[1] - cam.C[1], p[2] - cam.C[2]];
+  const b = dot(cam.C, v) / len(v);
+  const r = RE + AIR_TOP;
+  return b < 0 && b * b - (dot(cam.C, cam.C) - r * r) > 0;
+}
+
 /** How far below its top the limb has dropped, dx px to the side of it, for a
  *  level camera. */
 export function limbDrop(pose: { C: Vec3; fwd: Vec3; f: number }, dx: number) {
