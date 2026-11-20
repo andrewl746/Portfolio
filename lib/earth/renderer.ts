@@ -116,6 +116,10 @@ type MapName = "uBase" | "uNightG" | "uNightR" | "uDay";
 export type EarthRenderer = {
   /** False when the browser has no WebGL2: the page falls back to the finale image. */
   ok: boolean;
+  /** How many of its maps have arrived and gone up to the graphics chip, 0 to 1. */
+  loaded: () => number;
+  /** What the first map still to come shows, in a few words, or null when all are here. */
+  waitingFor: () => string | null;
   /** Match the drawing buffer to the canvas's CSS size at `scale` device px per CSS px. */
   resize(scale: number): void;
   /** sun: unit vector to the Sun. fade: 0 to 1. */
@@ -125,7 +129,15 @@ export type EarthRenderer = {
   dispose(): void;
 };
 
-const NONE: EarthRenderer = { ok: false, resize() {}, render() {}, onchange: null, dispose() {} };
+/** What each map is, for the line that says what is loading. */
+const WAITS: [MapName, string][] = [
+  ["uBase", "the Earth's surface"],
+  ["uNightG", "city lights"],
+  ["uNightR", "the east coast"],
+  ["uDay", "daylight"],
+];
+
+const NONE: EarthRenderer = { ok: false, loaded: () => 1, waitingFor: () => null, resize() {}, render() {}, onchange: null, dispose() {} };
 
 export function createEarthRenderer(canvas: HTMLCanvasElement): EarthRenderer {
   const gl = canvas.getContext("webgl2", { alpha: true, premultipliedAlpha: true, antialias: false });
@@ -140,7 +152,9 @@ export function createEarthRenderer(canvas: HTMLCanvasElement): EarthRenderer {
   let disposed = false;
   let generation = 0; // goes up when the context is rebuilt, so late map loads from before it are dropped
 
-  const self: EarthRenderer = { ok: true, resize, render, onchange: null, dispose };
+  const loaded = () => Object.values(has).reduce((sum, v) => sum + v, 0) / 4;
+  const waitingFor = () => WAITS.find(([name]) => !has[name])?.[1] ?? null;
+  const self: EarthRenderer = { ok: true, loaded, waitingFor, resize, render, onchange: null, dispose };
 
   function compile(type: number, src: string) {
     const s = gl!.createShader(type);

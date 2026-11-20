@@ -50,6 +50,10 @@ const EMBERS = 1;
  *  29 s on screen, so once an ember satellite is out of view it skips the
  *  rest of the far side and comes back into view this long after it left. */
 const NEXT_AFTER = 5;
+/** The longest the opening waits for the maps and the typeface, ms, and how
+ *  long the Earth takes to fade in before the clock starts (as in the styles). */
+const HOLD_MOST = 4000;
+const EARTH_IN = 450;
 /** How long after the satellites first show the leading ember one comes into
  *  view, in seconds: as the name and the text settle. */
 const RISE_AFTER = 1.1;
@@ -63,7 +67,7 @@ export type Moment = {
   max: number;
   /** Scroll progress through the whole page, 0 to 1. */
   p: number;
-  /** Seconds since the scene started. */
+  /** Seconds since the opening started; 0 while it is held back to load. */
   time: number;
   portrait: boolean;
   /** False when there is no WebGL2 and the finale image stands in for the live Earth. */
@@ -108,6 +112,8 @@ export function createStage({
   pose,
   place,
   needPlate,
+  onLoad,
+  onBegin,
 }: {
   /** The WebGL canvas the Earth is drawn on, and what draws it. */
   earth: HTMLCanvasElement;
@@ -123,6 +129,11 @@ export function createStage({
   place: (m: Moment, shot: Shot) => void;
   /** Called once, when the finale image is going to be needed. */
   needPlate: () => void;
+  /** Called as what the opening needs arrives, with how much of it is here,
+   *  0 to 1, and what is still to come, in a few words ("" when nothing is). */
+  onLoad: (part: number, what: string) => void;
+  /** Called once, when everything the opening needs has loaded and it starts. */
+  onBegin: () => void;
 }): Stage | null {
   const faceContext = faceCanvas.getContext("2d");
   const skyContext = skyCanvas.getContext("2d");
@@ -130,7 +141,10 @@ export function createStage({
   const face: CanvasRenderingContext2D = faceContext;
   const sky: CanvasRenderingContext2D = skyContext;
   const still = reduced;
-  const start = performance.now();
+  // The scene's clock stays at zero until the opening can play without a
+  // hitch: see `begin`.
+  let start = 0;
+  let began = false;
   let W = 0;
   let H = 0;
   let dpr = 1;
@@ -239,7 +253,7 @@ export function createStage({
 
   function paint(now: number) {
     const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const time = still ? STILL_TIME : (now - start) / 1000;
+    const time = !began ? 0 : still ? STILL_TIME : Math.max(0, (now - start) / 1000);
     const y = window.scrollY;
     const m: Moment = { W, H, y, max, p: clamp01(y / max), time, portrait: H > W, gl: earth.ok };
     const shot = pose(m);
@@ -417,9 +431,50 @@ export function createStage({
   const onVisible = () => {
     if (!document.hidden) {
       lastFrameAt = 0;
+      if (waiting) begin();
       refresh();
     }
   };
+
+  // --- Starting -------------------------------------------------------------------------
+  // The opening is held back, with only the stars showing, until what it
+  // needs is here: the Earth's maps (each one stalls a frame as it goes up
+  // to the graphics chip), the typeface the name is set in, and a couple of
+  // frames drawn with them. Played while those were still arriving, the
+  // name's rise stuttered and the Earth changed under it. A slow connection
+  // isn't kept waiting for ever: after HOLD_MOST it starts with what it has.
+  // In a background tab it waits to be looked at.
+  let fontsIn = !document.fonts;
+  let warming = false;
+  let waiting = false;
+  const plateIn = () => {
+    const imgs = [...plate.querySelectorAll("img")];
+    return imgs.length ? imgs.filter((img) => img.complete).length / imgs.length : 0;
+  };
+  function begin() {
+    if (began || dead) return;
+    if (document.hidden) {
+      waiting = true;
+      return;
+    }
+    waiting = false;
+    began = true;
+    // The Earth fades in first (styles), then the clock starts.
+    start = performance.now() + (still ? 0 : EARTH_IN);
+    onBegin();
+    refresh();
+  }
+  function check() {
+    if (began || warming || dead) return;
+    const maps = earth.ok ? earth.loaded() : plateIn();
+    onLoad((maps * 4 + (fontsIn ? 1 : 0)) / 5, (earth.ok ? earth.waitingFor() : maps < 1 ? "the Earth" : null) ?? (fontsIn ? "" : "the lettering"));
+    if (!fontsIn || maps < 1) return;
+    warming = true;
+    refresh();
+    requestAnimationFrame(() => requestAnimationFrame(begin));
+  }
+  const holdTimer = window.setTimeout(begin, HOLD_MOST);
+  plate.addEventListener("load", check, true);
   // A move to a screen with another pixel density needs sharper (or lighter)
   // canvases even though the window is the same size.
   let density: MediaQueryList | null = null;
@@ -437,15 +492,19 @@ export function createStage({
   earth.onchange = () => {
     dirty = true;
     refresh();
+    check();
   };
   window.addEventListener("resize", onResize);
   window.addEventListener("scroll", refresh, { passive: true });
   document.addEventListener("visibilitychange", onVisible);
   watchDensity();
   document.fonts?.ready.then(() => {
+    fontsIn = true;
     if (!dead) refresh();
+    check();
   });
   frame(performance.now());
+  check();
 
   return {
     redraw() {
@@ -455,6 +514,8 @@ export function createStage({
     destroy() {
       dead = true;
       cancelAnimationFrame(raf);
+      window.clearTimeout(holdTimer);
+      plate.removeEventListener("load", check, true);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", refresh);
       document.removeEventListener("visibilitychange", onVisible);

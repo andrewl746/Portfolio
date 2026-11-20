@@ -306,7 +306,8 @@ export function startCoast({
     const clear = Math.max(1 - easeInOut((time - PEAK) / SETTLE), easeInOut(t / LIFT));
     const y0 = rest + rise + set - clear * SUNK * size;
     write("name", y0.toFixed(1), (px) => (name!.style.transform = `translate3d(-50%, ${px}px, 0)`));
-    write("gone", t >= 0.995 ? "hidden" : "", (value) => (name!.style.visibility = value));
+    // Out of sight once it has set, and until the opening starts.
+    write("gone", t >= 0.995 || time <= 0 ? "hidden" : "", (value) => (name!.style.visibility = value));
     if (front) {
       // The copy in front of the Earth: the part of the name below the top
       // of the Earth's glow, while the name is on the near side. It changes
@@ -338,15 +339,52 @@ export function startCoast({
 
   measure();
   measureHero();
-  const stage = createStage({ earth, renderer, face, sky, plate, reduced, pose, place, needPlate });
+  // The scene has the first screen from here, so the styles that hide it
+  // until then stand down; "wait" keeps the Earth out of sight until the
+  // opening starts.
+  root.dataset.scene = "wait";
+  // The loading line: how much is here, counted up smoothly, and what is
+  // still to come.
+  const loadWhat = root.querySelector<HTMLElement>('[data-load="what"]');
+  const loadPct = root.querySelector<HTMLElement>('[data-load="pct"]');
+  let loadPart = 0;
+  let loadShown = 0;
+  let loadRaf = 0;
+  const showLoad = () => {
+    loadRaf = 0;
+    // Quicker at the end: the line is on its way out by then.
+    const step = loadPart >= 1 ? 0.35 : 0.14;
+    loadShown = reduced || loadPart - loadShown < 0.004 ? loadPart : loadShown + (loadPart - loadShown) * step;
+    root.style.setProperty("--loaded", loadShown.toFixed(3));
+    if (loadPct) loadPct.textContent = Math.round(loadShown * 100) + "%";
+    if (loadShown < loadPart) loadRaf = requestAnimationFrame(showLoad);
+  };
+  // A load that has taken more than a moment shows the loading line.
+  const slow = window.setTimeout(() => (root.dataset.slow = "1"), Math.max(0, 900 - performance.now()));
+  const stage = createStage({
+    earth,
+    renderer,
+    face,
+    sky,
+    plate,
+    reduced,
+    pose,
+    place,
+    needPlate,
+    onLoad: (part, what) => {
+      loadPart = part;
+      if (loadWhat) loadWhat.textContent = what ? "Loading " + what : "Ready";
+      if (!loadRaf) loadRaf = requestAnimationFrame(showLoad);
+    },
+    onBegin: () => (root.dataset.scene = "on"),
+  });
   if (!stage) {
     renderer.dispose();
     delete root.dataset.gl;
+    delete root.dataset.scene;
+    window.clearTimeout(slow);
     return () => {};
   }
-  // From here the scene owns the first screen (it has just placed it), so the
-  // styles that hide it until then stand down.
-  root.dataset.scene = "on";
 
   const pageWatch = new ResizeObserver(() => {
     measure();
@@ -384,6 +422,10 @@ export function startCoast({
     renderer.dispose();
     delete root.dataset.scene;
     delete root.dataset.gl;
+    root.style.removeProperty("--loaded");
+    cancelAnimationFrame(loadRaf);
+    window.clearTimeout(slow);
+    delete root.dataset.slow;
     name.style.fontSize = name.style.transform = name.style.visibility = "";
     if (front) front.style.fontSize = front.style.transform = front.style.visibility = front.style.opacity = front.style.clipPath = "";
     for (const prop of ["--top-y", "--band-y", "--hero-fade"]) heroEl.style.removeProperty(prop);

@@ -87,6 +87,16 @@ export default function EarthScene() {
         </div>
       </div>
       <canvas ref={faceRef} aria-hidden="true" className="scene-layer scene-face" />
+      {/* Shows only when the first screen takes a while to load. */}
+      <div aria-hidden="true" className="scene-loading">
+        <span className="scene-loading-line">
+          <span />
+        </span>
+        <span className="scene-loading-text">
+          <span data-load="what">Loading</span>
+          <span data-load="pct">0%</span>
+        </span>
+      </div>
     </>
   );
 }

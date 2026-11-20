@@ -345,6 +345,86 @@ html:not(.js) .typewriter-caret {
   pointer-events: none;
 }
 
+/* The Earth stays out of sight while the opening waits for its maps, then
+   fades in just before it plays (EARTH_IN in lib/earth/stage.ts). */
+.coast[data-scene="on"] .scene-earth,
+.coast[data-scene="on"] .scene-plate-frame { transition: opacity 0.45s ease-out; }
+
+.coast[data-scene="wait"] .scene-earth,
+.coast[data-scene="wait"] .scene-plate-frame { opacity: 0; }
+
+/* A hairline in the middle of the sky that fills as the first screen loads,
+   with what is loading and how far along it is under it. It only shows once
+   the wait has gone on for more than a moment, so a quick load never flashes
+   it, and it goes as the Earth comes in. */
+.scene-loading {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 9;
+  width: min(260px, 100vw - 2 * var(--gutter));
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scene-loading-line {
+  display: block;
+  height: 1px;
+  background: rgba(236, 238, 244, 0.14);
+}
+
+.scene-loading-line span {
+  display: block;
+  height: 100%;
+  background: var(--ember);
+  transform: scaleX(var(--loaded, 0));
+  transform-origin: left;
+}
+
+.scene-loading-text {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  line-height: 1.625;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.scene-loading-text [data-load="pct"] {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* Before the scene's code has run, the line comes in 0.9 s after the page
+   starts; if the scene never starts, the first screen shows itself (below)
+   and the line goes with it. Once the scene is waiting on its maps, it marks
+   the page slow at the same 0.9 s (data-slow, lib/earth/coast.ts). */
+.js .coast:not([data-scene]) .scene-loading {
+  animation: scene-loading-in 0.3s ease-out 0.9s both, scene-late-gone 0s linear 4s forwards;
+}
+
+.coast[data-scene="wait"][data-slow] .scene-loading {
+  opacity: 1;
+  animation: scene-loading-in 0.3s ease-out both;
+}
+
+.coast[data-scene="on"] .scene-loading { transition: opacity 0.25s ease-out; }
+
+@keyframes scene-loading-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scene-late-gone {
+  to { visibility: hidden; }
+}
+
 .scene-sky { z-index: 2; }
 .scene-earth { z-index: 5; }
 .scene-face { z-index: 7; }
