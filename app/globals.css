@@ -320,6 +320,7 @@ html:not(.js) .typewriter-caret {
   --star-size: clamp(103px, 6px + 16.1vw, 176px);
   --rise: 56px;
   --sec-top: 96px;
+  --title-size: clamp(3.75rem, 11vw, 10.5rem);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
   /* Projects are wider than the reading column on wide screens, and 100vw
@@ -763,7 +764,7 @@ html:not(.js) .hero-pin {
 /* Section titles rise from behind the Earth at full size. */
 .section-title {
   font-family: var(--serif);
-  font-size: clamp(3.75rem, 11vw, 10.5rem);
+  font-size: var(--title-size);
   font-optical-sizing: auto;
   line-height: 0.9;
   letter-spacing: -0.03em;
@@ -833,7 +834,9 @@ html:not(.js) .hero-pin {
   padding: 0;
 }
 
-.end .section-title { font-size: clamp(3rem, 7vw, 6.5rem); }
+/* Contact is the ending, not another section: its title is three quarters the
+   size of a section's, on every screen. */
+.end .section-title { font-size: calc(var(--title-size) * 3 / 4); }
 .end .section-constellation { top: calc(-1 * var(--rise)); }
 
 /* The near side of the planet fades into the page, so the footer reads
