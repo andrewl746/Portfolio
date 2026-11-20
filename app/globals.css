@@ -751,7 +751,7 @@ html:not(.js) .hero-pin {
   position: relative;
   z-index: 3;
   max-width: calc(60rem + 2 * var(--gutter));
-  padding: 14vh var(--gutter) 34vh;
+  padding: 14vh var(--gutter) 0;
 }
 
 .section {
@@ -819,6 +819,13 @@ html:not(.js) .hero-pin {
   min-height: 100lvh;
   padding: calc(var(--bar) + var(--rise) + 16px) var(--gutter) max(132px, 20vh);
 }
+
+/* The break before Contact, end of the last section to the Contact title, is
+   the same as between any two sections (a section's bottom space plus the
+   next one's top space). The last screen has its own top space, sized to keep
+   its constellation under the bar, so the difference goes in as a margin. */
+.page .section:last-child { padding-bottom: 0; }
+.end { margin-top: calc(104px + var(--sec-top) - (var(--bar) + var(--rise) + 16px)); }
 
 .end .section {
   z-index: 3;
