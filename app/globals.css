@@ -297,7 +297,8 @@ html:not(.js) .typewriter-caret {
        2  satellites over the sky    (.scene-sky)
        3  the page's content         (.page, Contact)
        5  the Earth, then the finale image over its last frame
-       6  satellites crossing the Earth's face  (.scene-face)
+       6  the feet of the name, at rest  (.hero-name-front)
+       7  satellites crossing the Earth's face  (.scene-face)
        8  the shade under the footer (.end-scrim)
       10  the first screen's text, the footer
       40  the bar (30: its phone drawer), 50: reading progress
@@ -346,7 +347,7 @@ html:not(.js) .typewriter-caret {
 
 .scene-sky { z-index: 2; }
 .scene-earth { z-index: 5; }
-.scene-face { z-index: 6; }
+.scene-face { z-index: 7; }
 
 /* The rendered finale image, laid exactly over the live Earth's last frame:
    as wide as the screen, standing on the bottom edge. Two renders, a tall one
@@ -537,7 +538,7 @@ html:not(.js) .typewriter-caret {
 
 /* --- The first screen --------------------------------------------------------- */
 
-/* The name: as wide as the screen allows, standing on the Earth's limb.
+/* The name: as wide as the screen allows, standing across the Earth's limb.
    The scene sizes and places it (lib/earth/coast.ts); the values here are
    only what shows if it never starts. */
 .hero-name {
@@ -556,6 +557,18 @@ html:not(.js) .typewriter-caret {
   transform: translate3d(-50%, 26vh, 0);
   will-change: transform;
 }
+
+/* A second copy of the name, in front of the Earth: the scene shows the part
+   of it that the Earth would hide while the name is at rest, so no letter
+   looks cut off. Without the scene there is nothing in front to stand in. */
+.hero-name-front {
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.coast:not([data-scene]) .hero-name-front { display: none; }
 
 /* The first screen stays put for one more screen of scrolling while the name
    sets behind the Earth and the horizon sinks to become the floor of the page. */

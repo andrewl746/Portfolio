@@ -1,7 +1,7 @@
 import { SITE, STATS } from "@/lib/content";
 
 /**
- * The first screen: the name as wide as the screen allows, standing on
+ * The first screen: the name as wide as the screen allows, standing across
  * the Earth's limb. Above it, in clear sky, the school line and the two
  * credits. Under the limb at the left, on dark ocean, the two sentences and
  * the buttons, so nothing sits on the city lights.
@@ -25,6 +25,10 @@ export default function Hero() {
       <h1 data-scene="name" className="hero-name">
         {SITE.name}
       </h1>
+      {/* The feet of the name, shown in front of the Earth while it is at rest. */}
+      <div data-scene="name-front" aria-hidden="true" className="hero-name hero-name-front">
+        {SITE.name}
+      </div>
       <div data-scene="hero" className="hero">
         <div data-scene="hero-top" className="hero-top hero-text">
           <div className="hero-who">

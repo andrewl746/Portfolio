@@ -1,7 +1,7 @@
 // "Down the coast": what the page does with the live Earth.
 //
 // The camera starts off Newfoundland at dusk, looking down the lit coast with
-// the name standing on the limb. Scrolling carries it out over the
+// the name standing across the limb. Scrolling carries it out over the
 // Atlantic and south through the night, always looking back at the coast, and
 // lands it exactly on the Contact finale's view. The Earth is drawn over the
 // page, so the name sets behind it and every section rises from behind it.
@@ -19,13 +19,13 @@ import { aim, blend, finalePose, glowHeight, limbDrop, type Pose } from "./view"
 // limb up to the bottom of the line above the name, and the baseline's
 // distance below the top of the name's line box. If the heading typeface or
 // the name ever changes, these need measuring again.
-const CAPS = 0.7015;
+const CAPS = 0.63;
 const BASELINE = 0.7915;
-/** The baseline rests this far below the top of the limb. None: the name
- *  stands on the Earth, so every letter is whole and only the glow of the air
- *  washes over their feet (sunk into it, the letters looked cut off at a
- *  phone's size). CAPS above counts this in. */
-const SUNK = 0;
+/** The baseline rests this far below the top of the limb, so the feet of the
+ *  middle letters stand across it. At rest a second copy of the name shows
+ *  them in front of the Earth (hidden behind it, the letters looked cut off
+ *  at a phone's size); it fades as the page scrolls and the name sets. */
+const SUNK = 0.0715;
 /** The least space kept between the name and each edge of the window, px. */
 const NAME_MARGIN = 12;
 /** Sky kept clear between the last line of Contact and the Earth's glow, px. */
@@ -112,6 +112,7 @@ export function startCoast({
 }): () => void {
   const find = (name: string) => root.querySelector<HTMLElement>(`[data-scene="${name}"]`);
   const name = find("name");
+  const front = find("name-front");
   const pin = find("pin");
   const heroEl = find("hero");
   const topEl = find("hero-top");
@@ -218,7 +219,7 @@ export function startCoast({
   }
 
   // What pose() worked out that place() needs.
-  let v = { pinLen: 1, heroY: 0, apexY: 0, size: 0, gap: 0, bandY: null as number | null };
+  let v = { pinLen: 1, heroY: 0, apexY: 0, size: 0, gap: 0, glow: 0, bandY: null as number | null };
 
   function pose(m: Moment): Shot {
     const { W, H, y, max, p, portrait } = m;
@@ -250,7 +251,7 @@ export function startCoast({
       y < pinLen
         ? mix(hero.apex[1], floor, easeInOut(clamp01((y - pinLen * 0.08) / (pinLen * 0.92))))
         : mix(floor, fin.apex[1], easeInOut(endT));
-    v = { pinLen, heroY: hero.apex[1], apexY, size, gap, bandY };
+    v = { pinLen, heroY: hero.apex[1], apexY, size, gap, glow: glowHeight(hero), bandY };
     return {
       ...cam,
       apex: [W / 2, apexY],
@@ -275,16 +276,33 @@ export function startCoast({
 
   function place(m: Moment) {
     const { y, time } = m;
-    const { pinLen, heroY, apexY, size, gap, bandY } = v;
+    const { pinLen, heroY, apexY, size, gap, glow, bandY } = v;
     const t = clamp01(y / pinLen);
     write("size", size.toFixed(1) + "px", (px) => (name!.style.fontSize = px));
-    // Resting place: baseline on the top of the limb. On load the
+    // Resting place: baseline a little below the top of the limb. On load the
     // name rises into place; on scroll it sets behind the Earth.
     const rest = heroY + (SUNK - BASELINE) * size;
     const rise = (1 - easeOut(clamp01((time - 0.15) / 1.5))) * size * 0.55;
     const set = t * t * size * 1.05 + (apexY - heroY);
     write("name", (rest + rise + set).toFixed(1), (px) => (name!.style.transform = `translate3d(-50%, ${px}px, 0)`));
     write("gone", t >= 0.995 ? "hidden" : "", (value) => (name!.style.visibility = value));
+    if (front) {
+      // The copy in front of the Earth: only the part of the name from the
+      // top of the Earth's glow down, once the name has risen into place,
+      // and fading out as soon as the page moves, so the name still rises
+      // from behind the Earth and sets behind it.
+      const shown = smoothstep(1.35, 1.75, time) * (1 - smoothstep(0.02, 0.16, t));
+      write("front", shown.toFixed(3), (value) => {
+        front.style.opacity = value;
+        front.style.visibility = value === "0.000" ? "hidden" : "";
+      });
+      if (shown > 0) {
+        front.style.fontSize = name!.style.fontSize;
+        front.style.transform = name!.style.transform;
+        const cut = (BASELINE - SUNK) * size - glow;
+        write("cut", cut.toFixed(1), (px) => (front.style.clipPath = `inset(${px}px -10% -50% -10%)`));
+      }
+    }
     // The line above the name sits on its bottom edge, a little over the capitals.
     write("top", (heroY - CAPS * size - gap).toFixed(0) + "px", (px) => heroEl!.style.setProperty("--top-y", px));
     write("band", bandY === null ? "" : bandY.toFixed(0) + "px", (px) =>
@@ -346,6 +364,7 @@ export function startCoast({
     delete root.dataset.scene;
     delete root.dataset.gl;
     name.style.fontSize = name.style.transform = name.style.visibility = "";
+    if (front) front.style.fontSize = front.style.transform = front.style.visibility = front.style.opacity = front.style.clipPath = "";
     for (const prop of ["--top-y", "--band-y", "--hero-fade"]) heroEl.style.removeProperty(prop);
     heroEl.classList.remove("gone");
     plate.style.transform = plate.style.opacity = "";
