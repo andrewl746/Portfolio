@@ -219,13 +219,16 @@ export function startCoast({
     const { size, heroY, gap, bandY } = heroLayout(W, H, portrait, hero, m.gl);
     hero.apex = [W / 2, heroY];
     const fin = finalePose(W, H);
+    // No WebGL: the image can't sit higher than the finale has it. That is
+    // the finale's own height, as the first screen was laid out for, not the
+    // lowered one below.
+    if (!m.gl) hero.apex[1] = Math.max(hero.apex[1], fin.apex[1]);
     // The Contact text stands in the sky over the finale's Earth. On a short
     // window the Earth would rise past it, so there the whole finale sits
     // lower by the difference. The gap is kept to the top of the limb's
     // glow, which is taller the larger the Earth is drawn.
     const sink = Math.max(0, H - end!.offsetHeight + contactBottom + CONTACT_CLEAR + glowHeight(fin) - fin.apex[1]);
     fin.apex = [fin.apex[0], fin.apex[1] + sink];
-    if (!m.gl) hero.apex[1] = Math.max(hero.apex[1], fin.apex[1]); // no WebGL: the image can't sit higher than this
     const way: Pose = { ...cruise(p), roll: 0, f: hero.f, apex: hero.apex };
     const cam = blend(blend(hero, way, smoothstep(0, 0.22, p)), fin, smoothstep(0.8, 1, p));
     // Horizon: where the hero has it, then one steady height for the whole
