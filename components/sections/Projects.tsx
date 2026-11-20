@@ -5,20 +5,23 @@ import Constellation from "@/components/Constellation";
 import Reveal from "@/components/animations/Reveal";
 import ViewfinderLock from "@/components/animations/ViewfinderLock";
 
-// The description, with its linked phrase (if it has one) as a link.
-function Description({ p }: { p: Project }) {
+// One paragraph of the description, with the project's linked phrase (if it
+// has one, and it is in this paragraph) as a link.
+function Description({ p, text }: { p: Project; text: string }) {
   const link = p.descriptionLink;
-  if (!link) return <>{p.description}</>;
-  const at = p.description.indexOf(link.text);
+  if (!link) return <>{text}</>;
+  const whole = p.description.join(" ");
   // Fails the build, so rewording the description can't silently drop the link.
-  if (at === -1 || at !== p.description.lastIndexOf(link.text)) {
+  if (!whole.includes(link.text) || whole.indexOf(link.text) !== whole.lastIndexOf(link.text)) {
     throw new Error(
       `${p.name}: descriptionLink text "${link.text}" must appear in the description exactly once.`,
     );
   }
+  const at = text.indexOf(link.text);
+  if (at === -1) return <>{text}</>;
   return (
     <>
-      {p.description.slice(0, at)}
+      {text.slice(0, at)}
       <a
         href={link.href}
         target="_blank"
@@ -29,7 +32,7 @@ function Description({ p }: { p: Project }) {
         {link.text}
         <span className="sr-only"> ({link.hint})</span>
       </a>
-      {p.description.slice(at + link.text.length)}
+      {text.slice(at + link.text.length)}
     </>
   );
 }
@@ -68,9 +71,11 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
           )}
           {p.award ? ` / ${p.award}` : ""}
         </p>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
-          <Description p={p} />
-        </p>
+        {p.description.map((text, i) => (
+          <p key={i} className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
+            <Description p={p} text={text} />
+          </p>
+        ))}
         <p className="mt-3 text-xs text-dim">{p.tech.join(" / ")}</p>
         {links.length > 0 && (
           <div className="project-links mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs uppercase tracking-[0.1em]">
@@ -113,7 +118,7 @@ export default async function Projects() {
   const fill = (text: string) => text.replaceAll("{downloads}", downloads);
   const flagship = {
     ...FLAGSHIP,
-    description: fill(FLAGSHIP.description),
+    description: FLAGSHIP.description.map(fill),
     stat: FLAGSHIP.stat && fill(FLAGSHIP.stat),
   };
   return (

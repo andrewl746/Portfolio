@@ -1,7 +1,9 @@
 export type Project = {
   name: string;
   context: string;
-  description: string;
+  // Two paragraphs: what it does and the headline result, then the story
+  // behind it, so a reader can stop after the first.
+  description: string[];
   tech: string[];
   github?: string;
   live?: string;
@@ -50,7 +52,10 @@ export const STATS = [
 export const FLAGSHIP: Project = {
   name: "Nebulosity",
   context: "Live at nebulosity.ca",
-  description: "Gives Claude Code a live map of how a large codebase fits together, so it can answer a question that spans many files with one tool call instead of a chain of searches. On multi-file questions, Claude Code with Nebulosity answered up to 4.4× faster and was fully right in 42 of 42 test runs, versus 29 without it. Nebulosity is published on npm, the VS Code Marketplace, and Open VSX, and you can explore its interactive map in VS Code or the browser.",
+  description: [
+    "Gives Claude Code a live map of how a large codebase fits together, so it can answer a question that spans many files with one tool call instead of a chain of searches. On multi-file questions, Claude Code with Nebulosity answered up to 4.4× faster and was fully right in 42 of 42 test runs, versus 29 without it.",
+    "Nebulosity is published on npm, the VS Code Marketplace, and Open VSX, and you can explore its interactive map in VS Code or the browser.",
+  ],
   // {downloads} is filled in with the live total from those three stores
   // (lib/downloads.ts).
   stat: "{downloads} downloads",
@@ -74,8 +79,10 @@ export const PROJECTS: Project[] = [
   {
     name: "Pyronac",
     context: "NASA Space Apps 2026",
-    description:
-      "Merges NASA's MODIS and VIIRS satellite fire data into one consistent record for Canada, India, and Brazil from 2003 to now. VIIRS reports about 5 times more hotspots than MODIS, so the raw fire counts jumped when VIIRS came online in 2012 even though nothing had changed on the ground. I built a harmonization model to remove that discrepancy, and it cut the gap between the two satellites' monthly fire counts from 78.5% to 9.2% on years it was never trained on. I also led the technical design and built a tool that picks optimal locations for firefighting bases. On a decade of data it had never seen, its sites covered 3 times more hotspots than bases placed where fires had burned before.",
+    description: [
+      "Merges NASA's MODIS and VIIRS satellite fire data into one consistent record for Canada, India, and Brazil from 2003 to now. I led the technical design and built a harmonization model that cut the gap between the two satellites' monthly fire counts from 78.5% to 9.2% on years it was never trained on.",
+      "The model is necessary because VIIRS reports about 5 times more hotspots than MODIS, so the raw fire counts jumped when VIIRS came online in 2012 even though nothing had changed on the ground. I also built a tool that picks optimal locations for firefighting bases. On a decade of data it had never seen, its sites covered 3 times more hotspots than bases placed where fires had burned before.",
+    ],
     // The error figure links to the method write-up, for anyone who doubts it.
     descriptionLink: {
       text: "from 78.5% to 9.2%",
@@ -93,8 +100,10 @@ export const PROJECTS: Project[] = [
   {
     name: "Suplex",
     context: "Hack the Valley 2026",
-    description:
-      "Checks any Toronto address against the City's 4 pre-approved multiplex designs and shows the result in 3D. I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
+    description: [
+      "Checks any Toronto address against the City's 4 pre-approved multiplex designs and shows the result in 3D.",
+      "I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
+    ],
     tech: ["Python", "FastAPI", "Shapely", "three.js", "React"],
     live: "https://suplex.andrewli.app",
     github: "https://github.com/andrewl746/suplex",
@@ -107,8 +116,10 @@ export const PROJECTS: Project[] = [
   {
     name: "OlympIQ",
     context: "Live at olympiq.ca",
-    description:
-      "Set to run scheduling for my high school's Science Olympics team, where executives used to spend 10+ hours manually assigning 60+ competitors to events while juggling their preferences and avoiding time conflicts. A custom algorithm now does it instantly, flags any conflicts it can't resolve, and exports the schedule to Excel. It was piloted with the executives in summer 2026 before the full rollout for the 2027 season.",
+    description: [
+      "Set to run scheduling for my high school's Science Olympics team. A custom algorithm assigns 60+ competitors to events instantly, a job that used to take the executives 10+ hours by hand.",
+      "It respects everyone's preferences, avoids time conflicts, flags anything it can't resolve, and exports the schedule to Excel. It was piloted with the executives in summer 2026 before the full rollout for the 2027 season.",
+    ],
     tech: ["Next.js", "TypeScript", "Firebase", "Firestore"],
     live: "https://www.olympiq.ca",
     image: {
