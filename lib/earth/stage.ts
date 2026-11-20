@@ -32,7 +32,7 @@ const GLINT_NEAR = 0.035;
 /** One flash a pass: a satellite that has just flashed sits out this long, in
  *  seconds on screen, so a flash point that moves ahead of it while the page
  *  scrolls can't set it off twice. */
-const GLINT_REST = 6;
+const GLINT_REST = 3;
 /** Three more shells that fade in while reading: OneWeb's near-polar one, a
  *  sun-synchronous one, and Starlink's 70° one. */
 const SHELLS: Ring[] = [ring(1200, 87.9, -58), ring(560, 97.6, -104), ring(570, 70, -132)];
@@ -42,10 +42,13 @@ const TURN = Math.PI * 2;
 /** An angle brought into -pi to pi. */
 const wrap = (a: number) => ((((a + Math.PI) % TURN) + TURN) % TURN) - Math.PI;
 /** The ember satellites go round this many times faster than the rest, at one
- *  steady speed, so the flash comes a few seconds after one appears. A lap
- *  takes about 29 s on screen, so two of them keep a pass coming every 14.5. */
+ *  steady speed, so the flash comes a few seconds after one appears. */
 const EMBER_PACE = 3;
-const EMBERS = 2;
+const EMBERS = 1;
+/** The sky is never empty for longer than this, in seconds: a lap takes about
+ *  29 s on screen, so once an ember satellite is out of view it skips the
+ *  rest of the far side and comes back into view this long after it left. */
+const NEXT_AFTER = 5;
 /** How long after the satellites first show the leading ember one comes into
  *  view, in seconds: as the name and the text settle. */
 const RISE_AFTER = 1.1;
@@ -136,6 +139,10 @@ export function createStage({
   let plateOpacity = "";
   let flashAt: number | null = null; // where on their orbit the ember satellites flash, as the page stands
   let flashKey = "";
+  // Where the pass that leads to the flash comes into view, and the view it
+  // was worked out for.
+  let startAt = 0;
+  let startKey = "";
   // On a phone the browser's toolbars come and go and the visible height
   // changes with them. Everything is laid out for the tallest view (toolbars
   // away), so the Earth isn't moved or rebuilt each time they slide.
@@ -316,7 +323,19 @@ export function createStage({
       const edge = still ? null : shadowExit(track, shot.sun);
       for (const sat of fleet) {
         const pace = angularSpeed(sat.orbit) * TIME_SCALE * time;
-        const u = sat.hero ? first + sat.u0 + pace * EMBER_PACE : sat.u0 + pace;
+        let u = sat.hero ? first + sat.u0 + pace * EMBER_PACE : sat.u0 + pace;
+        if (sat.hero && !still && flashAt !== null && !inView(cam, sat.orbit, u, sight)) {
+          if (startKey !== flashKey) {
+            startKey = flashKey;
+            startAt = passStart(cam, track, flashAt, sight);
+          }
+          const ahead = (((startAt - u) % TURN) + TURN) % TURN;
+          const most = angularSpeed(track) * TIME_SCALE * EMBER_PACE * NEXT_AFTER;
+          if (ahead > most) {
+            sat.u0 += ahead - most;
+            u += ahead - most;
+          }
+        }
         const at = orbitPoint(sat.orbit, u);
         if (!sat.hero) {
           drawDot(face, sky, cam, at, shot.sun, a, 0.9);
