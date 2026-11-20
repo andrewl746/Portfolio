@@ -107,6 +107,7 @@ export function createStage({
   place,
   needPlate,
   onLoad,
+  holdFor,
   onBegin,
 }: {
   /** The WebGL canvas the Earth is drawn on, and what draws it. */
@@ -124,6 +125,8 @@ export function createStage({
   /** Called as what the opening needs arrives, with how much of it is here,
    *  0 to 1, and what is still to come, in a few words ("" when nothing is). */
   onLoad: (part: number, what: string) => void;
+  /** Asked once everything has loaded: how much longer to hold the opening, ms. */
+  holdFor: () => number;
   /** Called once, when everything the opening needs has loaded and it starts. */
   onBegin: () => void;
 }): Stage | null {
@@ -463,7 +466,13 @@ export function createStage({
     if (!fontsIn || maps < 1) return;
     warming = true;
     refresh();
-    requestAnimationFrame(() => requestAnimationFrame(begin));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const hold = holdFor();
+        if (hold > 0) window.setTimeout(begin, hold);
+        else begin();
+      }),
+    );
   }
   const holdTimer = window.setTimeout(begin, HOLD_MOST);
   let lastPart = 0;

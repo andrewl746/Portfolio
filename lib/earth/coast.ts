@@ -34,6 +34,10 @@ const SUNK = 0.0715;
 const PEAK = 1.3;
 const SETTLE = 0.6;
 const LIFT = 0.08;
+/** The loading line shows once the page has been loading this long, ms (as in
+ *  the styles), and then stays up at least this long. */
+const LINE_AFTER = 900;
+const LINE_LEAST = 800;
 /** The least space kept between the name and each edge of the window, px. */
 const NAME_MARGIN = 12;
 /** Sky kept clear between the last line of Contact and the Earth's glow, px. */
@@ -347,7 +351,16 @@ export function startCoast({
     if (loadShown < loadPart) loadRaf = requestAnimationFrame(showLoad);
   };
   // A load that has taken more than a moment shows the loading line.
-  const slow = window.setTimeout(() => (root.dataset.slow = "1"), Math.max(0, 900 - performance.now()));
+  const slow = window.setTimeout(() => (root.dataset.slow = "1"), Math.max(0, LINE_AFTER - performance.now()));
+  // Once the line has shown it is seen through: it stays up for LINE_LEAST,
+  // and long enough after the last piece to reach 100% and say so, before it
+  // goes and the Earth comes in. Shown and gone in the same moment, it read
+  // as a flicker. A load that ends just as the line starts to show doesn't
+  // wait for it.
+  const holdFor = () => {
+    const now = performance.now();
+    return now < LINE_AFTER + 100 ? 0 : Math.max(LINE_AFTER + LINE_LEAST - now, 450);
+  };
   const stage = createStage({
     earth,
     renderer,
@@ -362,6 +375,7 @@ export function startCoast({
       if (loadWhat) loadWhat.textContent = what ? "Loading " + what : "Ready";
       if (!loadRaf) loadRaf = requestAnimationFrame(showLoad);
     },
+    holdFor,
     onBegin: () => (root.dataset.scene = "on"),
   });
   if (!stage) {
