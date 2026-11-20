@@ -48,9 +48,12 @@ const EMBERS = 1;
  *  29 s on screen, so once an ember satellite is out of view it skips the
  *  rest of the far side and comes back into view this long after it left. */
 const NEXT_AFTER = 5;
-/** The longest the opening waits for the maps and the typeface, ms, and how
- *  long the Earth takes to fade in before the clock starts (as in the styles). */
-const HOLD_MOST = 4000;
+/** The longest the opening waits for the maps and the typeface, ms; how long
+ *  it waits with nothing new arriving before it takes the load for stuck; and
+ *  how long the Earth takes to fade in before the clock starts (as in the
+ *  styles). */
+const HOLD_MOST = 10000;
+const HOLD_STUCK = 4000;
 const EARTH_IN = 450;
 /** How long after the satellites first show the leading ember one comes into
  *  view, in seconds: as the name and the text settle. */
@@ -423,7 +426,9 @@ export function createStage({
   // to the graphics chip), the typeface the name is set in, and a couple of
   // frames drawn with them. Played while those were still arriving, the
   // name's rise stuttered and the Earth changed under it. A slow connection
-  // isn't kept waiting for ever: after HOLD_MOST it starts with what it has.
+  // is waited for, with the loading line to show for it, up to HOLD_MOST. A
+  // load that has stopped (a map that failed, a dropped connection) isn't:
+  // once nothing new has arrived for HOLD_STUCK it starts with what it has.
   // In a background tab it waits to be looked at.
   let fontsIn = !document.fonts;
   let warming = false;
@@ -448,13 +453,21 @@ export function createStage({
   function check() {
     if (began || warming || dead) return;
     const maps = earth.ok ? earth.loaded() : plateIn();
-    onLoad((maps * 4 + (fontsIn ? 1 : 0)) / 5, (earth.ok ? earth.waitingFor() : maps < 1 ? "the Earth" : null) ?? (fontsIn ? "" : "the lettering"));
+    const part = (maps * 4 + (fontsIn ? 1 : 0)) / 5;
+    if (part > lastPart) {
+      lastPart = part;
+      window.clearTimeout(stuckTimer);
+      stuckTimer = window.setTimeout(begin, HOLD_STUCK);
+    }
+    onLoad(part, (earth.ok ? earth.waitingFor() : maps < 1 ? "the Earth" : null) ?? (fontsIn ? "" : "the lettering"));
     if (!fontsIn || maps < 1) return;
     warming = true;
     refresh();
     requestAnimationFrame(() => requestAnimationFrame(begin));
   }
   const holdTimer = window.setTimeout(begin, HOLD_MOST);
+  let lastPart = 0;
+  let stuckTimer = window.setTimeout(begin, HOLD_STUCK);
   plate.addEventListener("load", check, true);
   // A move to a screen with another pixel density needs sharper (or lighter)
   // canvases even though the window is the same size.
@@ -496,6 +509,7 @@ export function createStage({
       dead = true;
       cancelAnimationFrame(raf);
       window.clearTimeout(holdTimer);
+      window.clearTimeout(stuckTimer);
       plate.removeEventListener("load", check, true);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", refresh);
