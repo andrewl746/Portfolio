@@ -1072,11 +1072,19 @@ html:not(.js) .hero-pin {
     height: 170svh;
   }
 
+  /* No pause of open sky under the last section either: wider screens have a
+     third of a screen of it before the last screen, which on a phone was more
+     than half a screen of nothing. The last screen brings its own space above
+     its title (room for its constellation under the bar), so the last section
+     ends short and the break before Contact matches the other breaks. */
   .page {
     margin-top: -22vh;
     margin-top: -22svh;
     padding-top: 0;
+    padding-bottom: 0;
   }
+
+  .page .section:last-child { padding-bottom: 16px; }
 
   .hero-tagline { font-size: 18px; }
   .hero-stats { gap: 12px 16px; }
@@ -1114,6 +1122,10 @@ html:not(.js) .hero-pin {
     font-size: 16px;
     line-height: 24px;
   }
+
+  /* The footer's two items take a row each here, so it stands taller and
+     needs more room under the Contact links. */
+  .end { padding-bottom: max(156px, 20vh); }
 }
 
 /* Touch screens: small text links get a finger-sized target without looking
