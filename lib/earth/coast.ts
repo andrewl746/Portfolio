@@ -26,6 +26,11 @@ const BASELINE = 0.7915;
  *  them in front of the Earth (hidden behind it, the letters looked cut off
  *  at a phone's size); it fades as the page scrolls and the name sets. */
 const SUNK = 0.0715;
+/** The copy of the name in front of the Earth starts to show this long after
+ *  the scene starts (the name has risen), and is gone by this far through
+ *  the first screen's scroll. */
+const FEET_IN = 1.35;
+const FEET_OUT = 0.16;
 /** The least space kept between the name and each edge of the window, px. */
 const NAME_MARGIN = 12;
 /** Sky kept clear between the last line of Contact and the Earth's glow, px. */
@@ -251,7 +256,12 @@ export function startCoast({
       y < pinLen
         ? mix(hero.apex[1], floor, easeInOut(clamp01((y - pinLen * 0.08) / (pinLen * 0.92))))
         : mix(floor, fin.apex[1], easeInOut(endT));
-    v = { pinLen, heroY: hero.apex[1], apexY, size, gap, glow: glowHeight(hero), bandY };
+    const glow = glowHeight(hero);
+    v = { pinLen, heroY: hero.apex[1], apexY, size, gap, glow, bandY };
+    // While the feet of the name show in front of the Earth (see place), the
+    // satellites near them are drawn over them, from the top of that copy down.
+    const t = clamp01(y / pinLen);
+    const feet = m.time > FEET_IN && t < FEET_OUT;
     return {
       ...cam,
       apex: [W / 2, apexY],
@@ -262,6 +272,7 @@ export function startCoast({
       shells: smoothstep(0.12, 0.7, y / pinLen) * (1 - smoothstep(0.3, 0.75, endT)),
       top: W < 768 ? 56 : 64,
       covers: covers.filter((c) => c[3] > y && c[1] < y + H).map((c) => [c[0], c[1] - y, c[2], c[3] - y]),
+      lift: feet ? apexY + t * t * size * 1.05 - glow : Infinity,
     };
   }
 
@@ -291,7 +302,7 @@ export function startCoast({
       // top of the Earth's glow down, once the name has risen into place,
       // and fading out as soon as the page moves, so the name still rises
       // from behind the Earth and sets behind it.
-      const shown = smoothstep(1.35, 1.75, time) * (1 - smoothstep(0.02, 0.16, t));
+      const shown = smoothstep(FEET_IN, FEET_IN + 0.4, time) * (1 - smoothstep(0.02, FEET_OUT, t));
       write("front", shown.toFixed(3), (value) => {
         front.style.opacity = value;
         front.style.visibility = value === "0.000" ? "hidden" : "";

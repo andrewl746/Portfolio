@@ -174,6 +174,20 @@ export function flashPoint(cam: Camera, o: Ring, sun: Vec3, sight: Sight): numbe
   return null;
 }
 
+// --- Which canvas ---------------------------------------------------------------------
+// What is in front of the Earth or its glow goes on the top canvas. So does
+// anything below `lift` on screen: while the feet of the name stand in front
+// of the Earth, they would otherwise hide the stretch of sky beside them.
+// One thing is never split between the canvases where the Earth could hide
+// part of it: a stretch of line goes on top if either end is over the Earth,
+// and a satellite does if any of its halo is.
+let lift = Infinity;
+/** From this height down the window, draw on the top canvas (Infinity: don't). */
+export const setLift = (y: number) => {
+  lift = y;
+};
+const onTop = (cam: Camera, p: Vec3, y: number, reach = 0) => y + reach > lift || overEarth(cam, p, reach);
+
 /** A whole orbit as a brass line: faint in front of the night side, clearer
  *  over the sky. */
 export function drawTrack(
@@ -187,23 +201,26 @@ export function drawTrack(
 ) {
   for (const c of [face, sky]) {
     c.lineWidth = width;
-    c.lineCap = "round";
+    // Butt ends: the line is drawn a short stretch at a time, and round ends
+    // would overlap at every join and bead a see-through line.
+    c.lineCap = "butt";
   }
-  let prev: { x: number; y: number; ok: boolean } | null = null;
+  let prev: { x: number; y: number; ok: boolean; top: boolean } | null = null;
   for (let i = 0; i <= steps; i++) {
     const p = orbitPoint(o, (Math.PI * 2 * i) / steps);
     const s = see(cam, p);
     const ok = s.z > 0 && s.clearance > 0;
+    const onFace = s.clearance < 9000 && overEarth(cam, p);
+    const top = onFace || s.y > lift;
     if (prev && ok && prev.ok) {
-      const onFace = s.clearance < 9000 && overEarth(cam, p);
-      const c = onFace ? face : sky;
+      const c = top || prev.top ? face : sky;
       c.strokeStyle = rgba(BRASS, (onFace ? onEarth : 0.42) * alpha * smoothstep(0, 60, s.clearance + 60));
       c.beginPath();
       c.moveTo(prev.x, prev.y);
       c.lineTo(s.x, s.y);
       c.stroke();
     }
-    prev = { x: s.x, y: s.y, ok };
+    prev = { x: s.x, y: s.y, ok, top };
   }
 }
 
@@ -225,14 +242,16 @@ export function drawHero(
   const red = 1 - smoothstep(8, 60, here.clearance);
   const k = Math.min(1.5, Math.max(0.8, 4200 / here.distance));
   let prev: Seen | null = null;
+  let prevTop = false;
   for (let i = 0; i <= 26; i++) {
     const t = i / 26;
     const q = orbitPoint(o, u - trail * (1 - t));
     const s = see(cam, q, sun);
+    const top = onTop(cam, q, s.y);
     // Both ends in front of the camera: an end behind it projects to nonsense
     // and the stroke would cross the whole screen.
     if (prev && s.z > 0 && prev.z > 0 && s.clearance > 0 && prev.clearance > 0) {
-      const c = overEarth(cam, q) ? face : sky;
+      const c = top || prevTop ? face : sky;
       c.strokeStyle = rgba(EMBER, Math.pow(t, 1.7) * 0.75 * mix(0.55, 1, lightAs ?? s.sun) * smoothstep(-2, 45, s.clearance) * alpha);
       c.lineWidth = (0.35 + 1.5 * t) * k;
       c.beginPath();
@@ -241,11 +260,12 @@ export function drawHero(
       c.stroke();
     }
     prev = s;
+    prevTop = top;
   }
   if (here.clearance < -2) return;
-  const c = overEarth(cam, at) ? face : sky;
   const lit = lightAs ?? here.sun;
   const r = (9 + 9 * lit + 16 * glint) * k;
+  const c = onTop(cam, at, here.y, r) ? face : sky;
   const halo = c.createRadialGradient(here.x, here.y, 0, here.x, here.y, r);
   const glow = (0.32 + 0.3 * lit + 0.35 * glint) * air * alpha;
   halo.addColorStop(0, rgba(EMBER, glow));
@@ -269,7 +289,7 @@ export function drawDot(face: Ctx, sky: Ctx, cam: Camera, p: Vec3, sun: Vec3, al
   if (s.z <= 0 || s.clearance < 0) return;
   const a = (0.16 + 0.42 * s.sun) * smoothstep(0, 45, s.clearance) * alpha;
   if (a <= 0.01) return;
-  const c = overEarth(cam, p) ? face : sky;
+  const c = onTop(cam, p, s.y) ? face : sky;
   c.fillStyle = `rgba(232,226,211,${a})`;
   c.beginPath();
   c.arc(s.x, s.y, r, 0, Math.PI * 2);

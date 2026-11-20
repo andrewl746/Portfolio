@@ -14,6 +14,7 @@ import {
   drawDot,
   drawHero,
   drawTrack,
+  setLift,
   flashPoint,
   inView,
   orbitPoint,
@@ -82,6 +83,9 @@ export type Shot = Pose & {
    *  The ember satellites flash clear of both. */
   top: number;
   covers: Cover[];
+  /** From this height down the window the satellites are drawn on the top
+   *  canvas, over the feet of the name (Infinity when those aren't showing). */
+  lift: number;
 };
 
 /** `u0` is where a satellite is on its orbit when the scene starts (for the
@@ -287,6 +291,7 @@ export function createStage({
     }
 
     // Satellites.
+    setLift(shot.lift);
     for (const c of [face, sky]) {
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
       c.clearRect(0, 0, W, H);
