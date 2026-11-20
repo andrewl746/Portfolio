@@ -647,10 +647,11 @@ html:not(.js) .typewriter-caret {
    and hide that one. */
 .hero-band .hero-tagline { display: none; }
 
+/* A little larger and lighter than body text: it sits on the Earth. */
 .hero-sub {
-  font-size: 14px;
-  line-height: 1.625;
-  color: var(--text-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--text-primary) 60%, var(--text-body));
 }
 
 /* One sentence per line. */
