@@ -8,7 +8,19 @@
 import { SUN } from "@/lib/earth-scene";
 import { clamp01, smoothstep, type Vec3 } from "./math";
 import type { EarthRenderer } from "./renderer";
-import { angularSpeed, drawDot, drawHero, drawTrack, flashPoint, orbitPoint, ring, type Cover, type Ring } from "./satellites";
+import {
+  angularSpeed,
+  drawDot,
+  drawHero,
+  drawTrack,
+  flashPoint,
+  inView,
+  orbitPoint,
+  passStart,
+  ring,
+  type Cover,
+  type Ring,
+} from "./satellites";
 import { camera, centreFor, finaleFrame, finalePose, type Pose } from "./view";
 
 /** Seconds of orbit per second on screen. */
@@ -26,6 +38,14 @@ const SHELLS: Ring[] = [ring(1200, 87.9, -58), ring(560, 97.6, -104), ring(570, 
 /** With reduced motion nothing moves by itself: the scene holds this moment. */
 const STILL_TIME = 7;
 const TURN = Math.PI * 2;
+/** An ember satellite hurries from where it comes into view to its flash
+ *  point, so the flash isn't a long wait: it covers that stretch in FAST_FOR
+ *  seconds, flashes, and eases back to its usual speed over EASE_FOR. */
+const FAST_FOR = 2;
+const EASE_FOR = 0.9;
+/** How long after the satellites first show the leading ember one comes into
+ *  view, in seconds: as the name and the text settle. */
+const RISE_AFTER = 1.1;
 
 /** One frame's facts about the window and the scroll. */
 export type Moment = {
@@ -58,7 +78,9 @@ export type Shot = Pose & {
   covers: Cover[];
 };
 
-type Sat = { orbit: Ring; u0: number; hero: boolean; glintAt: number; past: number };
+/** `u0` is where a satellite is on its orbit when the scene starts (for the
+ *  ember ones, measured from `lead`). `held` keeps one hidden: see `lead`. */
+type Sat = { orbit: Ring; u0: number; hero: boolean; glintAt: number; past: number; held: boolean };
 
 export type Stage = {
   /** Ask for a fresh frame after something outside the scroll changed (a re-measure, say). */
@@ -111,6 +133,21 @@ export function createStage({
   let plateOpacity = "";
   let flashAt: number | null = null; // where on their orbit the ember satellites flash, as the page stands
   let flashKey = "";
+  // The hurry, as a bend in where a satellite is for its place in the queue:
+  // the `quick` radians of queue before the flash point `to` are stretched
+  // over `span` radians of orbit (`fast` times the usual speed). Past the
+  // point the speed eases down over `ease` radians of queue to `rest`, a
+  // little under the usual, which keeps a lap a lap.
+  let warp: { to: number; span: number; quick: number; fast: number; ease: number; rest: number } | null = null;
+  const along = (place: number) => {
+    if (!warp) return place;
+    const { to, quick, fast, ease, rest } = warp;
+    const d = (((place - to) % TURN) + TURN) % TURN;
+    if (d >= TURN - quick) return to - (TURN - d) * fast;
+    // Speed past the point is rest + (fast - rest) (1 - d / ease)^2, which adds up to this.
+    const left = Math.max(0, 1 - d / ease);
+    return to + rest * d + ((fast - rest) * ease * (1 - left * left * left)) / 3;
+  };
 
   // On a phone the browser's toolbars come and go and the visible height
   // changes with them. Everything is laid out for the tallest view (toolbars
@@ -125,15 +162,24 @@ export function createStage({
   // finale's background traffic.
   let fleet: Sat[] = [];
   let track: Ring = SHELLS[0];
+  // Where the leading ember satellite is on the orbit when the scene starts.
+  // Set once, when the satellites first show: the page opens on one of them
+  // coming into view (up over the limb, or in from the window's edge) on the
+  // pass that leads to the flash, not on one already partway across the sky.
+  let lead: number | null = null;
+  // The scroll position that was timed for, and until when it can be timed
+  // again: a page opened on a section jumps there a moment after it starts.
+  let openedAt = 0;
+  let openUntil = 0;
   const build = () => {
     const fr = finaleFrame(W, H);
     fleet = [];
     for (let i = 0; i < 6; i++) {
-      fleet.push({ orbit: fr.orbit, u0: fr.orbit.start + (i * Math.PI) / 3, hero: true, glintAt: -99, past: Math.PI });
+      fleet.push({ orbit: fr.orbit, u0: (i * Math.PI) / 3, hero: true, glintAt: -99, past: Math.PI, held: false });
     }
     fr.traffic.forEach((o, k) => {
       for (let i = 0; i < 4; i++) {
-        fleet.push({ orbit: o, u0: o.start + (i * Math.PI) / 2 + k, hero: false, glintAt: -99, past: Math.PI });
+        fleet.push({ orbit: o, u0: o.start + (i * Math.PI) / 2 + k, hero: false, glintAt: -99, past: Math.PI, held: false });
       }
     });
     track = fr.orbit;
@@ -239,11 +285,23 @@ export function createStage({
     // the page has in front of the sky, so it is worked out again only when
     // one of those has changed. A phone's toolbars cover the bottom of the
     // canvas while they show, so the window ends where they begin.
-    const bottom = Math.min(H, window.innerHeight);
-    const sightKey = `${key}|${y}|${W}|${bottom}`;
+    const sight = { W, H: Math.min(H, window.innerHeight), top: shot.top, covers: shot.covers };
+    const sightKey = `${key}|${y}|${W}|${sight.H}`;
     if (!still && sightKey !== flashKey) {
       flashKey = sightKey;
-      flashAt = flashPoint(cam, track, shot.sun, { W, H: bottom, top: shot.top, covers: shot.covers });
+      flashAt = flashPoint(cam, track, shot.sun, sight);
+      warp = null;
+      if (flashAt !== null) {
+        const pace = angularSpeed(track) * TIME_SCALE;
+        const span = flashAt - passStart(cam, track, flashAt, sight);
+        const quick = pace * FAST_FOR;
+        const ease = pace * EASE_FOR;
+        const fast = span / quick;
+        if (fast > 1) {
+          const rest = (TURN - span - (fast * ease) / 3) / (TURN - quick - ease / 3);
+          warp = { to: flashAt, span, quick, fast, ease, rest };
+        }
+      }
     }
 
     // Satellites.
@@ -253,13 +311,44 @@ export function createStage({
     }
     const a = smoothstep(0.3, 1.6, time);
     if (a > 0.01) {
-      drawTrack(face, sky, cam, track, a, 240);
+      // The ember orbit: as clear over the Earth as over the sky, and a little
+      // heavier on a phone, where a hairline all but disappears.
+      drawTrack(face, sky, cam, track, a, 240, { width: W < 768 ? 1.5 : 1.1, overEarth: 0.4 });
+      if (lead !== null && Math.abs(y - openedAt) > 4) {
+        // The page has moved since the opening was timed. Before the leading
+        // satellite has come up, time it again for where the page is now;
+        // after that, just stop holding the others back, or a new view could
+        // sit empty until they come round.
+        if (time < openUntil) lead = null;
+        else if (Math.abs(y - openedAt) > H / 3) for (const sat of fleet) sat.held = false;
+      }
+      let first = lead;
+      if (first === null) {
+        openedAt = y;
+        openUntil = time + RISE_AFTER;
+        const speed = angularSpeed(track) * TIME_SCALE;
+        // Held still (reduced motion), or with nowhere to flash, the
+        // satellites stand where the finale's render has them.
+        first = finaleFrame(W, H).orbit.start;
+        if (!still && flashAt !== null) {
+          first = (warp ? warp.to - warp.quick : passStart(cam, track, flashAt, sight)) - speed * (time + RISE_AFTER);
+          // Any other that would start out in view waits until it has left
+          // it, so none of them just appears in the middle of the sky.
+          for (const sat of fleet) sat.held = sat.hero && inView(cam, track, along(first + sat.u0 + speed * time), sight);
+        }
+        lead = first;
+      }
       for (const sat of fleet) {
-        const u = sat.u0 + angularSpeed(sat.orbit) * TIME_SCALE * time;
+        const place = sat.u0 + angularSpeed(sat.orbit) * TIME_SCALE * time;
+        const u = sat.hero ? along(first + place) : place;
         const at = orbitPoint(sat.orbit, u);
         if (!sat.hero) {
           drawDot(face, sky, cam, at, shot.sun, a, 0.9);
           continue;
+        }
+        if (sat.held) {
+          if (inView(cam, sat.orbit, u, sight)) continue;
+          sat.held = false;
         }
         // A glint as it passes the flash point: a frame ago it was just short
         // of the point and now it is just past it. Either may have moved (the

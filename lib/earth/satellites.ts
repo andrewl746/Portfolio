@@ -58,8 +58,9 @@ export type Sight = { W: number; H: number; top: number; covers: Cover[] };
 const FLASH_MARGIN = 44;
 const COVER_MARGIN = 10;
 /** A flash takes most of a second to fade, so the satellite has to stay in
- *  sight for this much of its orbit after it starts (about 0.7 s of travel). */
-const FLASH_SPAN = 3 * DEG;
+ *  sight for this much of its orbit after it starts. It is still moving fast
+ *  then (stage.ts), so this is under half a second of travel. */
+const FLASH_SPAN = 4 * DEG;
 
 /** Where on its orbit a satellite leaves the Earth's shadow (the cylinder
  *  see() uses), or null when the orbit never enters it. Sunlight along the
@@ -128,6 +129,26 @@ function limbCrossing(cam: Camera, o: Ring, sight: Sight): number | null {
   return best;
 }
 
+/** How far outside the window a satellite still shows (its halo reaches in), px. */
+const HALO_REACH = 40;
+
+/** Is a satellite at this point of the orbit showing: in the window, or near
+ *  enough for its halo to reach in, and not behind the Earth? */
+export function inView(cam: Camera, o: Ring, u: number, sight: Sight) {
+  const s = see(cam, orbitPoint(o, u));
+  const e = HALO_REACH;
+  return s.z > 0 && s.clearance > 0 && s.x > -e && s.x < sight.W + e && s.y > -e && s.y < sight.H + e;
+}
+
+/** Where the pass that reaches a point of the orbit comes into view: up over
+ *  the Earth's limb, or in from the window's edge. */
+export function passStart(cam: Camera, o: Ring, u: number, sight: Sight) {
+  const step = 0.25 * DEG;
+  let from = u;
+  for (let d = 0; d < Math.PI && inView(cam, o, from - step, sight); d += step) from -= step;
+  return from;
+}
+
 /** Where on the orbit the ember satellites flash for a view, or null when no
  *  part of the orbit can be seen. */
 export function flashPoint(cam: Camera, o: Ring, sun: Vec3, sight: Sight): number | null {
@@ -145,9 +166,17 @@ export function flashPoint(cam: Camera, o: Ring, sun: Vec3, sight: Sight): numbe
 
 /** A whole orbit as a brass line: faint in front of the night side, clearer
  *  over the sky. */
-export function drawTrack(face: Ctx, sky: Ctx, cam: Camera, o: Ring, alpha: number, steps: number) {
+export function drawTrack(
+  face: Ctx,
+  sky: Ctx,
+  cam: Camera,
+  o: Ring,
+  alpha: number,
+  steps: number,
+  { width = 1.1, overEarth = 0.18 }: { width?: number; overEarth?: number } = {},
+) {
   for (const c of [face, sky]) {
-    c.lineWidth = 1.1;
+    c.lineWidth = width;
     c.lineCap = "round";
   }
   let prev: { x: number; y: number; ok: boolean } | null = null;
@@ -158,7 +187,7 @@ export function drawTrack(face: Ctx, sky: Ctx, cam: Camera, o: Ring, alpha: numb
     if (prev && ok && prev.ok) {
       const onFace = s.clearance < 9000 && behindLimb(cam, p);
       const c = onFace ? face : sky;
-      c.strokeStyle = rgba(BRASS, (onFace ? 0.18 : 0.42) * alpha * smoothstep(0, 60, s.clearance + 60));
+      c.strokeStyle = rgba(BRASS, (onFace ? overEarth : 0.42) * alpha * smoothstep(0, 60, s.clearance + 60));
       c.beginPath();
       c.moveTo(prev.x, prev.y);
       c.lineTo(s.x, s.y);
