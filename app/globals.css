@@ -1077,7 +1077,7 @@ html:not(.js) .hero-pin {
      third of a screen of it before the last screen, which on a phone was more
      than half a screen of nothing. The last screen brings its own space above
      its title (room for its constellation under the bar), so the last section
-     ends short and the break before Contact matches the other breaks. */
+     ends with none of its own. */
   .page {
     margin-top: -22vh;
     margin-top: -22svh;
@@ -1085,7 +1085,17 @@ html:not(.js) .hero-pin {
     padding-bottom: 0;
   }
 
-  .page .section:last-child { padding-bottom: 16px; }
+  .page .section:last-child { padding-bottom: 0; }
+
+  /* The break before Contact, end of the last section to the Contact title,
+     is the same as between any two sections (80px + the next one's top
+     space). The last screen's own top space is taller than that, to keep its
+     constellation under the bar, so it starts that much sooner. */
+  .end {
+    margin-top: calc(
+      80px + var(--sec-top) - (var(--bar) + 16px + var(--star-size) * var(--end-star, 1.15) - var(--star-drop))
+    );
+  }
 
   /* A phone's first screen leaves the tagline out: the two sentences under
      it say the same more exactly, and it was one piece of text too many. */
