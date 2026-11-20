@@ -217,7 +217,7 @@ export function startCoast({
   }
 
   // What pose() worked out that place() needs.
-  let v = { pinLen: 1, heroY: 0, apexY: 0, size: 0, gap: 0, glow: 0, bandY: null as number | null };
+  let v = { pinLen: 1, heroY: 0, apexY: 0, size: 0, gap: 0, glow: 0, under: 0, bandY: null as number | null };
 
   function pose(m: Moment): Shot {
     const { W, H, y, max, p, portrait } = m;
@@ -250,7 +250,11 @@ export function startCoast({
         ? mix(hero.apex[1], floor, easeInOut(clamp01((y - pinLen * 0.08) / (pinLen * 0.92))))
         : mix(floor, fin.apex[1], easeInOut(endT));
     const glow = glowHeight(hero);
-    v = { pinLen, heroY: hero.apex[1], apexY, size, gap, glow, bandY };
+    // How far down the name has to start to be wholly behind the Earth: its
+    // own height, and as much again as the limb has dropped away by the ends
+    // of the name, where the first and last letters stand.
+    const under = (BASELINE + 0.04) * size + limbDrop(hero, size / 0.49);
+    v = { pinLen, heroY: hero.apex[1], apexY, size, gap, glow, under, bandY };
     return {
       ...cam,
       apex: [W / 2, apexY],
@@ -274,7 +278,7 @@ export function startCoast({
 
   function place(m: Moment) {
     const { y, time } = m;
-    const { pinLen, heroY, apexY, size, gap, glow, bandY } = v;
+    const { pinLen, heroY, apexY, size, gap, glow, under, bandY } = v;
     const t = clamp01(y / pinLen);
     write("size", size.toFixed(1) + "px", (px) => (name!.style.fontSize = px));
     // Resting place: baseline a little below the top of the limb, in front
@@ -282,7 +286,7 @@ export function startCoast({
     // stands clear on the limb, then settles down in front of it. On scroll
     // it goes back up clear, then behind, and sets.
     const rest = heroY + (SUNK - BASELINE) * size;
-    const rise = (1 - easeOut(clamp01((time - 0.15) / (PEAK - 0.15)))) * size * 0.55;
+    const rise = (1 - easeOut(clamp01((time - 0.15) / (PEAK - 0.15)))) * under;
     const set = t * t * size * 1.05 + (apexY - heroY);
     // How far the name is from its place in front, back toward clear of the
     // Earth: 1 at the top of the move, 0 at rest.
