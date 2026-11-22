@@ -101,9 +101,15 @@ export const PROJECTS: Project[] = [
     name: "Suplex",
     context: "Hack the Valley 2026",
     description: [
-      "Checks any Toronto address against the City's 4 pre-approved multiplex designs and shows the result in 3D.",
+      "Checks any Toronto address against the City's 4 pre-approved multiplex designs and shows the result in 3D. It's now featured in the City of Toronto's Open Data Gallery.",
       "I led the technical design and built the rules engine, which screened all 495,456 lots in Toronto against the zoning by-law and answers a single address in under 50 ms. I also built the FastAPI backend and the three.js 3D scene.",
     ],
+    // The gallery links to Suplex's entry on the City's site, for anyone who doubts it.
+    descriptionLink: {
+      text: "Open Data Gallery",
+      href: "https://open.toronto.ca/gallery-item/suplex/",
+      hint: "Suplex's entry",
+    },
     tech: ["Python", "FastAPI", "Shapely", "three.js", "React"],
     live: "https://suplex.andrewli.app",
     github: "https://github.com/andrewl746/suplex",
