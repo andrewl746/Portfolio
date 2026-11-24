@@ -48,13 +48,18 @@ const EMBERS = 1;
  *  29 s on screen, so once an ember satellite is out of view it skips the
  *  rest of the far side and comes back into view this long after it left. */
 const NEXT_AFTER = 5;
-/** The longest the opening waits for the maps and the typeface, ms; how long
- *  it waits with nothing new arriving before it takes the load for stuck; and
+/** The longest the opening waits for what the page shows (the maps, the
+ *  typeface, the project screenshots, the finale image), ms; how long it
+ *  waits with nothing new arriving before it takes the load for stuck; and
  *  how long the Earth takes to fade in before the clock starts (as in the
  *  styles). */
 const HOLD_MOST = 10000;
 const HOLD_STUCK = 4000;
 const EARTH_IN = 450;
+/** How much of the loading line each of those is, roughly as the bytes go:
+ *  the maps are most of them. Without WebGL the finale image is the Earth,
+ *  and takes the maps' share as well as its own. */
+const SHARE = { maps: 0.6, finale: 0.15, shots: 0.2, lettering: 0.05 };
 /** How long after the satellites first show the leading ember one comes into
  *  view, in seconds: as the name and the text settle. */
 const RISE_AFTER = 1.1;
@@ -94,6 +99,8 @@ type Sat = { orbit: Ring; u0: number; hero: boolean; glintAt: number; past: numb
 export type Stage = {
   /** Ask for a fresh frame after something outside the scroll changed (a re-measure, say). */
   redraw(): void;
+  /** Something the opening waits for may have arrived: look again. */
+  arrived(): void;
   destroy(): void;
 };
 
@@ -106,6 +113,7 @@ export function createStage({
   pose,
   place,
   needPlate,
+  shots,
   onLoad,
   holdFor,
   onBegin,
@@ -120,8 +128,10 @@ export function createStage({
   reduced: boolean;
   pose: (m: Moment) => Shot;
   place: (m: Moment, shot: Shot) => void;
-  /** Called once, when the finale image is going to be needed. */
+  /** Called once, as the stage starts, for the page to put the finale image in. */
   needPlate: () => void;
+  /** How many of the page's project screenshots have arrived (or been given up on), 0 to 1. */
+  shots: () => number;
   /** Called as what the opening needs arrives, with how much of it is here,
    *  0 to 1, and what is still to come, in a few words ("" when nothing is). */
   onLoad: (part: number, what: string) => void;
@@ -145,7 +155,8 @@ export function createStage({
   let lastKey = "";
   let raf = 0;
   let dead = false;
-  let plateAsked = false;
+  // The finale image's layers, once the page has put them in (needPlate).
+  let layers: HTMLImageElement[] = [];
   let plateTransform = "";
   let plateOpacity = "";
   let flashAt: number | null = null; // where on their orbit the ember satellites flash, as the page stands
@@ -249,13 +260,6 @@ export function createStage({
     const m: Moment = { W, H, y, max, p: clamp01(y / max), time, portrait: H > W, gl: earth.ok };
     const shot = pose(m);
 
-    // The finale image is about 300 KB and only shows on the last screen (or
-    // all the way down, when it stands in for the live Earth), so it's
-    // fetched when it's going to be needed.
-    if (!plateAsked && (!earth.ok || m.p > 0.5)) {
-      plateAsked = true;
-      needPlate();
-    }
     let shift = shot.plateShift;
     if (!earth.ok) {
       // Without WebGL the finale image stands in for the live Earth. An image
@@ -269,7 +273,10 @@ export function createStage({
     }
     const transform = shift ? `translate3d(0, ${shift.toFixed(1)}px, 0)` : "";
     if (transform !== plateTransform) plate.style.transform = plateTransform = transform;
-    const opacity = shot.plate.toFixed(3);
+    // The finale image shows only once every layer of it has arrived, never
+    // half-loaded. Until then the live Earth's own last frame is what shows.
+    const whole = layers.length > 0 && layers.every((img) => img.complete);
+    const opacity = (whole ? shot.plate : 0).toFixed(3);
     if (opacity !== plateOpacity) plate.style.opacity = plateOpacity = opacity;
 
     const [cx, cy] = centreFor(shot.C, shot.fwd, shot.roll, shot.f, shot.apex[0], shot.apex[1]);
@@ -424,12 +431,15 @@ export function createStage({
   };
 
   // --- Starting -------------------------------------------------------------------------
-  // The opening is held back, with only the stars showing, until what it
-  // needs is here: the Earth's maps (each one stalls a frame as it goes up
-  // to the graphics chip), the typeface the name is set in, and a couple of
-  // frames drawn with them. Played while those were still arriving, the
-  // name's rise stuttered and the Earth changed under it. A slow connection
-  // is waited for, with the loading line to show for it, up to HOLD_MOST. A
+  // The opening is held back, with only the stars showing, until what the
+  // page shows is here: the Earth's maps (each one stalls a frame as it goes
+  // up to the graphics chip), the typeface the name is set in, a couple of
+  // frames drawn with them, and the page's pictures (the project screenshots
+  // and the finale image), so that nothing is fetched once the page has
+  // opened. Played while the maps were still arriving, the name's rise
+  // stuttered and the Earth changed under it; and a picture fetched as it
+  // was scrolled to could be on screen half-loaded. A slow connection is
+  // waited for, with the loading line to show for it, up to HOLD_MOST. A
   // load that has stopped (a map that failed, a dropped connection) isn't:
   // once nothing new has arrived for HOLD_STUCK it starts with what it has.
   // In a background tab it waits to be looked at.
@@ -437,8 +447,8 @@ export function createStage({
   let warming = false;
   let waiting = false;
   const plateIn = () => {
-    const imgs = [...plate.querySelectorAll("img")];
-    return imgs.length ? imgs.filter((img) => img.complete).length / imgs.length : 0;
+    layers = [...plate.querySelectorAll("img")];
+    return layers.length ? layers.filter((img) => img.complete).length / layers.length : 0;
   };
   function begin() {
     if (began || dead) return;
@@ -455,15 +465,35 @@ export function createStage({
   }
   function check() {
     if (began || warming || dead) return;
-    const maps = earth.ok ? earth.loaded() : plateIn();
-    const part = (maps * 4 + (fontsIn ? 1 : 0)) / 5;
+    const maps = earth.loaded();
+    const finale = plateIn();
+    const pics = shots();
+    const all = maps >= 1 && finale >= 1 && pics >= 1 && fontsIn;
+    const part = all
+      ? 1
+      : (earth.ok ? SHARE.maps * maps + SHARE.finale * finale : (SHARE.maps + SHARE.finale) * finale) +
+        SHARE.shots * pics +
+        (fontsIn ? SHARE.lettering : 0);
     if (part > lastPart) {
       lastPart = part;
       window.clearTimeout(stuckTimer);
       stuckTimer = window.setTimeout(begin, HOLD_STUCK);
     }
-    onLoad(part, (earth.ok ? earth.waitingFor() : maps < 1 ? "the Earth" : null) ?? (fontsIn ? "" : "the lettering"));
-    if (!fontsIn || maps < 1) return;
+    // What is still to come, in the order it is wanted: the Earth, then the
+    // rest of the page.
+    const what =
+      earth.waitingFor() ??
+      (!earth.ok && finale < 1
+        ? "the Earth"
+        : pics < 1
+          ? "the projects"
+          : finale < 1
+            ? "the last view"
+            : fontsIn
+              ? ""
+              : "the lettering");
+    onLoad(part, what);
+    if (!all) return;
     warming = true;
     refresh();
     requestAnimationFrame(() =>
@@ -477,7 +507,15 @@ export function createStage({
   const holdTimer = window.setTimeout(begin, HOLD_MOST);
   let lastPart = 0;
   let stuckTimer = window.setTimeout(begin, HOLD_STUCK);
-  plate.addEventListener("load", check, true);
+  // A layer of the finale image has arrived, or failed. If the opening has
+  // already started without it, a fresh frame lets it show.
+  const onPlate = () => {
+    plateIn();
+    check();
+    if (!dead) refresh();
+  };
+  plate.addEventListener("load", onPlate, true);
+  plate.addEventListener("error", onPlate, true);
   // A move to a screen with another pixel density needs sharper (or lighter)
   // canvases even though the window is the same size.
   let density: MediaQueryList | null = null;
@@ -506,6 +544,9 @@ export function createStage({
     if (!dead) refresh();
     check();
   });
+  // The finale image is fetched now, with the rest, and after the maps have
+  // been asked for: they are what the first screen needs.
+  needPlate();
   frame(performance.now());
   check();
 
@@ -514,12 +555,14 @@ export function createStage({
       dirty = true;
       refresh();
     },
+    arrived: check,
     destroy() {
       dead = true;
       cancelAnimationFrame(raf);
       window.clearTimeout(holdTimer);
       window.clearTimeout(stuckTimer);
-      plate.removeEventListener("load", check, true);
+      plate.removeEventListener("load", onPlate, true);
+      plate.removeEventListener("error", onPlate, true);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", refresh);
       document.removeEventListener("visibilitychange", onVisible);

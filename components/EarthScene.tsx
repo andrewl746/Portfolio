@@ -45,8 +45,9 @@ export default function EarthScene() {
   const earthRef = useRef<HTMLCanvasElement>(null);
   const faceRef = useRef<HTMLCanvasElement>(null);
   const plateRef = useRef<HTMLDivElement>(null);
-  // The finale image is only fetched once the reader is past halfway (or at
-  // once, when it stands in for the live Earth).
+  // The finale image is put in as the scene starts, not sent with the page:
+  // the scene has asked for the Earth's maps by then, so they are fetched
+  // first. The opening waits for it with everything else the page shows.
   const [plateWanted, setPlateWanted] = useState(false);
 
   useEffect(() => {
@@ -75,6 +76,9 @@ export default function EarthScene() {
                 sizes="100vw"
                 alt=""
                 decoding="async"
+                // It fills the window, which a browser takes for urgent. It
+                // isn't seen until the last screen; the maps go first.
+                fetchPriority="low"
                 draggable={false}
               />
             </picture>

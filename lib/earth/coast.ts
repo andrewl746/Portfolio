@@ -361,6 +361,16 @@ export function startCoast({
     const now = performance.now();
     return now < LINE_AFTER + 100 ? 0 : Math.max(LINE_AFTER + LINE_LEAST - now, 450);
   };
+  // The project screenshots keep themselves out of sight until they have
+  // arrived (components/ProjectShot.tsx), and say where they have got to in
+  // data-shot. The opening waits for them as it does for the maps: this is
+  // how many have settled, arrived or been given up on.
+  const shots = () => {
+    const all = root.querySelectorAll<HTMLElement>("[data-shot]");
+    let settled = 0;
+    for (const el of all) if (el.dataset.shot === "ready" || el.dataset.shot === "failed") settled++;
+    return all.length ? settled / all.length : 1;
+  };
   const stage = createStage({
     earth,
     renderer,
@@ -370,6 +380,7 @@ export function startCoast({
     pose,
     place,
     needPlate,
+    shots,
     onLoad: (part, what) => {
       loadPart = part;
       if (loadWhat) loadWhat.textContent = what ? "Loading " + what : "Ready";
@@ -386,6 +397,8 @@ export function startCoast({
     return () => {};
   }
 
+  const shotWatch = new MutationObserver(stage.arrived);
+  shotWatch.observe(root, { subtree: true, attributes: true, attributeFilter: ["data-shot"] });
   const pageWatch = new ResizeObserver(() => {
     measure();
     stage.redraw();
@@ -414,6 +427,7 @@ export function startCoast({
 
   return () => {
     stopped = true;
+    shotWatch.disconnect();
     pageWatch.disconnect();
     heroWatch.disconnect();
     window.removeEventListener("resize", measureHero);

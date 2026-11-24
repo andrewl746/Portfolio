@@ -209,6 +209,9 @@ export function createEarthRenderer(canvas: HTMLCanvasElement): EarthRenderer {
       upload();
     };
     img.decoding = "async";
+    // The first screen is made of these, so they go ahead of the page's other
+    // pictures, which the opening also waits for but nobody sees yet.
+    img.fetchPriority = "high";
     img.addEventListener("load", () => window.setTimeout(send, 400), { once: true });
     img.src = MAPS + file;
     img.decode().then(send, () => {});

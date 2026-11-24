@@ -287,6 +287,20 @@ html:not(.js) .typewriter-caret {
   35% { opacity: 1; }
 }
 
+/* A project's screenshot (ProjectShot.tsx) stays out of sight until all of
+   it has arrived, so no browser ever has it on screen half-loaded. Hidden,
+   not removed: it keeps its space, and the brackets frame the gap until it
+   comes. Without JS it simply shows. If the page's script never runs, nothing
+   takes it on from "wait", and it shows itself after a while. */
+.js .shot[data-shot="wait"],
+.js .shot[data-shot="loading"] {
+  visibility: hidden;
+}
+
+.js .shot[data-shot="wait"] {
+  animation: reveal-fallback 0s linear 8s forwards;
+}
+
 /* ==========================================================================
    The home page, "Down the coast" (app/page.tsx).
 

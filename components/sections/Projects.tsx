@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { FLAGSHIP, PROJECTS, SITE, type Project } from "@/lib/content";
 import { formatDownloads, nebulosityDownloads } from "@/lib/downloads";
 import Constellation from "@/components/Constellation";
+import ProjectShot from "@/components/ProjectShot";
 import Reveal from "@/components/animations/Reveal";
 import ViewfinderLock from "@/components/animations/ViewfinderLock";
 
@@ -95,16 +95,7 @@ function Row({ p, current = false }: { p: Project; current?: boolean }) {
       </div>
       {p.image && (
         <ViewfinderLock className="project-shot mt-5 max-w-2xl p-2">
-          <Image
-            src={p.image.src}
-            alt={p.image.alt}
-            width={1280}
-            height={800}
-            sizes="(min-width: 1280px) 720px, (min-width: 768px) 656px, 100vw"
-            quality={90}
-            // Solid, so the scene keeps the satellites' flash clear of it.
-            className="block w-full border border-white/10"
-          />
+          <ProjectShot src={p.image.src} alt={p.image.alt} />
         </ViewfinderLock>
       )}
     </div>
