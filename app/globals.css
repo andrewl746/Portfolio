@@ -438,6 +438,29 @@ html:not(.js) .typewriter-caret {
   to { visibility: hidden; }
 }
 
+/* Until the opening starts, nothing on the page can be used: it can't be
+   scrolled (by wheel, keys or a finger), the bar stays hidden, and the scene
+   makes the page inert (lib/earth/coast.ts), so no one lands halfway down
+   the page before it has opened. It lasts only as long as "wait" does, which
+   the scene caps, and a scene that never starts never locks. The scrollbar's
+   room is kept, so nothing moves when the lock lifts. */
+html { scrollbar-gutter: stable; }
+
+html:has(.coast[data-scene="wait"]),
+html:has(.coast[data-scene="wait"]) body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html:has(.coast[data-scene="wait"]) body { touch-action: none; }
+
+.coast[data-scene="wait"] > .topbar { opacity: 0; visibility: hidden; }
+.coast[data-scene="on"] > .topbar { animation: scene-loading-in 0.3s var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .coast[data-scene="on"] > .topbar { animation: none; }
+}
+
 .scene-earth { z-index: 5; }
 .scene-face { z-index: 7; }
 

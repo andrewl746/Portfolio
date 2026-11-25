@@ -334,6 +334,10 @@ export function startCoast({
   // until then stand down; "wait" keeps the Earth out of sight until the
   // opening starts.
   root.dataset.scene = "wait";
+  // Until then nothing on the page can be used: the styles stop it scrolling
+  // and hide the bar, and inert keeps clicks, keyboard focus and screen
+  // readers off it.
+  root.inert = true;
   // The loading line: how much is here, counted up smoothly, and what is
   // still to come.
   const loadWhat = root.querySelector<HTMLElement>('[data-load="what"]');
@@ -387,12 +391,16 @@ export function startCoast({
       if (!loadRaf) loadRaf = requestAnimationFrame(showLoad);
     },
     holdFor,
-    onBegin: () => (root.dataset.scene = "on"),
+    onBegin: () => {
+      root.dataset.scene = "on";
+      root.inert = false;
+    },
   });
   if (!stage) {
     renderer.dispose();
     delete root.dataset.gl;
     delete root.dataset.scene;
+    root.inert = false;
     window.clearTimeout(slow);
     return () => {};
   }
@@ -435,6 +443,7 @@ export function startCoast({
     stage.destroy();
     renderer.dispose();
     delete root.dataset.scene;
+    root.inert = false;
     delete root.dataset.gl;
     root.style.removeProperty("--loaded");
     cancelAnimationFrame(loadRaf);
